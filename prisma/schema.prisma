@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id                 String         @id @default(cuid())
+  name               String?
+  email              String?        @unique
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  sessions           Session[]
+  memberships        Membership[]
+  posts              Post[]
+  comments           Comment[]
+  ownedOrganisations Organisation[] @relation("OwnerOfOrganisation")
+  settings           UserSettings?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model UserSettings {
+  id                   String       @id @default(cuid())
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String       @unique
+  selectedOrganisation Organisation @relation(fields: [organisationId], references: [id])
+  organisationId       String
+}
+
+model Organisation {
+  id         String         @id @default(cuid())
+  name       String
+  members    Membership[]
+  owner      User           @relation("OwnerOfOrganisation", fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  invites    Invite[]
+  isActive   Boolean?       @default(true)
+  posts      Post[]
+  comments   Comment[]
+  selectedIn UserSettings[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisationId String
+  role           Role         @default(USER)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Invite {
+  id             String        @id @default(cuid())
+  dateSent       DateTime      @default(now())
+  email          String
+  isValid        Boolean       @default(true)
+  organisation   Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisationId String?
+}
+
+model Post {
+  id             String        @id @default(cuid())
+  text           String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         String?
+  organisation   Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisationId String?
+}
+
+model Comment {
+  id             String        @id @default(cuid())
+  text           String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         String?
+  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  organisationId String?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
