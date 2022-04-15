@@ -43,43 +43,36 @@ model VerificationToken {
 }
 
 model User {
-  id                 String         @id @default(cuid())
-  name               String?
-  email              String?        @unique
-  emailVerified      DateTime?
-  image              String?
-  accounts           Account[]
-  sessions           Session[]
-  memberships        Membership[]
-  posts              Post[]
-  comments           Comment[]
-  ownedOrganisations Organisation[] @relation("OwnerOfOrganisation")
-  settings           UserSettings?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-}
-
-model UserSettings {
-  id                   String       @id @default(cuid())
-  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId               String       @unique
-  selectedOrganisation Organisation @relation(fields: [organisationId], references: [id])
-  organisationId       String
+  id                   String         @id @default(cuid())
+  name                 String?
+  email                String?        @unique
+  emailVerified        DateTime?
+  image                String?
+  accounts             Account[]
+  sessions             Session[]
+  memberships          Membership[]
+  posts                Post[]
+  comments             Comment[]
+  ownedOrganisations   Organisation[] @relation("OwnerOfOrganisation")
+  selectedOrganisation Organisation?  @relation("SelectedOrganisation", fields: [organisationId], references: [id], onDelete: SetNull)
+  organisationId       String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
 }
 
 model Organisation {
-  id         String         @id @default(cuid())
-  name       String
-  members    Membership[]
-  owner      User           @relation("OwnerOfOrganisation", fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
-  invites    Invite[]
-  isActive   Boolean?       @default(true)
-  posts      Post[]
-  comments   Comment[]
-  selectedIn UserSettings[]
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  id          String       @id @default(cuid())
+  name        String
+  memberships Membership[]
+  owner       User         @relation("OwnerOfOrganisation", fields: [userId], references: [id], onDelete: Cascade)
+  selectedBy  User[]       @relation("SelectedOrganisation")
+  userId      String
+  invites     Invite[]
+  isActive    Boolean?     @default(true)
+  posts       Post[]
+  comments    Comment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Membership {

@@ -2,7 +2,7 @@ import { Role } from '@prisma/client'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 
 export const withOwnerAuthorisation = (apiHandler: NextApiHandler) => async (
   req: NextApiRequest,
@@ -29,7 +29,6 @@ export const withOwnerAuthorisation = (apiHandler: NextApiHandler) => async (
     where: { email: session.user.email! },
     include: {
       ownedOrganisations: true,
-      settings: true,
     },
   })
 
@@ -41,7 +40,7 @@ export const withOwnerAuthorisation = (apiHandler: NextApiHandler) => async (
     return
   }
 
-  const organisation = user.ownedOrganisations.find(org => org.id === user.settings?.organisationId)
+  const organisation = user.ownedOrganisations.find(org => org.id === user.organisationId)
 
   if (!organisation) {
     res.status(403).json({

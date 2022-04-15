@@ -1,16 +1,16 @@
 import { Organisation } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { RecordQueryResponse, RecordRequestResponse } from 'types'
+import { MutationResponse, QueryResponse } from 'types'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 import { withMembershipAuthorisation, withOwnerAuthorisation, withRoleAuthorisation } from 'utils/auth'
 
 const getOrganisation = async (
   req: NextApiRequest,
-  res: NextApiResponse<RecordQueryResponse<Organisation>>
+  res: NextApiResponse<QueryResponse<Organisation>>
 ) => {
   try {
-    const id = req.query.id as string
+    const id = req.query.organisationId as string
 
     if (!id) {
       throw 'Organisation id not provided.'
@@ -18,7 +18,7 @@ const getOrganisation = async (
 
     const organisation = await prisma.organisation.findUnique({
       where: { id },
-      include: { members: true },
+      include: { memberships: true },
     })
 
     if (!organisation) {
@@ -41,7 +41,7 @@ const editOrganisation = withRoleAuthorisation(
     res: NextApiResponse
   ) => {
     try {
-      const id = req.query.id as string
+      const id = req.query.organisationId as string
 
       if (!id) {
         throw 'Organisation id not provided.'
@@ -66,20 +66,20 @@ const editOrganisation = withRoleAuthorisation(
 
 const removeOrganisation = withOwnerAuthorisation(async (
   req: NextApiRequest,
-  res: NextApiResponse<RecordRequestResponse>
+  res: NextApiResponse<MutationResponse<Organisation>>
 ) => {
   try {
-    const id = req.query.id as string
+    const id = req.query.organisationId as string
 
     if (!id) {
       throw 'Organisation id not provided.'
     }
 
-    const home = await prisma.organisation.delete({
+    const deletedOrganisation = await prisma.organisation.delete({
       where: { id },
     })
   
-    res.status(200).json({ success: true })
+    res.status(200).json({ success: true, record: deletedOrganisation })
   } catch (error: any) {
     console.error(error)
     res.status(400).json({ success: false, error })
@@ -90,7 +90,7 @@ export default withMembershipAuthorisation(
   async (
     req: NextApiRequest,
     res: NextApiResponse
-  ) => {  
+  ) => {
     switch (req.method) {
       case 'GET':
         await getOrganisation(req, res)

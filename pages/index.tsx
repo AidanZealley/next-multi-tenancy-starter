@@ -1,70 +1,73 @@
-import { Box, Button, Divider, Heading, Icon, IconButton, Text } from '@chakra-ui/react'
+import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure } from '@chakra-ui/react'
 import type { NextPageContext } from 'next'
-import { getSession, useSession } from 'next-auth/react'
-import { prisma } from 'lib/prisma'
-import { LogIn, PlusSquare } from 'react-feather'
+import { getSession } from 'next-auth/react'
+import { prisma } from 'utils/prisma'
+import { Plus } from 'react-feather'
 import Link from 'next/link'
-import { MembershipWithOrganisation } from 'types'
+import { MembershipWithUserAndOrganisation } from 'types'
+import { useLoggedInUserQuery, useUserMembershipsQuery } from 'utils/users'
+import { User } from '@prisma/client'
+import { ActionMessage } from 'components/ActionMessage'
+import { MembershipsList } from 'components/MembershipsList'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { AddOrganisationModal } from 'components/AddOrganisationModal'
 
 interface IProps {
-  memberships: MembershipWithOrganisation[]
+  initialLoggedInUser: User
+  initialUserMemberships: MembershipWithUserAndOrganisation[]
 }
 
-const Home = ({ memberships }: IProps) => {
-  const { data: session } = useSession()
+const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships }: IProps) => {
+  const { loggedInUser } = useLoggedInUserQuery({
+    fallbackData: initialLoggedInUser
+  })
+  const { userMemberships } = useUserMembershipsQuery(initialLoggedInUser.id, {
+    fallbackData: initialUserMemberships
+  })
+  const { push } = useRouter()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const enterHandler = async (organisationId: string) => {
-    try {
-      await fetch('api/session', {
-        method: 'PATCH',
-      })
-    } catch (error) {
-
+  useEffect(() => {
+    if (loggedInUser.organisationId) {
+      push('/dashboard')
     }
-  }
+  }, [loggedInUser.organisationId])
 
   return (
-    <Box display="grid" placeItems="center" p={6} minH="100vh">
-      <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
-        <Heading as="h2" fontWeight="extrabold">
-          Hi, <Link href="/acount"><Text as="span" color="blue.500">{session?.user?.name}</Text></Link>
-        </Heading>
+    <>
+      <Box display="grid" placeItems="center" p={6} minH="100vh">
+        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
+          <Heading as="h2" fontWeight="extrabold">
+            Hi, <Link href="/acount"><Text as="span" color="blue.500">{loggedInUser?.name}</Text></Link>
+          </Heading>
 
-        <Box display="flex" flexDir="column" gap={6}>
-          <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" borderBottom="1px solid" borderColor="gray.200" pb={2}>
-            <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Your Organisations</Heading>
-            <IconButton colorScheme="gray" variant="ghost" aria-label="Create Organisation" icon={<PlusSquare size="1rem"/>}/>
+          <Box display="flex" flexDir="column" gap={6}>
+            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
+              <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Your Organisations</Heading>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Create Organisation" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
+            </Box>
+
+            {userMemberships.length ? (
+              <MembershipsList memberships={userMemberships}/>
+            ) : (
+              <ActionMessage>
+                <Text>You're not a member of any organisations. Would you like to create one?</Text>
+                <Link href="/account/organisations/create">
+                  <Button as="a" leftIcon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}>Create Organisation</Button>
+                </Link>
+              </ActionMessage>
+            )}
           </Box>
-
-          {memberships.length ? (
-            <Box display="grid" gap={2}>
-              {memberships.map(membership => (
-                <Box key={membership.id} display="grid" gridTemplateColumns="1fr auto" gap={2} alignItems="center">
-                  <Text fontSize="xl" fontWeight="bold">{membership.organisation.name}</Text>
-                  <Button
-                    onClick={() => enterHandler(membership.organisationId)}
-                    leftIcon={<Icon as={LogIn} w={4} h={4}/>}
-                  >
-                    Enter
-                  </Button>
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <Box display="flex" flexDir="column" gap={4} bg="gray.100" p={4} borderRadius="xl">
-              <Text>You're not a member of any organisations. Would you like to create one?</Text>
-              <Link href="/account/organisations/create">
-                <Button as="a" leftIcon={<Icon as={PlusSquare} w={4} h={4}/>}>Create Organisation</Button>
-              </Link>
-            </Box>
-          )}
         </Box>
       </Box>
-    </Box>
+
+      <AddOrganisationModal isOpen={isOpen} onClose={onClose}/>
+    </>
   )
 }
 
-export default Home
+export default OrganisationSelectionPage
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context)
@@ -72,20 +75,39 @@ export async function getServerSideProps(context: NextPageContext) {
   if (!session) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/api/auth/signin',
         permanent: false,
       },
     }
   }
 
-  const user = await prisma.user.findUnique({
+  const loggedInUser = await prisma.user.findUnique({
     where: { email: session?.user?.email! },
-    include: { memberships: { include: {  organisation: true } } }
+    include: {
+      memberships: {
+        include: {
+          organisation: true,
+          user: { include: { ownedOrganisations: true } },
+        }
+      },
+      selectedOrganisation: true,
+      ownedOrganisations: true
+    }
   })
+
+  if (loggedInUser?.selectedOrganisation) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    }
+  }
 
   return {
     props: {
-      memberships: JSON.parse(JSON.stringify(user?.memberships))
+      initialLoggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
+      initialUserMemberships: JSON.parse(JSON.stringify(loggedInUser?.memberships))
     },
   }
 }

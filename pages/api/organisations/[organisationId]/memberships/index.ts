@@ -1,11 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { prisma } from 'lib/prisma';
+import { prisma } from 'utils/prisma';
 import { withMembershipAuthorisation } from 'utils/auth';
+import { QueryResponse } from 'types';
+import { Membership } from '@prisma/client';
 
 const getMemberships = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<QueryResponse<Membership[]>>
 ) => {
   try {
     const id = req.query.organisationId as string
@@ -16,17 +18,24 @@ const getMemberships = async (
 
     const organisation = await prisma.organisation.findUnique({
       where: { id },
-      include: { members: true }
+      include: {
+        memberships: {
+          include: {
+            organisation: true,
+            user: { include: { ownedOrganisations: true } },
+          }
+        },
+      }
     })
 
     if (!organisation) {
       throw 'User not found'
     }
 
-    res.status(200).json(organisation.members)
+    res.status(200).json(organisation.memberships)
   } catch (error) {
     console.error(error)
-    res.status(400).json({ success: false })
+    res.status(400).json({ success: false, error })
   }
 }
 

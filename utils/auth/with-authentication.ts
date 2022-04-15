@@ -1,16 +1,12 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react';
+import { assertReqRes } from './assert-req-res';
 
 export const withAuthentication = (apiHandler: NextApiHandler) => async (
   req: NextApiRequest,
   res: NextApiResponse
-) => {
-  if (!req) {
-    throw new Error('Request is not available');
-  }
-  if (!res) {
-    throw new Error('Response is not available');
-  }
+): Promise<void> => {
+  assertReqRes(req, res)
   
   const session = await getSession({ req })
 

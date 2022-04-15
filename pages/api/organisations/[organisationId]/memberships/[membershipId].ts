@@ -1,13 +1,13 @@
 import { Membership } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { RecordQueryResponse, RecordRequestResponse } from 'types'
+import { MembershipWithUserAndOrganisation, MutationResponse, QueryResponse } from 'types'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth'
 
 const getMembership = async (
   req: NextApiRequest,
-  res: NextApiResponse<RecordQueryResponse<Membership>>
+  res: NextApiResponse<QueryResponse<Membership>>
 ) => {
   try {
     const id = req.query.membershipId as string
@@ -41,7 +41,7 @@ const editMembership = withRoleAuthorisation(
   },
   async (
     req: NextApiRequest,
-    res: NextApiResponse
+    res: NextApiResponse<MutationResponse<Membership>>
   ) => {
     try {
       const id = req.query.membershipId as string
@@ -73,7 +73,7 @@ const removeMembership = withRoleAuthorisation(
   },
   async (
     req: NextApiRequest,
-    res: NextApiResponse<RecordRequestResponse>
+    res: NextApiResponse<MutationResponse<Membership>>
   ) => {
     try {
       const id = req.query.membershipId as string
@@ -82,11 +82,11 @@ const removeMembership = withRoleAuthorisation(
         throw 'Membership id not provided.'
       }
 
-      await prisma.membership.delete({
+      const deletedMembership = await prisma.membership.delete({
         where: { id },
       });
     
-      res.status(200).json({ success: true })
+      res.status(200).json({ success: true, record: deletedMembership })
     } catch (error: any) {
       console.error(error)
       res.status(400).json({ success: false, error })

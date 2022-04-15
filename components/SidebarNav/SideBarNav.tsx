@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
-import { ISidebarNavLink } from 'types'
-import { SidebarNavLink } from '../SidebarNavLink'
+import { ISidebarNavLink } from 'components/SidebarNavLink/types'
+import { SidebarNavLink } from 'components/SidebarNavLink'
 
 interface IProps {
   navLinks: ISidebarNavLink[]

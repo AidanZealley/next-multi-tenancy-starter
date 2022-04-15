@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { prisma } from 'lib/prisma';
+import { prisma } from 'utils/prisma';
 import { getSession } from 'next-auth/react';
 import { withMembershipAuthorisation } from 'utils/auth';
 

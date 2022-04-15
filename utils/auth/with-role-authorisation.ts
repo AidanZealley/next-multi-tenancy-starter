@@ -2,7 +2,7 @@ import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 import { Role } from '@prisma/client'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 
 interface IRoleAuthorisation {
   allowedRoles?: Role[],
@@ -43,7 +43,6 @@ export const withRoleAuthorisation = (
     where: { email: session.user.email! },
     include: {
       memberships: true,
-      settings: true,
     },
   })
 
@@ -55,7 +54,7 @@ export const withRoleAuthorisation = (
     return
   }
 
-  const membership = user.memberships.find(org => org.id === user.settings?.organisationId)
+  const membership = user.memberships.find(membership => membership.organisationId === user.organisationId)
 
   if (!membership || !(allowedRoles?.includes(membership?.role) || allowSameUser)) {
     res.status(403).json({

@@ -3,8 +3,6 @@ import { FormProvider, UseFormProps } from 'react-hook-form'
 import { Box } from '@chakra-ui/react'
 import { Button } from '@chakra-ui/react'
 
-import { FormInput } from './FormInput'
-
 type IProps = {
   defaultValues?: { [key: string]: any }
   includeSubmit?: boolean

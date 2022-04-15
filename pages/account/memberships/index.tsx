@@ -1,9 +1,9 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react'
 import type { NextPageContext } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 import { Membership } from '@prisma/client'
-import { PlusSquare } from 'react-feather'
+import { Plus } from 'react-feather'
 import Link from 'next/link'
 import { WithSidebar } from 'layouts/WithSidebar'
 import { SidebarNav } from 'components/SidebarNav'
@@ -30,7 +30,7 @@ const Memberships = ({ memberships }: IProps) => {
           <Box display="flex" flexDir="column" gap={4} bg="gray.100" p={4} borderRadius="xl">
             <Text>You're not a member of any organisations. Would you like to create one?</Text>
             <Link href="/account/organisations/create">
-              <Button as="a" leftIcon={<PlusSquare size="1rem"/>}>Create Organisation</Button>
+              <Button as="a" leftIcon={<Plus size="1rem"/>}>Create Organisation</Button>
             </Link>
           </Box>
         )}
@@ -47,7 +47,7 @@ Memberships.layout = (page: React.ReactElement) => {
             {
               href: '/account/organisations/create',
               text: 'Create Organisation',
-              icon: <PlusSquare size="1rem"/>,
+              icon: <Plus size="1rem"/>,
               getActiveStatus: (href: string) => isActiveSection(href)
             },
           ]}

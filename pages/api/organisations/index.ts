@@ -1,10 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react';
 
-import { prisma } from 'lib/prisma';
+import { prisma } from 'utils/prisma';
 import { withAuthentication } from 'utils/auth';
+import { MutationResponse } from 'types';
+import { Organisation } from '@prisma/client';
 
-const addOrganisation = async (req: NextApiRequest, res: NextApiResponse) => {
+const addOrganisation = async (
+  req: NextApiRequest,
+  res: NextApiResponse<MutationResponse<Organisation>>
+) => {
   try {
     const session = await getSession({ req });
     const user = await prisma.user.findUnique({
@@ -42,8 +47,11 @@ const addOrganisation = async (req: NextApiRequest, res: NextApiResponse) => {
       })
 
       res.status(500).json({
-        error: 'not_created',
-        description: 'There was an error creating the organisation'
+        success: false,
+        error: {
+          type: 'not_created',
+          description: 'There was an error creating the organisation'
+        }
       })
       return
     }

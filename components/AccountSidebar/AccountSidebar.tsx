@@ -1,6 +1,6 @@
 import { Icon } from '@chakra-ui/react'
 import { SidebarNav } from 'components/SidebarNav'
-import { PlusSquare, Users } from 'react-feather'
+import { Plus, Users } from 'react-feather'
 import { isActiveSection } from 'utils/navigation'
 
 export const AccountSidebar = () => {
@@ -10,7 +10,7 @@ export const AccountSidebar = () => {
         {
           href: '/account/organisations/create',
           text: 'Create Organisation',
-          icon: <Icon as={PlusSquare} w={4} h={4}/>,
+          icon: <Icon as={Plus} w={4} h={4}/>,
           getActiveStatus: (href: string) => isActiveSection(href)
         },
         {

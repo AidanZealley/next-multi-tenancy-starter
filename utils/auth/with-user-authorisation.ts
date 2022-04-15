@@ -1,7 +1,7 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
 
 export const withUserAuthorisation = (apiHandler: NextApiHandler) => async (
   req: NextApiRequest,

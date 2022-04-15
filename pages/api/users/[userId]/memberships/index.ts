@@ -1,21 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react';
 
-import { prisma } from 'lib/prisma';
-import { RecordsQueryResponse } from 'types';
+import { prisma } from 'utils/prisma';
+import { QueryResponse } from 'types';
 import { Membership } from '@prisma/client';
-import { withMembershipAuthorisation } from 'utils/auth';
+import { withAuthentication } from 'utils/auth';
 
 const getUserMemberships = async (
   req: NextApiRequest,
-  res: NextApiResponse<RecordsQueryResponse<Membership>>
+  res: NextApiResponse<QueryResponse<Membership[]>>
 ) => {
   const session = await getSession({ req });
 
   try {
     const user = await prisma.user.findUnique({
       where: { email: session?.user?.email! },
-      include: { memberships: { include: {  organisation: true } } }
+      include: { memberships: { include: {
+        user: {
+          include: { ownedOrganisations: true },
+        },
+        organisation: true,
+      } } }
     })
 
     if (!user) {
@@ -25,11 +30,11 @@ const getUserMemberships = async (
     res.status(200).json(user.memberships)
   } catch (error) {
     console.error(error)
-    res.status(400).json({ success: false })
+    res.status(400).json({ success: false, error })
   }
 }
 
-export default withMembershipAuthorisation(
+export default withAuthentication(
   async (
     req: NextApiRequest,
     res: NextApiResponse

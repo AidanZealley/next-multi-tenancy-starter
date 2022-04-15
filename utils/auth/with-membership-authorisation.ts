@@ -1,19 +1,16 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
-import { prisma } from 'lib/prisma'
+import { prisma } from 'utils/prisma'
+import { assertReqRes } from './assert-req-res'
 
 export const withMembershipAuthorisation = (apiHandler: NextApiHandler) => async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  if (!req) {
-    throw new Error('Request is not available')
-  }
-  if (!res) {
-    throw new Error('Response is not available')
-  }
+  assertReqRes(req, res)
   
+  const organisationId = req.query.organisationId
   const session = await getSession({ req })
 
   if (!session || !session.user) {
@@ -28,7 +25,6 @@ export const withMembershipAuthorisation = (apiHandler: NextApiHandler) => async
     where: { email: session.user.email! },
     include: {
       memberships: true,
-      settings: true,
     },
   })
 
@@ -40,7 +36,7 @@ export const withMembershipAuthorisation = (apiHandler: NextApiHandler) => async
     return
   }
 
-  const membership = user.memberships.find(org => org.id === user.settings?.organisationId)
+  const membership = user.memberships.find(membership => membership.organisationId === organisationId)
 
   if (!membership) {
     res.status(403).json({

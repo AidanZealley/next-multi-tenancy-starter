@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react';
 
-import { prisma } from 'lib/prisma';
+import { prisma } from 'utils/prisma';
 import { Organisation } from '@prisma/client';
 import { RecordsQueryResponse } from 'types';
 import { withUserAuthorisation } from 'utils/auth';
