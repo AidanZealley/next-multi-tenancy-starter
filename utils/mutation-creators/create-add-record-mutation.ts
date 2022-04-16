@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react'
 import { KeyedMutator } from 'swr'
-import { MutationResponse } from 'types'
 
 import { RecordMutationResponse, BaseRecordType, IMutationRequestError, MutationStatusTypes } from 'utils/mutation-creators/types'
 
@@ -18,7 +17,7 @@ export const createAddRecordMutation = <T extends BaseRecordType>(
     setErrors([])
   }, [])
 
-  const addRecord = async (data: Partial<T>): Promise<MutationResponse<T> | void> => {
+  const addRecord = async (data: Partial<T>) => {
     if (status === 'loading') return
 
     setStatus('loading')

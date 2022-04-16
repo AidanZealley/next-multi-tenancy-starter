@@ -79,7 +79,7 @@ model Membership {
   id             String       @id @default(cuid())
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   role           Role         @default(USER)
   createdAt      DateTime     @default(now())

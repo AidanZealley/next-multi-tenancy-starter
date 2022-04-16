@@ -3,12 +3,12 @@ import { getSession } from 'next-auth/react';
 
 import { prisma } from 'utils/prisma';
 import { Organisation } from '@prisma/client';
-import { RecordsQueryResponse } from 'types';
+import { QueryResponse } from 'types';
 import { withUserAuthorisation } from 'utils/auth';
 
 const getUserOrganisations = async (
   req: NextApiRequest,
-  res: NextApiResponse<RecordsQueryResponse<Organisation>>
+  res: NextApiResponse<QueryResponse<Organisation>>
 ) => {
   const session = await getSession({ req });
 
@@ -25,7 +25,7 @@ const getUserOrganisations = async (
     res.status(200).json(user.ownedOrganisations)
   } catch (error) {
     console.error(error)
-    res.status(400).json({ success: false })
+    res.status(400).json({ success: false, error })
   }
 }
 

@@ -15,7 +15,7 @@ const getUserMemberships = async (
   try {
     const user = await prisma.user.findUnique({
       where: { email: session?.user?.email! },
-      include: { memberships: { include: {
+      include: {memberships: { include: {
         user: {
           include: { ownedOrganisations: true },
         },

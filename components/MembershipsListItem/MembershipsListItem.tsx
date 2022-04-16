@@ -1,8 +1,8 @@
-import { Box, Button, Icon, Tag, Text } from '@chakra-ui/react'
-import { LogIn } from 'react-feather'
+import { Box, Button, Icon, IconButton, Tag, Text } from '@chakra-ui/react'
+import { LogIn, Trash } from 'react-feather'
 import { MembershipWithUserAndOrganisation } from 'types'
-import { useSwitchOrganisationMutation } from 'utils/organisations/use-switch-organisation-mutation'
-import { useLoggedInUserQuery } from 'utils/users'
+import { useRemoveOrganisationMutation, useSwitchOrganisationMutation } from 'lib/organisations/mutations'
+import { useLoggedInUserQuery } from 'lib/users/queries'
 
 interface IProps {
   membership: MembershipWithUserAndOrganisation
@@ -12,8 +12,13 @@ export const MembershipsListItem = ({ membership }: IProps) => {
   const { user, organisationId, organisation, role } = membership
   const { mutate } = useLoggedInUserQuery()
   const { switchOrganisation, status } = useSwitchOrganisationMutation(mutate)
+  const { removeOrganisation, status: removeStatus } = useRemoveOrganisationMutation(organisationId, mutate)
   const enterHandler = async () => {
     switchOrganisation(organisationId, { organisationId })
+  }
+
+  const removeHandler = () => {
+    removeOrganisation(organisation)
   }
 
   return (
@@ -27,14 +32,26 @@ export const MembershipsListItem = ({ membership }: IProps) => {
         </Box>
       </Box>
 
-      <Button
-        onClick={enterHandler}
-        leftIcon={<Icon as={LogIn} w={4} h={4}/>}
-        isLoading={status === 'loading'}
-        size="sm"
-      >
-        Enter
-      </Button>
+      <Box display="flex" gap={2} alignItems="center">
+        <Button
+          onClick={enterHandler}
+          leftIcon={<Icon as={LogIn} w={4} h={4}/>}
+          isLoading={status === 'loading'}
+          size="sm"
+        >
+          Enter
+        </Button>
+        <IconButton
+          colorScheme="gray"
+          aria-label="Create Organisation"
+          icon={<Icon as={Trash}
+          w={4}
+          h={4}/>}
+          onClick={removeHandler}
+          size="sm"
+          isLoading={removeStatus === 'loading'}
+        />
+      </Box>
     </Box>
   )
 }

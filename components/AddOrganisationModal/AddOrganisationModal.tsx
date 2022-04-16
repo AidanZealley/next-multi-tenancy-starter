@@ -12,8 +12,8 @@ import { Form } from 'components/Form'
 import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAddOrganisationMutation } from 'utils/organisations'
-import { useLoggedInUserQuery, useUserMembershipsQuery, useUserOrganisationsQuery } from 'utils/users'
+import { useAddOrganisationMutation } from 'lib/organisations/mutations'
+import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
 
 interface IProps {
   isOpen: boolean

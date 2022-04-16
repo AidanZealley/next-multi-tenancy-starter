@@ -1,7 +1,6 @@
 
 import { Organisation } from '@prisma/client'
 import { KeyedMutator } from 'swr'
-import { MembershipWithUserAndOrganisation } from 'types'
 import { createAddRecordMutation } from 'utils/mutation-creators'
 import { postRequest } from 'utils/requests'
 

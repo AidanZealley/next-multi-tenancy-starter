@@ -1,20 +1,16 @@
-import { Role } from '@prisma/client'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
 import { prisma } from 'utils/prisma'
+import { assertReqRes } from './assert-req-res'
 
 export const withOwnerAuthorisation = (apiHandler: NextApiHandler) => async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  if (!req) {
-    throw new Error('Request is not available')
-  }
-  if (!res) {
-    throw new Error('Response is not available')
-  }
+  assertReqRes(req, res)
   
+  const organisationId = req.query.organisationId
   const session = await getSession({ req })
 
   if (!session || !session.user) {
@@ -40,7 +36,7 @@ export const withOwnerAuthorisation = (apiHandler: NextApiHandler) => async (
     return
   }
 
-  const organisation = user.ownedOrganisations.find(org => org.id === user.organisationId)
+  const organisation = user.ownedOrganisations.find(org => org.id === organisationId)
 
   if (!organisation) {
     res.status(403).json({
