@@ -20,7 +20,7 @@ interface IProps {
   onClose: () => void
 }
 
-export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
+export const InviteMemberModal = ({ isOpen, onClose }: IProps) => {
   const { loggedInUser } = useLoggedInUserQuery()
   const { mutate } = useUserMembershipsQuery(loggedInUser?.id)
   const { addOrganisation, reset, status } = useAddOrganisationMutation(mutate)
@@ -53,7 +53,7 @@ export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add Organisation</ModalHeader>
+        <ModalHeader>Invite Member</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Form
@@ -62,8 +62,9 @@ export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
             includeSubmit={false}
           >
             <FormInput
-              name="name"
-              label="Name"
+              type="email"
+              name="email"
+              label="Email"
               validation={{ required: true }}
               autoComplete="false"
             />
@@ -72,7 +73,7 @@ export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
         <ModalFooter display="flex" justifyContent="space-between">
           <Button onClick={onClose} colorScheme="gray">Cancel</Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>Create Organisation</Button>
+          <Button onClick={submitHandler} isLoading={status === 'loading'}>Invite Member</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

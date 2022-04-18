@@ -1,33 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react';
 
-import { prisma } from 'utils/prisma';
 import { QueryResponse } from 'types';
 import { Membership } from '@prisma/client';
 import { withAuthentication } from 'utils/auth';
+import { retrieveLoggedInUser, retrieveUserMemberships } from 'lib/users/services';
 
 const getUserMemberships = async (
   req: NextApiRequest,
   res: NextApiResponse<QueryResponse<Membership[]>>
 ) => {
-  const session = await getSession({ req });
-
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email! },
-      include: {memberships: { include: {
-        user: {
-          include: { ownedOrganisations: true },
-        },
-        organisation: true,
-      } } }
-    })
+    const user = await retrieveLoggedInUser(req)
+    const memberships = await retrieveUserMemberships(user?.id!)
 
-    if (!user) {
-      throw 'User not found'
-    }
-
-    res.status(200).json(user.memberships)
+    res.status(200).json(memberships)
   } catch (error) {
     console.error(error)
     res.status(400).json({ success: false, error })

@@ -5,7 +5,7 @@ import { withMembershipAuthorisation } from 'utils/auth';
 import { QueryResponse } from 'types';
 import { Membership } from '@prisma/client';
 
-const getMemberships = async (
+const getOrganisationMemberships = async (
   req: NextApiRequest,
   res: NextApiResponse<QueryResponse<Membership[]>>
 ) => {
@@ -46,7 +46,7 @@ export default withMembershipAuthorisation(
   ) => {
     switch (req.method) {
       case 'GET':
-        await getMemberships(req, res)
+        await getOrganisationMemberships(req, res)
         break
       default:
         res.status(400).json({ success: false })

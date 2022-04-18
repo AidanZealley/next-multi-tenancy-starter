@@ -5,32 +5,19 @@ import { withAuthentication } from 'utils/auth'
 import { getSession } from 'next-auth/react'
 import { MutationResponse } from 'types'
 import { User } from '@prisma/client'
+import { retrieveLoggedInUser } from 'lib/users/services'
 
 const switchOrganisation = async (
   req: NextApiRequest,
   res: NextApiResponse<MutationResponse<User>>
 ) => {
   try {
-    const session = await getSession({ req })
+    const { organisationId = null } = req.body
   
-    const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email! },
-    })
-  
-    if (!user) {
-      res.status(404).json({
-        success: false,
-        error: {
-          type: 'not_found',
-          description: 'The user was not found'
-        }
-      })
-      return
-    }
-
+    const user = await retrieveLoggedInUser(req)
     const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: req.body,
+      where: { id: user?.id },
+      data: { organisationId },
     })
   
     res.status(200).json({ success: true, record: updatedUser })

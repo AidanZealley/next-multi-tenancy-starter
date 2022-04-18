@@ -1,52 +1,71 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { prisma } from 'utils/prisma';
-import { getSession } from 'next-auth/react';
-import { withMembershipAuthorisation } from 'utils/auth';
+import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth';
+import { QueryResponse } from 'types';
+import { Invite } from '@prisma/client';
+import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites';
+import { MutationResponse } from 'utils/mutation-creators/types';
+import { retrieveLoggedInUser } from 'lib/users/services';
+import { createInvite } from 'lib/invites/services';
 
-const joinOrganisation = async (
+const getOrganisationInvites = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<QueryResponse<Invite[]>>
 ) => {
-  const session = await getSession({ req });
-  const role = req.body.role || 'USER'
-
   try {
     const id = req.query.organisationId as string
 
     if (!id) {
-      throw 'User id not provided.'
+      throw 'Organisation id not provided.'
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email! },
-    })
+    const invites = await retrieveOrganisationInvites(id)
 
-    if (!user) {
-      throw 'User not found.'
-    }
-
-    const membership = prisma.membership.create({
-      data: {
-        userId: user.id,
-        organisationId: id,
-        role,
-      },
-    })
-
-    res.status(200).json({ success: true, record: membership })
+    res.status(200).json(invites)
   } catch (error) {
     console.error(error)
     res.status(400).json({ success: false, error })
   }
 }
 
-export default withMembershipAuthorisation(async (req: NextApiRequest, res: NextApiResponse) => {
-  switch (req.method) {
-    case 'POST':
-      await joinOrganisation(req, res)
-      break
-    default:
-      res.status(400).json({ success: false })
+const inviteNewMember = withRoleAuthorisation(
+  { allowedRoles: ['ADMIN'] },
+  async (
+    req: NextApiRequest,
+    res: NextApiResponse<MutationResponse<Invite>>
+  ) => {
+    try {
+      const user = await retrieveLoggedInUser(req)
+      const { email, organisationId } = req.body;
+
+      const organisation = await createInvite({
+        email,
+        organisationId,
+        userId: user?.id,
+      })
+
+      res.status(200).json({ success: true, record: organisation })
+    } catch (error: any) {
+      console.error(error)
+      res.status(400).json({ success: false, error })
+    }
   }
-})
+)
+
+export default withMembershipAuthorisation(
+  async (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => {
+    switch (req.method) {
+      case 'GET':
+        await getOrganisationInvites(req, res)
+        break
+      case 'POST':
+        await inviteNewMember(req, res)
+        break
+      default:
+        res.status(400).json({ success: false })
+    }
+  }
+)

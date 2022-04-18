@@ -1,5 +1,5 @@
 export type RequestError = any | {
-
+  statusCode?: number
 }
 
 export type QueryResponse<T> = T | T[] | {

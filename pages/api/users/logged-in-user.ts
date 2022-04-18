@@ -5,16 +5,14 @@ import { prisma } from 'utils/prisma';
 import { withAuthentication } from 'utils/auth';
 import { QueryResponse } from 'types';
 import { User } from '@prisma/client';
+import { retrieveLoggedInUser } from 'lib/users/services';
 
 const getLoggedInUser = async (
   req: NextApiRequest,
   res: NextApiResponse<QueryResponse<User>>
 ) => {
   try {
-    const session = await getSession({ req });
-    const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email! },
-    });
+    const user = await retrieveLoggedInUser(req)
 
     if (!user) {
       throw 'User not found.'

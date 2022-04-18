@@ -51,6 +51,7 @@ model User {
   accounts             Account[]
   sessions             Session[]
   memberships          Membership[]
+  invitesSent          Invite[]
   posts                Post[]
   comments             Comment[]
   ownedOrganisations   Organisation[] @relation("OwnerOfOrganisation")
@@ -90,9 +91,11 @@ model Invite {
   id             String        @id @default(cuid())
   dateSent       DateTime      @default(now())
   email          String
-  isValid        Boolean       @default(true)
+  isPending      Boolean       @default(true)
   organisation   Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String?
+  invitedBy      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?
 }
 
 model Post {

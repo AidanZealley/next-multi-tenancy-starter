@@ -1,7 +1,6 @@
 import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure } from '@chakra-ui/react'
-import type { NextPageContext } from 'next'
+import type { GetServerSideProps } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from 'utils/prisma'
 import { Plus } from 'react-feather'
 import Link from 'next/link'
 import { MembershipWithUserAndOrganisation } from 'types'
@@ -12,6 +11,7 @@ import { MembershipsList } from 'components/MembershipsList'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { AddOrganisationModal } from 'components/AddOrganisationModal'
+import { retrieveLoggedInUser, retrieveUserMemberships } from 'lib/users/services'
 
 interface IProps {
   initialLoggedInUser: User
@@ -69,8 +69,9 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
 
 export default OrganisationSelectionPage
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context)
+  const { req } = context
 
   if (!session) {
     return {
@@ -81,21 +82,10 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
-  const loggedInUser = await prisma.user.findUnique({
-    where: { email: session?.user?.email! },
-    include: {
-      memberships: {
-        include: {
-          organisation: true,
-          user: { include: { ownedOrganisations: true } },
-        }
-      },
-      selectedOrganisation: true,
-      ownedOrganisations: true
-    }
-  })
+  const user = await retrieveLoggedInUser(req)
+  const memberships = await retrieveUserMemberships(user?.id!)
 
-  if (loggedInUser?.selectedOrganisation) {
+  if (user?.organisationId) {
     return {
       redirect: {
         destination: '/dashboard',
@@ -106,8 +96,8 @@ export async function getServerSideProps(context: NextPageContext) {
 
   return {
     props: {
-      initialLoggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
-      initialUserMemberships: JSON.parse(JSON.stringify(loggedInUser?.memberships))
+      initialLoggedInUser: JSON.parse(JSON.stringify(user)),
+      initialUserMemberships: JSON.parse(JSON.stringify(memberships))
     },
   }
 }

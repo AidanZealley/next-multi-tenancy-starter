@@ -1,16 +1,12 @@
-export interface IMutationRequestError {
+export type MutationRequestError = {
   id: string
   message: string
 }
 
-export type BaseRecordType = {
-  id: string
-}
-
-export type RecordMutationResponse<T> = {
+export type MutationResponse<T> = {
   success: boolean
   record?: T
-  error?: IMutationRequestError
+  error?: MutationRequestError[]
 }
 
 export type MutationStatusTypes = 'idle' | 'loading' | 'success' | 'error'

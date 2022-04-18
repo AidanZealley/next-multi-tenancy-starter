@@ -1,26 +1,23 @@
 
-import { Organisation } from '@prisma/client'
+import { Membership, Organisation } from '@prisma/client'
 import { KeyedMutator } from 'swr'
-import { createRemoveRecordMutation } from 'utils/mutation-creators'
+import { createMutation } from 'utils/mutation-creators'
 import { deleteRequest } from 'utils/requests'
 
 export const useRemoveOrganisationMutation = (
-  organisationId: string,
-  mutate: KeyedMutator<Organisation[]>
+  mutate: KeyedMutator<Membership>
 ) => {
   const {
-    removeRecord,
-    reset,
+    mutation,
     status,
     errors,
-  } = createRemoveRecordMutation<Organisation>(
+  } = createMutation<Organisation, Membership>(
     mutate,
-    () => deleteRequest<Organisation>(`/api/organisations/${organisationId}`)
+    (data) => deleteRequest<Organisation>(`/api/organisations/${data.id}`)
   )
 
   return {
-    removeOrganisation: removeRecord,
-    reset,
+    removeOrganisation: mutation,
     status,
     errors,
   }

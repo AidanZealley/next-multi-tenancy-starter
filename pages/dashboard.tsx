@@ -1,28 +1,34 @@
-import { Box, Button, Heading, Icon, IconButton, Text, useModal } from '@chakra-ui/react'
+import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure, useModal } from '@chakra-ui/react'
 import type { NextPageContext } from 'next'
 import { getSession } from 'next-auth/react'
 import { prisma } from 'utils/prisma'
 import { Plus, X } from 'react-feather'
 import Link from 'next/link'
-import { Membership, Organisation, User } from '@prisma/client'
+import { Invite, Membership, Organisation, User } from '@prisma/client'
 import { useSwitchOrganisationMutation } from 'lib/organisations/mutations'
-import { useOrganisationQuery, useOrganisationMembershipsQuery } from 'lib/organisations/queries'
+import { useOrganisationQuery, useOrganisationMembershipsQuery, useOrganisationInvitesQuery } from 'lib/organisations/queries'
 import { useLoggedInUserQuery } from 'lib/users/queries'
 import { ActionMessage } from 'components/ActionMessage'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { MembersList } from 'components/MembersList'
+import { retrieveLoggedInUser, retrieveSelectedOrganisation } from 'lib/users/services'
+import { InviteMemberModal } from 'components/InviteMemberModal'
+import { InvitesList } from 'components/InvitesList'
+import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites'
 
 interface IProps {
   initialLoggedInUser: User
   initialOrganisation: Organisation
   initialOrganisationMemberships: Membership[]
+  initialOrganisationInvites: Invite[]
 }
 
 const OrganisationSelectionPage = ({
   initialLoggedInUser,
   initialOrganisation,
-  initialOrganisationMemberships
+  initialOrganisationMemberships,
+  initialOrganisationInvites,
 }: IProps) => {
   const { loggedInUser, mutate } = useLoggedInUserQuery({
     fallbackData: initialLoggedInUser
@@ -33,11 +39,15 @@ const OrganisationSelectionPage = ({
   const { organisationMemberships } = useOrganisationMembershipsQuery(initialOrganisation.id, {
     fallbackData: initialOrganisationMemberships
   })
+  const { organisationInvites } = useOrganisationInvitesQuery(initialOrganisation.id, {
+    fallbackData: initialOrganisationInvites
+  })
   const { switchOrganisation, status } = useSwitchOrganisationMutation(mutate)
   const switchHandler = async () => {
-    switchOrganisation(organisation.id, { organisationId: null })
+    switchOrganisation({ organisationId: null })
   }
   const { push } = useRouter()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
     if (!loggedInUser.organisationId) {
@@ -46,8 +56,9 @@ const OrganisationSelectionPage = ({
   }, [loggedInUser.organisationId])
 
   return (
-    <Box display="grid" placeItems="center" p={6} minH="100vh">
-      <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
+    <>
+      <Box display="grid" placeItems="center" p={6} minH="100vh">
+        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
           <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center">
             <Heading as="h2" fontWeight="extrabold">
               {organisation.name}
@@ -56,24 +67,35 @@ const OrganisationSelectionPage = ({
             <IconButton colorScheme="gray" variant="ghost" aria-label="Switch Organisation" icon={<Icon as={X} w={4} h={4}/>} onClick={switchHandler} isLoading={status === 'loading'}/>
           </Box>
 
-        <Box display="flex" flexDir="column" gap={6}>
-          <Box borderBottom="1px solid" borderColor="gray.200" pb={2}>
-            <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Members</Heading>
+          <Box display="flex" flexDir="column" gap={6}>
+            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
+              <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Members</Heading>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Invite Member" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
+            </Box>
+
+            <MembersList memberships={organisationMemberships}/>
+
+            {organisationMemberships.length === 1 &&
+              <ActionMessage>
+                <Text>You're the only member! Invite others to your organisation.</Text>
+                <Button as="a" leftIcon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}>Invite Members</Button>
+              </ActionMessage>
+            }
           </Box>
 
-          <MembersList memberships={organisationMemberships}/>
+          <Box display="flex" flexDir="column" gap={6}>
+            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
+              <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Invites</Heading>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Invite Member" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
+            </Box>
 
-          {organisationMemberships.length === 1 &&
-            <ActionMessage>
-              <Text>You're the only member! Invite others to your organisation.</Text>
-              <Link href="/account/organisations/create">
-                <Button as="a" leftIcon={<Icon as={Plus} w={4} h={4}/>}>Invite Members</Button>
-              </Link>
-            </ActionMessage>
-          }
+            <InvitesList invites={organisationInvites}/>
+          </Box>
         </Box>
       </Box>
-    </Box>
+
+      <InviteMemberModal isOpen={isOpen} onClose={onClose}/>
+    </>
   )
 }
 
@@ -81,6 +103,7 @@ export default OrganisationSelectionPage
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession(context)
+  const { req } = context
 
   if (!session) {
     return {
@@ -91,25 +114,11 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
-  const loggedInUser = await prisma.user.findUnique({
-    where: { email: session?.user?.email! },
-    include: {
-      memberships: {
-        include: {
-          organisation: true,
-          user: { include: { ownedOrganisations: true } },
-        }
-      },
-      selectedOrganisation: { include: {  memberships: {
-        include: {
-          organisation: true,
-          user: { include: { ownedOrganisations: true } },
-        }
-      } } },
-    }
-  })
+  const loggedInUser = await retrieveLoggedInUser(req!)
+  const organisation = await retrieveSelectedOrganisation(loggedInUser?.id!)
+  const invites = await retrieveOrganisationInvites(organisation?.id!)
 
-  if (!loggedInUser?.selectedOrganisation) {
+  if (!loggedInUser?.organisationId) {
     return {
       redirect: {
         destination: '/',
@@ -121,8 +130,9 @@ export async function getServerSideProps(context: NextPageContext) {
   return {
     props: {
       initialLoggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
-      initialOrganisation: JSON.parse(JSON.stringify(loggedInUser?.selectedOrganisation)),
-      initialOrganisationMemberships: JSON.parse(JSON.stringify(loggedInUser?.selectedOrganisation.memberships))
+      initialOrganisation: JSON.parse(JSON.stringify(organisation)),
+      initialOrganisationMemberships: JSON.parse(JSON.stringify(organisation?.memberships)),
+      initialOrganisationInvites: JSON.parse(JSON.stringify(invites)),
     },
   }
 }

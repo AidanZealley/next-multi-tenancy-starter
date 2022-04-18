@@ -1,18 +1,17 @@
-
-import { Membership, Organisation } from '@prisma/client'
+import { Invite } from '@prisma/client'
 import { KeyedMutator } from 'swr'
 import { createMutation } from 'utils/mutation-creators'
 import { postRequest } from 'utils/requests'
 
-export const useAddOrganisationMutation = (mutate: KeyedMutator<Membership>) => {
+export const useCreateInviteMutation = (mutate: KeyedMutator<Invite>) => {
   const {
     mutation,
     reset,
     status,
     errors,
-  } = createMutation<Organisation, Membership>(
+  } = createMutation<Invite, Invite>(
     mutate,
-    (data) => postRequest<Organisation>('/api/organisations', data)
+    (data) => postRequest<Invite>('/api/invites', data)
   )
 
   return {

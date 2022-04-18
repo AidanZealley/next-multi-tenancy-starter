@@ -2,7 +2,7 @@ import { Box, Button, Icon, IconButton, Tag, Text } from '@chakra-ui/react'
 import { LogIn, Trash } from 'react-feather'
 import { MembershipWithUserAndOrganisation } from 'types'
 import { useRemoveOrganisationMutation, useSwitchOrganisationMutation } from 'lib/organisations/mutations'
-import { useLoggedInUserQuery } from 'lib/users/queries'
+import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
 
 interface IProps {
   membership: MembershipWithUserAndOrganisation
@@ -11,10 +11,11 @@ interface IProps {
 export const MembershipsListItem = ({ membership }: IProps) => {
   const { user, organisationId, organisation, role } = membership
   const { mutate } = useLoggedInUserQuery()
+  const { mutate: membershipsMutate } = useUserMembershipsQuery(user.id)
   const { switchOrganisation, status } = useSwitchOrganisationMutation(mutate)
-  const { removeOrganisation, status: removeStatus } = useRemoveOrganisationMutation(organisationId, mutate)
+  const { removeOrganisation, status: removeStatus } = useRemoveOrganisationMutation(membershipsMutate)
   const enterHandler = async () => {
-    switchOrganisation(organisationId, { organisationId })
+    switchOrganisation({ organisationId })
   }
 
   const removeHandler = () => {

@@ -1,21 +1,21 @@
 
 import { User } from '@prisma/client'
 import { KeyedMutator } from 'swr'
-import { createEditRecordMutation } from 'utils/mutation-creators'
+import { createMutation } from 'utils/mutation-creators'
 import { patchRequest } from 'utils/requests'
 
 export const useSwitchOrganisationMutation = (mutate: KeyedMutator<User>) => {
   const {
-    editRecord,
+    mutation,
     status,
     errors,
-  } = createEditRecordMutation<User>(
+  } = createMutation<User, User>(
     mutate,
-    (organisationId, body) => patchRequest<User>(`/api/organisations/${organisationId}/switch`, body)
+    (data) => patchRequest<User>(`/api/organisations/${data.id}/switch`, data)
   )
 
   return {
-    switchOrganisation: editRecord,
+    switchOrganisation: mutation,
     status,
     errors,
   }
