@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { MutationResponse, QueryResponse } from 'types'
 
 import { prisma } from 'utils/prisma'
-import { withMembershipAuthorisation, withOwnerAuthorisation, withRoleAuthorisation } from 'utils/auth'
+import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth'
 
 const getInvite = async (
   req: NextApiRequest,

@@ -2,7 +2,7 @@ import { Box, Icon, IconButton, Tag, Text } from '@chakra-ui/react'
 import { Trash } from 'react-feather'
 import { useOrganisationInvitesQuery } from 'lib/organisations/queries'
 import { Invite } from '@prisma/client'
-import { useRemoveInviteMutation } from 'lib/invites/mutations'
+import { useRemoveInviteMutation } from 'lib/organisations/mutations'
 
 interface IProps {
   invite: Invite

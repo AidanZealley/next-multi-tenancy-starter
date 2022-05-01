@@ -11,11 +11,11 @@ export const useCreateInviteMutation = (mutate: KeyedMutator<Invite>) => {
     errors,
   } = createMutation<Invite, Invite>(
     mutate,
-    (data) => postRequest<Invite>('/api/invites', data)
+    (data) => postRequest<Invite>(`/api/organisations/${data.organisationId}/invites`, data)
   )
 
   return {
-    addOrganisation: mutation,
+    createInvite: mutation,
     reset,
     status,
     errors,

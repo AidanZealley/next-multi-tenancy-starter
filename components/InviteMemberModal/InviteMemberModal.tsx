@@ -12,18 +12,18 @@ import { Form } from 'components/Form'
 import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAddOrganisationMutation } from 'lib/organisations/mutations'
-import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
+import { useCreateInviteMutation } from 'lib/organisations/mutations'
+import { useOrganisationInvitesQuery } from 'lib/organisations/queries'
 
 interface IProps {
+  organisationId: string
   isOpen: boolean
   onClose: () => void
 }
 
-export const InviteMemberModal = ({ isOpen, onClose }: IProps) => {
-  const { loggedInUser } = useLoggedInUserQuery()
-  const { mutate } = useUserMembershipsQuery(loggedInUser?.id)
-  const { addOrganisation, reset, status } = useAddOrganisationMutation(mutate)
+export const InviteMemberModal = ({ organisationId, isOpen, onClose }: IProps) => {
+  const { mutate } = useOrganisationInvitesQuery(organisationId)
+  const { createInvite, reset, status } = useCreateInviteMutation(mutate)
   const methods = useForm()
 
   const submitHandler = async () => {
@@ -35,8 +35,10 @@ export const InviteMemberModal = ({ isOpen, onClose }: IProps) => {
       }
 
       const values = methods.getValues()
-      
-      addOrganisation(values)
+      createInvite({
+        ...values,
+        organisationId,
+      })
     } catch (error) {
       console.log(error)
     }

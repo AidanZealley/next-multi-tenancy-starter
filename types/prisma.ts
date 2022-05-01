@@ -10,3 +10,9 @@ export type MembershipWithUserAndOrganisation = Prisma.MembershipGetPayload<{
     organisation: true
   }
 }>
+
+export type UserWithMemberShips = Prisma.UserGetPayload<{
+  include: {
+    memberships: true,
+  },
+}>

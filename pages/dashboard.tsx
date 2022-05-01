@@ -94,7 +94,7 @@ const OrganisationSelectionPage = ({
         </Box>
       </Box>
 
-      <InviteMemberModal isOpen={isOpen} onClose={onClose}/>
+      <InviteMemberModal organisationId={organisation.id} isOpen={isOpen} onClose={onClose}/>
     </>
   )
 }

@@ -13,7 +13,7 @@ export const useRemoveInviteMutation = (
     errors,
   } = createMutation<Invite, Invite>(
     mutate,
-    (data) => deleteRequest<Invite>(`/api/invites/${data.id}`)
+    (data) => deleteRequest<Invite>(`/api/organisations/${data.organisationId}/invites/${data.id}`)
   )
 
   return {

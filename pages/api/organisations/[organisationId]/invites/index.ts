@@ -6,7 +6,7 @@ import { Invite } from '@prisma/client';
 import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites';
 import { MutationResponse } from 'utils/mutation-creators/types';
 import { retrieveLoggedInUser } from 'lib/users/services';
-import { createInvite } from 'lib/invites/services';
+import { createInvite } from 'lib/organisations/services';
 
 const getOrganisationInvites = async (
   req: NextApiRequest,
@@ -20,7 +20,6 @@ const getOrganisationInvites = async (
     }
 
     const invites = await retrieveOrganisationInvites(id)
-
     res.status(200).json(invites)
   } catch (error) {
     console.error(error)

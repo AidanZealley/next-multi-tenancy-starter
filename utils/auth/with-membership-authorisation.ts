@@ -1,7 +1,6 @@
+import { retrieveLoggedInUser } from 'lib/users/services'
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
 
-import { prisma } from 'utils/prisma'
 import { assertReqRes } from './assert-req-res'
 
 export const withMembershipAuthorisation = (apiHandler: NextApiHandler) => async (
@@ -11,32 +10,8 @@ export const withMembershipAuthorisation = (apiHandler: NextApiHandler) => async
   assertReqRes(req, res)
   
   const organisationId = req.query.organisationId
-  const session = await getSession({ req })
-
-  if (!session || !session.user) {
-    res.status(401).json({
-      error: 'not_authenticated',
-      description: 'The user does not have an active session or is not authenticated'
-    })
-    return
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email! },
-    include: {
-      memberships: true,
-    },
-  })
-
-  if (!user) {
-    res.status(404).json({
-      error: 'not_found',
-      description: 'The user was not found'
-    })
-    return
-  }
-
-  const membership = user.memberships.find(membership => membership.organisationId === organisationId)
+  const user = await retrieveLoggedInUser(req)
+  const membership = user?.memberships.find(membership => membership.organisationId === organisationId)
 
   if (!membership) {
     res.status(403).json({

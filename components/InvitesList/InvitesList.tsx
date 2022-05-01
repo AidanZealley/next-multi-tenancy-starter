@@ -9,7 +9,7 @@ interface IProps {
 export const InvitesList = ({ invites }: IProps) => {
   return (
     <Box display="grid" gap={2}>
-      {invites.map((invite: Invite) => (
+      {invites?.map((invite: Invite) => (
         <InvitesListItem key={invite.id} invite={invite}/>
       ))}
     </Box>
