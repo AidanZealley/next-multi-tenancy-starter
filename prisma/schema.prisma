@@ -88,14 +88,14 @@ model Membership {
 }
 
 model Invite {
-  id             String        @id @default(cuid())
-  dateSent       DateTime      @default(now())
+  id             String       @id @default(cuid())
+  dateSent       DateTime     @default(now())
   email          String
-  isPending      Boolean       @default(true)
-  organisation   Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
-  organisationId String?
-  invitedBy      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String?
+  isPending      Boolean      @default(true)
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisationId String
+  invitedBy      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
 }
 
 model Post {

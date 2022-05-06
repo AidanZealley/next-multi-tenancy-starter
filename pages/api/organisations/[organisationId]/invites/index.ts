@@ -35,12 +35,17 @@ const inviteNewMember = withRoleAuthorisation(
   ) => {
     try {
       const user = await retrieveLoggedInUser(req)
+      
+      if (!user) {
+        throw 'User not found.'
+      }
+
       const { email, organisationId } = req.body;
 
       const organisation = await createInvite({
         email,
         organisationId,
-        userId: user?.id,
+        userId: user.id,
       })
 
       res.status(200).json({ success: true, record: organisation })

@@ -35,6 +35,7 @@ export const InviteMemberModal = ({ organisationId, isOpen, onClose }: IProps) =
       }
 
       const values = methods.getValues()
+
       createInvite({
         ...values,
         organisationId,

@@ -1,9 +1,7 @@
-import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure, useModal } from '@chakra-ui/react'
+import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure } from '@chakra-ui/react'
 import type { NextPageContext } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from 'utils/prisma'
-import { Plus, X } from 'react-feather'
-import Link from 'next/link'
+import { ArrowLeft, LogOut, Plus } from 'react-feather'
 import { Invite, Membership, Organisation, User } from '@prisma/client'
 import { useSwitchOrganisationMutation } from 'lib/organisations/mutations'
 import { useOrganisationQuery, useOrganisationMembershipsQuery, useOrganisationInvitesQuery } from 'lib/organisations/queries'
@@ -16,6 +14,7 @@ import { retrieveLoggedInUser, retrieveSelectedOrganisation } from 'lib/users/se
 import { InviteMemberModal } from 'components/InviteMemberModal'
 import { InvitesList } from 'components/InvitesList'
 import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites'
+import { signOut } from 'next-auth/react'
 
 interface IProps {
   initialLoggedInUser: User
@@ -46,6 +45,9 @@ const OrganisationSelectionPage = ({
   const switchHandler = async () => {
     switchOrganisation({ organisationId: null })
   }
+  const signOutHandler = async () => {
+    signOut()
+  }
   const { push } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -64,7 +66,10 @@ const OrganisationSelectionPage = ({
               {organisation.name}
             </Heading>
 
-            <IconButton colorScheme="gray" variant="ghost" aria-label="Switch Organisation" icon={<Icon as={X} w={4} h={4}/>} onClick={switchHandler} isLoading={status === 'loading'}/>
+            <Box display="flex" gap={2}>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Switch Organisation" icon={<Icon as={ArrowLeft} w={4} h={4}/>} onClick={switchHandler} isLoading={status === 'loading'}/>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Sign Out" icon={<Icon as={LogOut} w={4} h={4}/>} onClick={signOutHandler}/>
+            </Box>
           </Box>
 
           <Box display="flex" flexDir="column" gap={6}>
@@ -94,7 +99,11 @@ const OrganisationSelectionPage = ({
         </Box>
       </Box>
 
-      <InviteMemberModal organisationId={organisation.id} isOpen={isOpen} onClose={onClose}/>
+      <InviteMemberModal
+        organisationId={organisation.id}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </>
   )
 }
@@ -116,9 +125,8 @@ export async function getServerSideProps(context: NextPageContext) {
 
   const loggedInUser = await retrieveLoggedInUser(req!)
   const organisation = await retrieveSelectedOrganisation(loggedInUser?.id!)
-  const invites = await retrieveOrganisationInvites(organisation?.id!)
 
-  if (!loggedInUser?.organisationId) {
+  if (!organisation) {
     return {
       redirect: {
         destination: '/',
@@ -126,6 +134,8 @@ export async function getServerSideProps(context: NextPageContext) {
       },
     }
   }
+
+  const invites = await retrieveOrganisationInvites(organisation?.id!)
 
   return {
     props: {

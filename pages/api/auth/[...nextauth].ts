@@ -4,12 +4,6 @@ import { prisma } from 'utils/prisma';
 import GoogleProvider from 'next-auth/providers/google';
 
 export default NextAuth({
-  // pages: {
-  //   signIn: '/',
-  //   signOut: '/',
-  //   error: '/',
-  //   verifyRequest: '/',
-  // },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,

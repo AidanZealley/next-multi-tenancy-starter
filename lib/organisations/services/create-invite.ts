@@ -3,9 +3,9 @@ import { prisma } from 'utils/prisma'
 
 export const createInvite = async (data: Partial<Invite>) => {
   try {
-    const { email, organisationId } = data
+    const { email, organisationId, userId } = data
 
-    if (!email || !organisationId) {
+    if (!email || !organisationId || !userId) {
       throw 'Insufficient data provided'
     }
 
@@ -13,6 +13,7 @@ export const createInvite = async (data: Partial<Invite>) => {
       data: {
         email,
         organisationId,
+        userId,
       },
     });
 

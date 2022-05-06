@@ -1,7 +1,7 @@
 import { Box, Button, Heading, Icon, IconButton, Text, useDisclosure } from '@chakra-ui/react'
 import type { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
-import { Plus } from 'react-feather'
+import { getSession, signOut } from 'next-auth/react'
+import { LogOut, Plus } from 'react-feather'
 import Link from 'next/link'
 import { MembershipWithUserAndOrganisation } from 'types'
 import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
@@ -27,6 +27,9 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
   })
   const { push } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const signOutHandler = async () => {
+    signOut()
+  }
 
   useEffect(() => {
     if (loggedInUser.organisationId) {
@@ -38,9 +41,15 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
     <>
       <Box display="grid" placeItems="center" p={6} minH="100vh">
         <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
+        <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center">
           <Heading as="h2" fontWeight="extrabold">
             Hi, <Link href="/acount"><Text as="span" color="blue.500">{loggedInUser?.name}</Text></Link>
           </Heading>
+
+            <Box display="flex" gap={2}>
+              <IconButton colorScheme="gray" variant="ghost" aria-label="Sign Out" icon={<Icon as={LogOut} w={4} h={4}/>} onClick={signOutHandler}/>
+            </Box>
+          </Box>
 
           <Box display="flex" flexDir="column" gap={6}>
             <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
@@ -76,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!session) {
     return {
       redirect: {
-        destination: '/api/auth/signin',
+        destination: '/sign-in',
         permanent: false,
       },
     }

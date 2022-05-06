@@ -2,12 +2,12 @@ import { User } from '@prisma/client';
 import { IncomingMessage } from 'http';
 import { NextApiRequest } from 'next';
 import { getSession } from 'next-auth/react';
-import { UserWithMemberShips } from 'types';
 import { prisma } from 'utils/prisma'
+import { LoggedInUser } from 'lib/users/types';
 
 export const retrieveLoggedInUser = async (
   req: IncomingMessage | NextApiRequest,
-): Promise<UserWithMemberShips | undefined> => {
+): Promise<LoggedInUser | undefined> => {
   try {
     const session = await getSession({ req });
     const user = await prisma.user.findUnique({
