@@ -1,7 +1,7 @@
 import { Membership } from '@prisma/client';
 import { prisma } from 'utils/prisma'
 
-export const createMembership = async (data: Partial<Membership>) => {
+export const createMembership = async (inviteId: string, data: Partial<Membership>) => {
   try {
     const { userId, organisationId } = data
 
@@ -9,18 +9,41 @@ export const createMembership = async (data: Partial<Membership>) => {
       throw 'Insufficient data provided'
     }
 
-    const membership = await prisma.membership.create({
+    const newMembership = prisma.membership.create({
       data: {
         userId,
         organisationId,
       },
+      include: {
+        organisation: true,
+      },
     });
 
-    if (!membership) {
+    const updatedInvite = prisma.invite.update({
+      where: {
+        id: inviteId,
+      },
+      data: {
+        status: 'ACCEPTED',
+      },
+    })
+
+    const setSelected = prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        organisationId,
+      },
+    })
+
+    const joined = await prisma.$transaction([newMembership, updatedInvite, setSelected])
+
+    if (!joined) {
       throw 'JOIN_UNSUCCESSFUL'
     }
 
-    return membership
+    return newMembership
   } catch (error) {
     throw error
   }

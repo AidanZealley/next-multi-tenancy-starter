@@ -91,7 +91,7 @@ model Invite {
   id             String       @id @default(cuid())
   dateSent       DateTime     @default(now())
   email          String
-  isPending      Boolean      @default(true)
+  status         InviteStatus @default(PENDING)
   organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   invitedBy      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -123,4 +123,10 @@ model Comment {
 enum Role {
   USER
   ADMIN
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }

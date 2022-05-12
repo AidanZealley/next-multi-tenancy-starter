@@ -3,10 +3,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth';
 import { QueryResponse } from 'types';
 import { Invite } from '@prisma/client';
-import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites';
+import { retrieveOrganisationInvites } from 'lib/organisations/services';
 import { MutationResponse } from 'utils/mutation-creators/types';
 import { retrieveLoggedInUser } from 'lib/users/services';
-import { createInvite } from 'lib/organisations/services';
+import { createInvite } from 'lib/invites/services';
 
 const getOrganisationInvites = async (
   req: NextApiRequest,

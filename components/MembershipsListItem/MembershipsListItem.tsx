@@ -28,7 +28,7 @@ export const MembershipsListItem = ({ membership }: IProps) => {
         <Text fontSize="xl" fontWeight="bold">{organisation?.name}</Text>
         
         <Box display="flex" gap={2} alignItems="center">
-          {user?.ownedOrganisations && <Tag size="sm" variant="subtle" colorScheme="green">Owner</Tag>}
+          {user?.id === organisation?.userId && <Tag size="sm" variant="subtle" colorScheme="green">Owner</Tag>}
           {role === 'ADMIN' && <Tag size="sm" variant="subtle" colorScheme="gray">Admin</Tag>}
         </Box>
       </Box>

@@ -46,11 +46,11 @@ const removeInvite = withRoleAuthorisation(
         throw 'Invite id not provided.'
       }
 
-      const deletedInvite = await prisma.invite.delete({
+      await prisma.invite.delete({
         where: { id },
       })
     
-      res.status(200).json({ success: true, record: deletedInvite })
+      res.status(200).json({ success: true })
     } catch (error: any) {
       console.error(error)
       res.status(400).json({ success: false, error })

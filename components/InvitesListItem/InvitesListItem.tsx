@@ -1,17 +1,38 @@
 import { Box, Icon, IconButton, Tag, Text } from '@chakra-ui/react'
 import { Trash } from 'react-feather'
 import { useOrganisationInvitesQuery } from 'lib/organisations/queries'
-import { Invite } from '@prisma/client'
+import { Invite, InviteStatus } from '@prisma/client'
 import { useRemoveInviteMutation } from 'lib/organisations/mutations'
 
 interface IProps {
   invite: Invite
 }
 
+interface InviteStatusValues {
+  label: string,
+  color: string
+}
+
+const inviteStatusValues = (status: InviteStatus): InviteStatusValues => ({
+  PENDING: {
+    label: 'Pending',
+    color: 'yellow'
+  },
+  ACCEPTED: {
+    label: 'Accepted',
+    color: 'green'
+  },
+  DECLINED: {
+    label: 'Declined',
+    color: 'red'
+  }
+}[status])
+
 export const InvitesListItem = ({ invite }: IProps) => {
-  const { organisationId } = invite
+  const { organisationId, status } = invite
   const { mutate } = useOrganisationInvitesQuery(organisationId!)
-  const { removeInvite, status } = useRemoveInviteMutation(mutate)
+  const { removeInvite, status: removeStatus } = useRemoveInviteMutation(mutate)
+  const inviteStatus = inviteStatusValues(status)
 
   const removeHandler = () => {
     removeInvite(invite)
@@ -22,13 +43,7 @@ export const InvitesListItem = ({ invite }: IProps) => {
       <Box display="flex" gap={3} alignItems="center">
         <Text fontSize="xl" fontWeight="bold">{invite?.email}</Text>
         
-        <Box display="flex" gap={2} alignItems="center">
-          {invite?.isPending ? (
-            <Tag size="sm" variant="subtle" colorScheme="yellow">Pending</Tag>
-          ): (
-            <Tag size="sm" variant="subtle" colorScheme="green">Accepted</Tag>
-          )}
-        </Box>
+          <Tag size="sm" variant="subtle" colorScheme={inviteStatus.color}>{inviteStatus.label}</Tag>
       </Box>
 
       <Box display="flex" gap={2} alignItems="center">
@@ -40,7 +55,7 @@ export const InvitesListItem = ({ invite }: IProps) => {
           h={4}/>}
           onClick={removeHandler}
           size="sm"
-          isLoading={status === 'loading'}
+          isLoading={removeStatus === 'loading'}
         />
       </Box>
     </Box>

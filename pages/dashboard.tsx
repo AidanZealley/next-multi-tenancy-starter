@@ -13,7 +13,7 @@ import { MembersList } from 'components/MembersList'
 import { retrieveLoggedInUser, retrieveSelectedOrganisation } from 'lib/users/services'
 import { InviteMemberModal } from 'components/InviteMemberModal'
 import { InvitesList } from 'components/InvitesList'
-import { retrieveOrganisationInvites } from 'lib/organisations/services/retrieve-organisation-invites'
+import { retrieveOrganisationInvites } from 'lib/organisations/services'
 import { signOut } from 'next-auth/react'
 
 interface IProps {
@@ -60,7 +60,7 @@ const OrganisationSelectionPage = ({
   return (
     <>
       <Box display="grid" placeItems="center" p={6} minH="100vh">
-        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
+        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={6}>
           <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center">
             <Heading as="h2" fontWeight="extrabold">
               {organisation.name}
@@ -72,7 +72,7 @@ const OrganisationSelectionPage = ({
             </Box>
           </Box>
 
-          <Box display="flex" flexDir="column" gap={6}>
+          <Box display="flex" flexDir="column" gap={4}>
             <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
               <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Members</Heading>
               <IconButton colorScheme="gray" variant="ghost" aria-label="Invite Member" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>

@@ -4,7 +4,7 @@ import { KeyedMutator } from 'swr'
 import { MutationRequestError, MutationStatusTypes, MutationResponse } from 'utils/mutation-creators/types'
 
 export const createMutation = <T, M>(
-  mutate: KeyedMutator<M>,
+  mutate: KeyedMutator<M> | null,
   request: (data: Partial<T>) => Promise<MutationResponse<T>>,
 ) => {
   const [record, setRecord] = useState<T | null>(null)
@@ -29,7 +29,7 @@ export const createMutation = <T, M>(
         throw response?.error
       }
 
-      mutate()
+      mutate && mutate()
 
       setStatus('success')
       setRecord(response.record!)

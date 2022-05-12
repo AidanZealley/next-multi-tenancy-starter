@@ -40,7 +40,7 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
   return (
     <>
       <Box display="grid" placeItems="center" p={6} minH="100vh">
-        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
+        <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={6}>
         <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center">
           <Heading as="h2" fontWeight="extrabold">
             Hi, <Link href="/acount"><Text as="span" color="blue.500">{loggedInUser?.name}</Text></Link>
@@ -51,8 +51,8 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
             </Box>
           </Box>
 
-          <Box display="flex" flexDir="column" gap={6}>
-            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
+          <Box display="flex" flexDir="column" gap={4}>
+            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200">
               <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Your Organisations</Heading>
               <IconButton colorScheme="gray" variant="ghost" aria-label="Create Organisation" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
             </Box>
@@ -62,9 +62,7 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
             ) : (
               <ActionMessage>
                 <Text>You're not a member of any organisations. Would you like to create one?</Text>
-                <Link href="/account/organisations/create">
-                  <Button as="a" leftIcon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}>Create Organisation</Button>
-                </Link>
+                <Button leftIcon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}>Create Organisation</Button>
               </ActionMessage>
             )}
           </Box>

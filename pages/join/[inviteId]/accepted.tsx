@@ -15,7 +15,7 @@ interface IProps {
   error: MembershipsErrorMessages | null
 }
 
-const SuccessPage = ({ membership, error = null }: IProps) => {
+const AcceptedPage = ({ membership, error = null }: IProps) => {
   return (
     <Box display="grid" placeItems="center" p={6} minH="100vh">
       <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
@@ -23,7 +23,7 @@ const SuccessPage = ({ membership, error = null }: IProps) => {
           {error ? (
             membershipsErrorMessages[error]
           ) : (
-            `Welcome to ${membership.organisation.name}`
+            `Welcome to ${membership?.organisation?.name}`
           )}
         </Heading>
 
@@ -32,7 +32,7 @@ const SuccessPage = ({ membership, error = null }: IProps) => {
             as="a"
             leftIcon={<Icon as={Home} w={4} h={4}/>}
           >
-            {membership.organisation.name} Dashboard
+            {membership?.organisation?.name} Dashboard
           </Button>
         </Link>
       </Box>
@@ -40,7 +40,7 @@ const SuccessPage = ({ membership, error = null }: IProps) => {
   )
 }
 
-export default SuccessPage;
+export default AcceptedPage;
 
 export const getServerSideProps = async (context: NextPageContext) => {
   const inviteId = context.query.inviteId as string
@@ -80,10 +80,13 @@ export const getServerSideProps = async (context: NextPageContext) => {
       }
     }
 
-    const membership = await createMembership({
-      userId: loggedInUser?.id,
-      organisationId: invite.organisationId,
-    })
+    const membership = await createMembership(
+      inviteId,
+      {
+        userId: loggedInUser?.id,
+        organisationId: invite.organisationId,
+      }
+    )
   
     return {
       props: {
