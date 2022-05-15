@@ -8,7 +8,7 @@ interface IProps {
 export const WithSidebar = ({ page, children }: IProps) => {
   return (
     <Box display="grid" gridTemplateColumns="18rem 1fr">
-      <Box display="grid" borderRight="1px solid" borderColor="gray.200" py={3}>
+      <Box display="grid" borderRight="1px solid" borderColor="gray.200">
         {children}
       </Box>
 

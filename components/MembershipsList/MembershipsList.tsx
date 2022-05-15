@@ -1,16 +1,23 @@
-import { Box } from "@chakra-ui/react"
-import { MembershipsListItem } from "components/MembershipsListItem"
-import { MembershipWithUserAndOrganisation } from "types"
+import { Box } from '@chakra-ui/react'
+import { MembershipsListItem } from 'components/MembershipsListItem'
+import { MembershipWithOrganisationAndMemberships } from 'lib/memberships/types'
+import { LoggedInUser } from 'lib/users/types'
 
 interface IProps {
-  memberships: MembershipWithUserAndOrganisation[]
+  memberships: MembershipWithOrganisationAndMemberships[]
+  loggedInUser: LoggedInUser
 }
 
-export const MembershipsList = ({ memberships }: IProps) => {
+export const MembershipsList = ({ memberships, loggedInUser }: IProps) => {
   return (
     <Box display="grid" gap={2}>
-      {memberships?.map((membership: MembershipWithUserAndOrganisation) => (
-        <MembershipsListItem key={membership.id} membership={membership}/>
+      {memberships?.map((membership: MembershipWithOrganisationAndMemberships) => (
+        <MembershipsListItem
+          key={membership.id}
+          membership={membership}
+          loggedInUser={loggedInUser}
+          isSelected={loggedInUser?.selectedOrganisation?.id === membership.organisationId}
+        />
       ))}
     </Box>
   )

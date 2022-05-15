@@ -3,19 +3,19 @@ import type { GetServerSideProps } from 'next'
 import { getSession, signOut } from 'next-auth/react'
 import { LogOut, Plus } from 'react-feather'
 import Link from 'next/link'
-import { MembershipWithUserAndOrganisation } from 'types'
+import { MembershipWithOrganisationAndMemberships } from 'lib/memberships/types'
 import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
 import { User } from '@prisma/client'
 import { ActionMessage } from 'components/ActionMessage'
 import { MembershipsList } from 'components/MembershipsList'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { AddOrganisationModal } from 'components/AddOrganisationModal'
-import { retrieveLoggedInUser, retrieveUserMemberships } from 'lib/users/services'
+import { AddOrganisationModal } from 'modals/AddOrganisationModal'
+import { retrieveLoggedInUser } from 'lib/users/services'
 
 interface IProps {
   initialLoggedInUser: User
-  initialUserMemberships: MembershipWithUserAndOrganisation[]
+  initialUserMemberships: MembershipWithOrganisationAndMemberships[]
 }
 
 const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships }: IProps) => {
@@ -52,13 +52,13 @@ const OrganisationSelectionPage = ({ initialLoggedInUser, initialUserMemberships
           </Box>
 
           <Box display="flex" flexDir="column" gap={4}>
-            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200">
+            <Box display="grid" gridTemplateColumns="1fr auto" alignItems="center" gap={2} borderBottom="1px solid" borderColor="gray.200" pb={2}>
               <Heading as="h3" fontSize="sm" fontWeight="normal" textTransform="uppercase" letterSpacing="wider">Your Organisations</Heading>
               <IconButton colorScheme="gray" variant="ghost" aria-label="Create Organisation" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
             </Box>
 
             {userMemberships.length ? (
-              <MembershipsList memberships={userMemberships}/>
+              <MembershipsList memberships={userMemberships} loggedInUser={loggedInUser}/>
             ) : (
               <ActionMessage>
                 <Text>You're not a member of any organisations. Would you like to create one?</Text>
@@ -90,7 +90,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const user = await retrieveLoggedInUser(req)
-  const memberships = await retrieveUserMemberships(user?.id!)
 
   if (user?.organisationId) {
     return {
@@ -104,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       initialLoggedInUser: JSON.parse(JSON.stringify(user)),
-      initialUserMemberships: JSON.parse(JSON.stringify(memberships))
+      initialUserMemberships: JSON.parse(JSON.stringify(user?.memberships))
     },
   }
 }

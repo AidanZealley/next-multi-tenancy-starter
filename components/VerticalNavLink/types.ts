@@ -1,4 +1,4 @@
-export interface ISidebarNavLink {
+export interface IVerticalNavLink {
   href: string
   icon: React.ReactElement
   text: string

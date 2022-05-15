@@ -1,58 +1,100 @@
-import { Box, Button, Icon, IconButton, Tag, Text } from '@chakra-ui/react'
-import { LogIn, Trash } from 'react-feather'
-import { MembershipWithUserAndOrganisation } from 'types'
-import { useRemoveOrganisationMutation, useSwitchOrganisationMutation } from 'lib/organisations/mutations'
-import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
+import { Avatar, Box, Button, Circle, Icon, Spinner, Tag, Text } from '@chakra-ui/react'
+import { Check } from 'react-feather'
+import { MembershipWithOrganisationAndMemberships } from 'lib/memberships/types'
+import { useSwitchOrganisationMutation } from 'lib/organisations/mutations'
+import { useLoggedInUserQuery } from 'lib/users/queries'
+import { LoggedInUser } from 'lib/users/types'
 
 interface IProps {
-  membership: MembershipWithUserAndOrganisation
+  membership: MembershipWithOrganisationAndMemberships
+  loggedInUser: LoggedInUser
+  isSelected: boolean
 }
 
-export const MembershipsListItem = ({ membership }: IProps) => {
-  const { user, organisationId, organisation, role } = membership
-  const { mutate } = useLoggedInUserQuery()
-  const { mutate: membershipsMutate } = useUserMembershipsQuery(user.id)
+export const MembershipsListItem = ({ membership, loggedInUser, isSelected }: IProps) => {
+  const { organisationId, organisation, role } = membership
+  const { loggedInUser: user, mutate } = useLoggedInUserQuery({
+    fallbackData: loggedInUser,
+  })
   const { switchOrganisation, status } = useSwitchOrganisationMutation(mutate)
-  const { removeOrganisation, status: removeStatus } = useRemoveOrganisationMutation(membershipsMutate)
   const enterHandler = async () => {
     switchOrganisation({ organisationId })
   }
 
-  const removeHandler = () => {
-    removeOrganisation(organisation)
-  }
-
   return (
-    <Box key={membership.id} display="grid" gridTemplateColumns="1fr auto" gap={2} alignItems="center">
-      <Box display="flex" gap={3} alignItems="center">
-        <Text fontSize="xl" fontWeight="bold">{organisation?.name}</Text>
-        
-        <Box display="flex" gap={2} alignItems="center">
-          {user?.id === organisation?.userId && <Tag size="sm" variant="subtle" colorScheme="green">Owner</Tag>}
-          {role === 'ADMIN' && <Tag size="sm" variant="subtle" colorScheme="gray">Admin</Tag>}
+    <Button
+      display="grid"
+      gridTemplateColumns="auto 1fr"
+      alignItems="center"
+      gap={3}
+      p={3}
+      w="100%"
+      h="auto"
+      textAlign="left"
+      colorScheme="gray"
+      variant="ghost"
+      onClick={enterHandler}
+    >
+      <Box
+        position="relative"
+      >
+        <Avatar borderRadius="md" name={organisation?.name}/>
+        {isSelected &&
+          <Circle
+            size={5}
+            bg="green.500"
+            position="absolute"
+            top={-1}
+            right={-1}
+            boxShadow="sm"
+          >
+            <Icon as={Check} w={3} h={3} color="white"/>
+          </Circle>
+        }
+        {status === 'loading' &&
+          <Circle
+            size={5}
+            bg="white"
+            position="absolute"
+            top={-1}
+            right={-1}
+            boxShadow="sm"
+          >
+            <Spinner size="xs" color="green.500"/>
+          </Circle>
+        }
+      </Box>
+      <Box
+        display="grid"
+        gap={1}
+        justifyContent="flex-start"
+      >
+        <Text fontSize="md" fontWeight="bold">{organisation?.name}</Text>
+        <Box
+          display="flex"
+          gap={2}
+          alignItems="center"
+        >
+          <Text fontSize="sm" fontWeight="normal" color="gray.600">
+            {organisation?.memberships?.length} member{organisation?.memberships?.length === 1 ? '' : 's'}
+          </Text>
+
+          {(user?.id === organisation?.userId || role === 'ADMIN') &&
+            <>
+              <Circle size={1} bg="gray.200"/>
+
+              <Box
+                display="flex"
+                gap={1}
+                alignItems="center"
+              >
+                {user?.id === organisation?.userId && <Tag size="sm" variant="subtle" colorScheme="green">Owner</Tag>}
+                {role === 'ADMIN' && <Tag size="sm" variant="subtle" colorScheme="gray">Admin</Tag>}
+              </Box>
+            </>
+          }
         </Box>
       </Box>
-
-      <Box display="flex" gap={2} alignItems="center">
-        <Button
-          onClick={enterHandler}
-          leftIcon={<Icon as={LogIn} w={4} h={4}/>}
-          isLoading={status === 'loading'}
-          size="sm"
-        >
-          Enter
-        </Button>
-        <IconButton
-          colorScheme="gray"
-          aria-label="Create Organisation"
-          icon={<Icon as={Trash}
-          w={4}
-          h={4}/>}
-          onClick={removeHandler}
-          size="sm"
-          isLoading={removeStatus === 'loading'}
-        />
-      </Box>
-    </Box>
+    </Button>
   )
 }

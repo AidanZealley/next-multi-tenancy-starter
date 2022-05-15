@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react';
 
-import { prisma } from 'utils/prisma';
 import { withAuthentication } from 'utils/auth';
 import { QueryResponse } from 'types';
 import { User } from '@prisma/client';

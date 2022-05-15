@@ -1,6 +1,6 @@
 import { Box, Tag, Text } from '@chakra-ui/react'
 import { useLoggedInUserQuery } from 'lib/users/queries'
-import { MembershipWithUserAndOrganisation } from 'types'
+import { MembershipWithUserAndOrganisation } from 'lib/memberships/types'
 
 interface IProps {
   membership: MembershipWithUserAndOrganisation

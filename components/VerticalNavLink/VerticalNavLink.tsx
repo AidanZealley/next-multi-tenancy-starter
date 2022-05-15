@@ -8,7 +8,7 @@ interface IProps {
   isActive?: boolean
 }
 
-export const SidebarNavLink = ({
+export const VerticalNavLink = ({
   href,
   icon,
   text,
@@ -23,6 +23,7 @@ export const SidebarNavLink = ({
         leftIcon={icon}
         colorScheme="gray"
         px={3}
+        gap={2}
       >
         {text}
       </Button>

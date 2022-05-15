@@ -2,7 +2,7 @@ import { Box, Button, Heading, Icon } from '@chakra-ui/react';
 import { retrieveInvite } from 'lib/invites/services';
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import { MembershipWithUserAndOrganisation } from 'types';
+import { MembershipWithUserAndOrganisation } from 'lib/memberships/types';
 import { createMembership } from 'lib/memberships/services';
 import { retrieveLoggedInUser } from 'lib/users/services';
 import { Home } from 'react-feather';
