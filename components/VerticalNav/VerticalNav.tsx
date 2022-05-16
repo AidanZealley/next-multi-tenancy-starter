@@ -31,13 +31,18 @@ export const VerticalNav = ({ heading, navLinks }: IProps) => {
         flexDirection="column"
         gap={1}
       >
-        {navLinks.map(({ href, icon, text, getActiveStatus}) => (
+        {navLinks.map(({ action, icon, text, getActiveStatus}, index) => (
           <VerticalNavLink
-            key={href}
-            href={href}
+            key={index}
+            action={action}
             icon={icon}
             text={text}
-            isActive={getActiveStatus ? getActiveStatus(href) : isActivePage(href)}
+            isActive={
+              typeof action === 'string' &&
+                getActiveStatus
+                  ? getActiveStatus(action)
+                  : isActivePage(action as string)
+            }
           />
         ))}
       </Box>

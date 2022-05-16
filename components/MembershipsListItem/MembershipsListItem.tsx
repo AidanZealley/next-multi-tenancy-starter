@@ -1,9 +1,9 @@
 import { Avatar, Box, Button, Circle, Icon, Spinner, Tag, Text } from '@chakra-ui/react'
 import { Check } from 'react-feather'
 import { MembershipWithOrganisationAndMemberships } from 'lib/memberships/types'
-import { useSwitchOrganisationMutation } from 'lib/organisations/mutations'
 import { useLoggedInUserQuery } from 'lib/users/queries'
 import { LoggedInUser } from 'lib/users/types'
+import { useDashboardLayoutActionsContext } from 'layouts/DashboardLayout/DashboardLayoutProvider'
 
 interface IProps {
   membership: MembershipWithOrganisationAndMemberships
@@ -11,13 +11,17 @@ interface IProps {
   isSelected: boolean
 }
 
-export const MembershipsListItem = ({ membership, loggedInUser, isSelected }: IProps) => {
+export const MembershipsListItem = ({
+  membership,
+  loggedInUser,
+  isSelected,
+}: IProps) => {
   const { organisationId, organisation, role } = membership
-  const { loggedInUser: user, mutate } = useLoggedInUserQuery({
+  const { loggedInUser: user } = useLoggedInUserQuery({
     fallbackData: loggedInUser,
   })
-  const { switchOrganisation, status } = useSwitchOrganisationMutation(mutate)
-  const enterHandler = async () => {
+  const { switchOrganisation } = useDashboardLayoutActionsContext()
+  const handleClick = async () => {
     switchOrganisation({ organisationId })
   }
 
@@ -33,7 +37,7 @@ export const MembershipsListItem = ({ membership, loggedInUser, isSelected }: IP
       textAlign="left"
       colorScheme="gray"
       variant="ghost"
-      onClick={enterHandler}
+      onClick={handleClick}
     >
       <Box
         position="relative"

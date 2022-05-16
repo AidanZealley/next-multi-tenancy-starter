@@ -1,20 +1,31 @@
-import { Box, Heading } from '@chakra-ui/react'
+import { Box, Heading, Text } from '@chakra-ui/react'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { retrieveLoggedInUser } from 'lib/users/services'
 import { NextPageContext } from 'next'
 import { getSession } from 'next-auth/react'
 import { LoggedInUser } from 'lib/users/types'
+import { useLoggedInUserQuery } from 'lib/users/queries'
 
 interface IProps {
-  loggedInUser: LoggedInUser
+  initialLoggedInUser: LoggedInUser
 }
 
 const ActivityPage = ({
-  loggedInUser,
+  initialLoggedInUser,
 }: IProps) => {
+  const { loggedInUser } = useLoggedInUserQuery({
+    fallbackData: initialLoggedInUser
+  })
+
   return (
-    <Box>
+    <Box
+      display="flex"
+      flexDirection="column"
+      gap={4}
+    >
       <Heading>Activity</Heading>
+      <Text>Hi, {loggedInUser.name}!</Text>
+      <Text>Activity page is WIP.</Text>
     </Box>
   )
 }
@@ -44,7 +55,8 @@ export async function getServerSideProps(context: NextPageContext) {
 
   return {
     props: {
-      loggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
+      layoutData: JSON.parse(JSON.stringify({ loggedInUser })),
+      initialLoggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
     },
   }
 }

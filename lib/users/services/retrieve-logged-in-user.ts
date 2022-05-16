@@ -13,16 +13,16 @@ export const retrieveLoggedInUser = async (
     const user = await prisma.user.findUnique({
       where: { email: session?.user?.email! },
       include: {
-        memberships: {
-          include: {
-            organisation: {
-              include: { memberships: true }
-            },
-          }
-        },
-        selectedOrganisation: {
-          include: { memberships: true }
-        },
+        memberships: { include: {
+          organisation: { include: {
+            memberships: true,
+          } },
+        } },
+        selectedOrganisation: { include: {
+          memberships: { include: {
+            user: true,
+          } }
+        } },
       },
     });
 

@@ -1,5 +1,5 @@
 export interface IVerticalNavLink {
-  href: string
+  action: string | (() => void)
   icon: React.ReactElement
   text: string
   getActiveStatus?: (href: string) => boolean

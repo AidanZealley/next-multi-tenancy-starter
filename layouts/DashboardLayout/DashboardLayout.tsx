@@ -1,6 +1,8 @@
+import { Box } from '@chakra-ui/react'
 import { DashboardSidebar } from 'components/DashboardSidebar'
-import { WithSidebar } from 'layouts/WithSidebar'
 import { useLoggedInUserQuery } from 'lib/users/queries'
+import { DashboardLayoutPage } from './DashboardLayoutPage'
+import { DashboardLayoutProvider } from './DashboardLayoutProvider'
 
 interface IProps {
   page: React.ReactElement
@@ -8,7 +10,8 @@ interface IProps {
 
 export const DashboardLayout = ({ page }: IProps) => {
   const { props } = page
-  const { loggedInUser } = props
+  const { layoutData } = props
+  const { loggedInUser } = layoutData
   const { loggedInUser: user } = useLoggedInUserQuery({
     fallbackData: loggedInUser
   })
@@ -18,14 +21,20 @@ export const DashboardLayout = ({ page }: IProps) => {
   } = user
 
   return (
-    user && (
-      <WithSidebar page={page}>
-        <DashboardSidebar
-          user={user}
-          organisation={selectedOrganisation!}
-          memberships={memberships!}
-        />
-      </WithSidebar>
-    )
+    <DashboardLayoutProvider>
+      <Box display="grid" gridTemplateColumns="18rem 1fr">
+        <Box display="grid" borderRight="1px solid" borderColor="gray.200">
+          <DashboardSidebar
+            user={user}
+            selectedOrganisation={selectedOrganisation!}
+            userMemberships={memberships!}
+          />
+        </Box>
+
+        <DashboardLayoutPage>
+          {page}
+        </DashboardLayoutPage>
+      </Box>
+    </DashboardLayoutProvider>
   )
 }
