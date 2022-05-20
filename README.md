@@ -1,3 +1,9 @@
+## \[WIP\] next-multi-tenancy-starter
+
+A starter project for multi-tenancy applications using Next.js, NextAuth, Prisma and Supabase.
+
+...
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
