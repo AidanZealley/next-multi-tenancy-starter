@@ -9,7 +9,7 @@ import { useLoggedInUserQuery } from 'lib/users/queries'
 import { ActionMessage } from 'components/ActionMessage'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { MembersList } from 'components/MembersList'
+import { MembersTable } from 'components/MembersTable'
 import { retrieveLoggedInUser, retrieveSelectedOrganisation } from 'lib/users/services'
 import { InviteMemberModal } from 'modals/InviteMemberModal'
 import { InvitesList } from 'components/InvitesList'
@@ -78,7 +78,7 @@ const OrganisationSelectionPage = ({
               <IconButton colorScheme="gray" variant="ghost" aria-label="Invite Member" icon={<Icon as={Plus} w={4} h={4}/>} onClick={onOpen}/>
             </Box>
 
-            <MembersList memberships={organisationMemberships}/>
+            <MembersTable memberships={organisationMemberships}/>
 
             {organisationMemberships.length === 1 &&
               <ActionMessage>
