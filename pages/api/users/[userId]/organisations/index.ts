@@ -1,16 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react'
 
-import { prisma } from 'utils/prisma';
-import { Organisation } from '@prisma/client';
-import { QueryResponse } from 'types';
-import { withUserAuthorisation } from 'utils/auth';
+import { prisma } from 'lib/prisma'
+import { Organisation } from '@prisma/client'
+import { QueryResponse } from 'types'
+import { withUserAuthorisation } from 'utils/auth'
 
 const getUserOrganisations = async (
   req: NextApiRequest,
-  res: NextApiResponse<QueryResponse<Organisation>>
+  res: NextApiResponse<QueryResponse<Organisation>>,
 ) => {
-  const session = await getSession({ req });
+  const session = await getSession({ req })
 
   try {
     const user = await prisma.user.findUnique({
@@ -30,10 +30,7 @@ const getUserOrganisations = async (
 }
 
 export default withUserAuthorisation(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {
+  async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case 'GET':
         await getUserOrganisations(req, res)
@@ -41,5 +38,5 @@ export default withUserAuthorisation(
       default:
         res.status(400).json({ success: false })
     }
-  }
+  },
 )

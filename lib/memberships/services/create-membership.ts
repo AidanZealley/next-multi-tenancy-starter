@@ -1,7 +1,10 @@
-import { Membership } from '@prisma/client';
-import { prisma } from 'utils/prisma'
+import { Membership } from '@prisma/client'
+import { prisma } from 'lib/prisma'
 
-export const createMembership = async (inviteId: string, data: Partial<Membership>) => {
+export const createMembership = async (
+  inviteId: string,
+  data: Partial<Membership>,
+) => {
   try {
     const { userId, organisationId } = data
 
@@ -17,7 +20,7 @@ export const createMembership = async (inviteId: string, data: Partial<Membershi
       include: {
         organisation: true,
       },
-    });
+    })
 
     const updatedInvite = prisma.invite.update({
       where: {
@@ -37,7 +40,11 @@ export const createMembership = async (inviteId: string, data: Partial<Membershi
       },
     })
 
-    const joined = await prisma.$transaction([newMembership, updatedInvite, setSelected])
+    const joined = await prisma.$transaction([
+      newMembership,
+      updatedInvite,
+      setSelected,
+    ])
 
     if (!joined) {
       throw 'JOIN_UNSUCCESSFUL'

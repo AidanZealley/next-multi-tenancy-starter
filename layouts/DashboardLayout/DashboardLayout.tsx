@@ -13,12 +13,9 @@ export const DashboardLayout = ({ page }: IProps) => {
   const { layoutData } = props
   const { loggedInUser } = layoutData
   const { loggedInUser: user } = useLoggedInUserQuery({
-    fallbackData: loggedInUser
+    fallbackData: loggedInUser,
   })
-  const {
-    selectedOrganisation,
-    memberships,
-  } = user
+  const { selectedOrganisation, memberships } = user
 
   return (
     <DashboardLayoutProvider>
@@ -27,13 +24,11 @@ export const DashboardLayout = ({ page }: IProps) => {
           <DashboardSidebar
             user={user}
             selectedOrganisation={selectedOrganisation!}
-            userMemberships={memberships!}
+            userMemberships={memberships}
           />
         </Box>
 
-        <DashboardLayoutPage>
-          {page}
-        </DashboardLayoutPage>
+        <DashboardLayoutPage>{page}</DashboardLayoutPage>
       </Box>
     </DashboardLayoutProvider>
   )

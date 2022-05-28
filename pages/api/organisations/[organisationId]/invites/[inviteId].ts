@@ -2,12 +2,12 @@ import { Invite } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { MutationResponse, QueryResponse } from 'types'
 
-import { prisma } from 'utils/prisma'
+import { prisma } from 'lib/prisma'
 import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth'
 
 const getInvite = async (
   req: NextApiRequest,
-  res: NextApiResponse<QueryResponse<Invite>>
+  res: NextApiResponse<QueryResponse<Invite>>,
 ) => {
   try {
     const id = req.query.inviteId as string
@@ -33,11 +33,11 @@ const getInvite = async (
 
 const removeInvite = withRoleAuthorisation(
   {
-    allowedRoles: ['ADMIN']
+    allowedRoles: ['ADMIN'],
   },
   async (
     req: NextApiRequest,
-    res: NextApiResponse<MutationResponse<Invite>>
+    res: NextApiResponse<MutationResponse<Invite>>,
   ) => {
     try {
       const id = req.query.inviteId as string
@@ -49,20 +49,17 @@ const removeInvite = withRoleAuthorisation(
       await prisma.invite.delete({
         where: { id },
       })
-    
+
       res.status(200).json({ success: true })
     } catch (error: any) {
       console.error(error)
       res.status(400).json({ success: false, error })
     }
-  }
-)  
+  },
+)
 
 export default withMembershipAuthorisation(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {
+  async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case 'GET':
         await getInvite(req, res)
@@ -73,5 +70,5 @@ export default withMembershipAuthorisation(
       default:
         res.status(400).json({ success: false })
     }
-  }
+  },
 )

@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { withAuthentication } from 'utils/auth';
-import { QueryResponse } from 'types';
-import { User } from '@prisma/client';
-import { retrieveLoggedInUser } from 'lib/users/services';
+import { withAuthentication } from 'utils/auth'
+import { QueryResponse } from 'types'
+import { User } from '@prisma/client'
+import { retrieveLoggedInUser } from 'lib/users/services'
 
 const getLoggedInUser = async (
   req: NextApiRequest,
-  res: NextApiResponse<QueryResponse<User>>
+  res: NextApiResponse<QueryResponse<User>>,
 ) => {
   try {
     const user = await retrieveLoggedInUser(req)
@@ -24,10 +24,7 @@ const getLoggedInUser = async (
 }
 
 export default withAuthentication(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {
+  async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case 'GET':
         await getLoggedInUser(req, res)
@@ -35,5 +32,5 @@ export default withAuthentication(
       default:
         res.status(400).json({ success: false })
     }
-  }
+  },
 )

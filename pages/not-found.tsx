@@ -1,6 +1,6 @@
-import { Alert, AlertIcon, Box, Button, Heading, Icon } from '@chakra-ui/react';
-import { Home } from 'react-feather';
-import Link from 'next/link';
+import { Alert, AlertIcon, Box, Button, Heading, Icon } from '@chakra-ui/react'
+import { Home } from 'react-feather'
+import Link from 'next/link'
 
 const JoinPage = () => {
   return (
@@ -11,15 +11,12 @@ const JoinPage = () => {
         </Heading>
 
         <Alert status="warning">
-          <AlertIcon/>
+          <AlertIcon />
           Oops, couldn't find that.
         </Alert>
 
         <Link href="/">
-          <Button
-            as="a"
-            leftIcon={<Icon as={Home} w={4} h={4}/>}
-          >
+          <Button as="a" leftIcon={<Icon as={Home} w={4} h={4} />}>
             Back to home
           </Button>
         </Link>
@@ -28,4 +25,4 @@ const JoinPage = () => {
   )
 }
 
-export default JoinPage;
+export default JoinPage

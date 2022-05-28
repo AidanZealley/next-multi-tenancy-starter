@@ -1,5 +1,5 @@
-import { Organisation } from '@prisma/client';
-import { prisma } from 'utils/prisma'
+import { Organisation } from '@prisma/client'
+import { prisma } from 'lib/prisma'
 
 export const createOrganisation = async (data: Partial<Organisation>) => {
   try {
@@ -13,11 +13,13 @@ export const createOrganisation = async (data: Partial<Organisation>) => {
         name,
         userId,
         memberships: {
-          create: [{
-            userId,
-            role: 'ADMIN',
-          },]
-        }
+          create: [
+            {
+              userId,
+              role: 'ADMIN',
+            },
+          ],
+        },
       },
       include: {
         memberships: {
@@ -26,10 +28,10 @@ export const createOrganisation = async (data: Partial<Organisation>) => {
               include: { ownedOrganisations: true },
             },
             organisation: true,
-          }
-        }
+          },
+        },
       },
-    });
+    })
 
     if (!organisation) {
       throw 'Error creating organisation.'

@@ -1,4 +1,14 @@
-import { Avatar, Box, Button, Icon, Popover, PopoverContent, PopoverTrigger, Portal, Text } from '@chakra-ui/react'
+import {
+  Avatar,
+  Box,
+  Button,
+  Icon,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
+  Text,
+} from '@chakra-ui/react'
 import { VerticalNav } from 'components/VerticalNav'
 import { LoggedInUser } from 'lib/users/types'
 import { signOut } from 'next-auth/react'
@@ -8,17 +18,17 @@ import { LogOut, MoreVertical, Plus, Settings } from 'react-feather'
 const accountLinks = [
   {
     action: '/organisations/create',
-    icon: <Icon as={Plus} w={4} h={4} color="gray.600"/>,
+    icon: <Icon as={Plus} w={4} h={4} color="gray.600" />,
     text: 'Create Organisation',
   },
   {
     action: '/account',
-    icon: <Icon as={Settings} w={4} h={4} color="gray.600"/>,
+    icon: <Icon as={Settings} w={4} h={4} color="gray.600" />,
     text: 'Settings',
   },
   {
     action: () => signOut(),
-    icon: <Icon as={LogOut} w={4} h={4} color="gray.600"/>,
+    icon: <Icon as={LogOut} w={4} h={4} color="gray.600" />,
     text: 'Log Out',
   },
 ]
@@ -28,12 +38,9 @@ interface IProps {
   dashboardRef: React.RefObject<HTMLElement | null>
 }
 
-export const SidebarAccountNav = ({
-  user,
-  dashboardRef,
-}: IProps) => {
+export const SidebarAccountNav = ({ user, dashboardRef }: IProps) => {
   return (
-    <Popover placement='end-end'>
+    <Popover placement="end-end">
       {({ isOpen }) => (
         <>
           <PopoverTrigger>
@@ -49,12 +56,8 @@ export const SidebarAccountNav = ({
               colorScheme="gray"
               variant={isOpen ? 'solid' : 'ghost'}
             >
-              <Avatar name={user?.name!}/>
-              <Box
-                display="grid"
-                gap={1}
-                justifyContent="flex-start"
-              >
+              <Avatar name={user?.name!} />
+              <Box display="grid" gap={1} justifyContent="flex-start">
                 <Text
                   fontSize="md"
                   fontWeight="bold"
@@ -75,15 +78,12 @@ export const SidebarAccountNav = ({
                   {user?.email!}
                 </Text>
               </Box>
-              <Icon as={MoreVertical} w={4} h={4} color="gray.600"/>
+              <Icon as={MoreVertical} w={4} h={4} color="gray.600" />
             </Button>
           </PopoverTrigger>
           <Portal containerRef={dashboardRef}>
-            <PopoverContent
-              p={1}
-              borderRadius="lg"
-            >
-              <VerticalNav navLinks={accountLinks}/>
+            <PopoverContent p={1} borderRadius="lg">
+              <VerticalNav navLinks={accountLinks} />
             </PopoverContent>
           </Portal>
         </>

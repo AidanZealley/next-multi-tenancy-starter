@@ -28,18 +28,22 @@ export const Form = ({
       <form onSubmit={handleSubmit(onSubmit)} {...props}>
         <Box display="grid" gap={6}>
           {Array.isArray(children)
-            ? children.map((child) => (
-              child.props.name
-                ? createElement(child.type, {
-                    ...{
-                      ...child.props,
-                      key: child.props.name
-                    }
-                  })
-                : child
-              ))
+            ? children.map(child =>
+                child.props.name
+                  ? createElement(child.type, {
+                      ...{
+                        ...child.props,
+                        key: child.props.name,
+                      },
+                    })
+                  : child,
+              )
             : children}
-          {includeSubmit && (buttonLabel && <Button type="submit" variant="solid">{buttonLabel}</Button>)}
+          {includeSubmit && buttonLabel && (
+            <Button type="submit" variant="solid">
+              {buttonLabel}
+            </Button>
+          )}
         </Box>
       </form>
     </FormProvider>

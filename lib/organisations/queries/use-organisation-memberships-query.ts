@@ -1,12 +1,19 @@
-import useSWR, { SWRConfiguration } from 'swr'
-import { fetcher } from 'utils/fetcher'
+import { MembershipWithUser } from 'lib/memberships/types'
+import { SWRConfiguration } from 'swr'
+import { createQuery } from 'utils/queries'
 
-export const useOrganisationMembershipsQuery = (organisationId: string, config?: SWRConfiguration) => {
-  const { data, error, mutate } = useSWR(`/api/organisations/${organisationId}/memberships`, fetcher, config)
+export const useOrganisationMembershipsQuery = (
+  organisationId: string,
+  config?: SWRConfiguration,
+) => {
+  const { data, status, error, mutate } = createQuery<MembershipWithUser[]>(
+    `/api/organisations/${organisationId}/memberships`,
+    config,
+  )
 
   return {
     organisationMemberships: data,
-    isLoading: !error && !data,
+    status,
     error,
     mutate,
   }

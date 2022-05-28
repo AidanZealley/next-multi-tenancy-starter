@@ -1,21 +1,16 @@
-import useSWR, { KeyedMutator, SWRConfiguration } from 'swr'
-import { fetcher } from 'utils/fetcher'
 import { LoggedInUser } from 'lib/users/types'
-import { User } from '@prisma/client'
+import { createQuery } from 'utils/queries'
+import { QueryConfig } from 'utils/queries/types'
 
-interface ILoggedInUserQuery {
-  loggedInUser: LoggedInUser
-  isLoading: boolean
-  error: any
-  mutate: KeyedMutator<User>
-}
-
-export const useLoggedInUserQuery = (config?: SWRConfiguration): ILoggedInUserQuery => {
-  const { data, error, mutate } = useSWR('/api/users/logged-in-user', fetcher, config)
+export const useLoggedInUserQuery = (config?: QueryConfig) => {
+  const { data, status, error, mutate } = createQuery<LoggedInUser>(
+    '/api/users/logged-in-user',
+    config,
+  )
 
   return {
     loggedInUser: data,
-    isLoading: !error && !data,
+    status,
     error,
     mutate,
   }

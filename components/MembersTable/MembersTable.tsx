@@ -1,12 +1,22 @@
-import { Table, TableCaption, TableContainer, Tbody, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
 import { MembersTableRow } from 'components/MembersTableRow'
-import { MembershipWithUserAndOrganisation } from 'lib/memberships/types'
+import { MembershipWithUser } from 'lib/memberships/types'
+import { OrganisationWithMemberships } from 'lib/organisations/types'
 
 interface IProps {
-  memberships: MembershipWithUserAndOrganisation[]
+  organisation: OrganisationWithMemberships
+  memberships: MembershipWithUser[]
 }
 
-export const MembersTable = ({ memberships }: IProps) => {
+export const MembersTable = ({ organisation, memberships }: IProps) => {
   return (
     <TableContainer>
       <Table variant="simple" colorScheme="gray">
@@ -20,7 +30,11 @@ export const MembersTable = ({ memberships }: IProps) => {
         </Thead>
         <Tbody>
           {memberships.map(membership => (
-            <MembersTableRow membership={membership}/>
+            <MembersTableRow
+              key={membership.id}
+              organisation={organisation}
+              membership={membership}
+            />
           ))}
         </Tbody>
       </Table>

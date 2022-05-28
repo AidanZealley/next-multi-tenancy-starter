@@ -10,38 +10,23 @@ interface IProps {
 
 export const VerticalNav = ({ heading, navLinks }: IProps) => {
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={2}
-    >
-      {heading &&
-        <Text
-          fontSize="xs"
-          fontWeight="bold"
-          color="gray.500"
-          px={3}
-        >
+    <Box display="flex" flexDirection="column" gap={2}>
+      {heading && (
+        <Text fontSize="xs" fontWeight="bold" color="gray.500" px={3}>
           {heading}
         </Text>
-      }
-      <Box
-        as="nav"
-        display="flex"
-        flexDirection="column"
-        gap={1}
-      >
-        {navLinks.map(({ action, icon, text, getActiveStatus}, index) => (
+      )}
+      <Box as="nav" display="flex" flexDirection="column" gap={1}>
+        {navLinks.map(({ action, icon, text, getActiveStatus }, index) => (
           <VerticalNavLink
             key={index}
             action={action}
             icon={icon}
             text={text}
             isActive={
-              typeof action === 'string' &&
-                getActiveStatus
-                  ? getActiveStatus(action)
-                  : isActivePage(action as string)
+              typeof action === 'string' && getActiveStatus
+                ? getActiveStatus(action)
+                : isActivePage(action as string)
             }
           />
         ))}

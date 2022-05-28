@@ -8,7 +8,7 @@ const OrganisationSelectionPage = () => {
   const handleSignInWithGoogle = () => {
     signIn('google')
   }
-    
+
   return (
     <>
       <Box display="grid" placeItems="center" p={6} minH="100vh">
@@ -19,7 +19,7 @@ const OrganisationSelectionPage = () => {
 
           <Button
             onClick={handleSignInWithGoogle}
-            leftIcon={<Icon as={LogIn} w={4} h={4}/>}
+            leftIcon={<Icon as={LogIn} w={4} h={4} />}
           >
             Sign In With Google
           </Button>
@@ -31,7 +31,7 @@ const OrganisationSelectionPage = () => {
 
 export default OrganisationSelectionPage
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context)
 
   if (session) {

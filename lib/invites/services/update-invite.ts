@@ -1,5 +1,5 @@
 import { Invite } from '@prisma/client'
-import { prisma } from 'utils/prisma'
+import { prisma } from 'lib/prisma'
 
 export const updateInvite = async (id: string, data: Partial<Invite>) => {
   try {
@@ -7,7 +7,7 @@ export const updateInvite = async (id: string, data: Partial<Invite>) => {
       where: { id },
       data,
     })
-  
+
     if (!updatedInvite) {
       throw 'Invite failed to update'
     }

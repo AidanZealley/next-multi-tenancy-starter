@@ -1,13 +1,14 @@
-import { prisma } from 'utils/prisma'
+import { prisma } from 'lib/prisma'
 
 export const retrieveOrganisationInvites = async (id: string) => {
   try {
     const organisation = await prisma.organisation.findUnique({
-      where: { id }, include: {
+      where: { id },
+      include: {
         invites: true,
-      }
+      },
     })
-  
+
     if (!organisation) {
       throw 'Organisation not found'
     }

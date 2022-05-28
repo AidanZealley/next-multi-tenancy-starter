@@ -1,16 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth';
-import { QueryResponse } from 'types';
-import { Invite } from '@prisma/client';
-import { retrieveOrganisationInvites } from 'lib/organisations/services';
-import { MutationResponse } from 'utils/mutation-creators/types';
-import { retrieveLoggedInUser } from 'lib/users/services';
-import { createInvite } from 'lib/invites/services';
+import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth'
+import { QueryResponse } from 'types'
+import { Invite } from '@prisma/client'
+import { retrieveOrganisationInvites } from 'lib/organisations/services'
+import { MutationResponse } from 'utils/mutations/types'
+import { retrieveLoggedInUser } from 'lib/users/services'
+import { createInvite } from 'lib/invites/services'
 
 const getOrganisationInvites = async (
   req: NextApiRequest,
-  res: NextApiResponse<QueryResponse<Invite[]>>
+  res: NextApiResponse<QueryResponse<Invite[]>>,
 ) => {
   try {
     const id = req.query.organisationId as string
@@ -31,16 +31,16 @@ const inviteNewMember = withRoleAuthorisation(
   { allowedRoles: ['ADMIN'] },
   async (
     req: NextApiRequest,
-    res: NextApiResponse<MutationResponse<Invite>>
+    res: NextApiResponse<MutationResponse<Invite>>,
   ) => {
     try {
       const user = await retrieveLoggedInUser(req)
-      
+
       if (!user) {
         throw 'User not found.'
       }
 
-      const { email, organisationId } = req.body;
+      const { email, organisationId } = req.body
 
       const organisation = await createInvite({
         email,
@@ -53,14 +53,11 @@ const inviteNewMember = withRoleAuthorisation(
       console.error(error)
       res.status(400).json({ success: false, error })
     }
-  }
+  },
 )
 
 export default withMembershipAuthorisation(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {
+  async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case 'GET':
         await getOrganisationInvites(req, res)
@@ -71,5 +68,5 @@ export default withMembershipAuthorisation(
       default:
         res.status(400).json({ success: false })
     }
-  }
+  },
 )

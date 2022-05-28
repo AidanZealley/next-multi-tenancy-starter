@@ -13,7 +13,10 @@ import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAddOrganisationMutation } from 'lib/organisations/mutations'
-import { useLoggedInUserQuery, useUserMembershipsQuery } from 'lib/users/queries'
+import {
+  useLoggedInUserQuery,
+  useUserMembershipsQuery,
+} from 'lib/users/queries'
 
 interface IProps {
   isOpen: boolean
@@ -35,7 +38,7 @@ export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
       }
 
       const values = methods.getValues()
-      
+
       addOrganisation(values)
     } catch (error) {
       console.log(error)
@@ -70,9 +73,13 @@ export const AddOrganisationModal = ({ isOpen, onClose }: IProps) => {
           </Form>
         </ModalBody>
         <ModalFooter display="flex" justifyContent="space-between">
-          <Button onClick={onClose} colorScheme="gray">Cancel</Button>
+          <Button onClick={onClose} colorScheme="gray">
+            Cancel
+          </Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>Create Organisation</Button>
+          <Button onClick={submitHandler} isLoading={status === 'loading'}>
+            Create Organisation
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

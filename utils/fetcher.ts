@@ -3,6 +3,6 @@ export const fetcher = async (
   init: RequestInit,
   ...args: any[]
 ) => {
-  const res = await fetch(input, init);
-  return res.json();
+  const res = await fetch(input, init)
+  return res.json()
 }

@@ -6,10 +6,7 @@ interface IProps {
 
 export const Wrapper = ({ children }: IProps) => {
   return (
-    <Box
-      display="grid"
-      minHeight="100vh"
-    >
+    <Box display="grid" minHeight="100vh">
       {children}
     </Box>
   )

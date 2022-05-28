@@ -1,54 +1,30 @@
-import { Box, Button, Icon, Tag, Td, Text, Tr } from '@chakra-ui/react'
-import { Role } from '@prisma/client'
-import { MembershipWithUserAndOrganisation } from 'lib/memberships/types'
+import { Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
+import { UserTags } from 'components/UserTags'
+import { MembershipWithUser } from 'lib/memberships/types'
+import { OrganisationWithMemberships } from 'lib/organisations/types'
 import { Edit2 } from 'react-feather'
 
 interface IProps {
-  membership: MembershipWithUserAndOrganisation
+  organisation: OrganisationWithMemberships
+  membership: MembershipWithUser
 }
 
-interface RoleValues {
-  label: string,
-  variant: string,
-  color: string,
-}
+export const MembersTableRow = ({ organisation, membership }: IProps) => {
+  const { user, role } = membership
 
-const getRoleValues = (role: Role): RoleValues => ({
-  ADMIN: {
-    label: 'Admin',
-    variant: 'subtle',
-    color: 'blue',
-  },
-  USER: {
-    label: 'User',
-    variant: 'subtle',
-    color: 'gray',
-  }
-}[role])
-
-export const MembersTableRow = ({ membership }: IProps) => {
-  const { id, role, user, organisation } = membership
-  const roleValues = getRoleValues(role)
-  
   return (
-    <Tr key={id}>
+    <Tr>
       <Td>
         <Text fontWeight="bold">{user.name}</Text>
       </Td>
       <Td>
-        <Box
-          display="flex"
-          gap={2}
-        >
-          {user?.id === organisation?.userId && <Tag size="sm" variant="subtle" colorScheme="green">Owner</Tag>}
-          <Tag size="sm" variant={roleValues.variant} colorScheme={roleValues.color}>{roleValues.label}</Tag>
-        </Box>
+        <UserTags user={user} organisation={organisation} role={role} />
       </Td>
       <Td isNumeric>
         <Button
           size="sm"
           colorScheme="gray"
-          leftIcon={<Icon as={Edit2} w={3} h={3}/>}
+          leftIcon={<Icon as={Edit2} w={3} h={3} />}
         >
           Edit
         </Button>

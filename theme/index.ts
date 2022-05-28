@@ -16,7 +16,7 @@ export const theme = extendTheme(
         600: '#489735',
         700: '#367227',
         800: '#244C1A',
-        900: '#12260D'
+        900: '#12260D',
       },
       blue: {
         50: '#EBECFA',
@@ -28,7 +28,7 @@ export const theme = extendTheme(
         600: '#2937A3',
         700: '#1F297A',
         800: '#151B51',
-        900: '#0A0E29'
+        900: '#0A0E29',
       },
       orange: {
         50: '#FCF2E9',
@@ -40,8 +40,8 @@ export const theme = extendTheme(
         600: '#B2661A',
         700: '#864C13',
         800: '#59330D',
-        900: '#2D1906'
-      }
+        900: '#2D1906',
+      },
     },
     components: {
       Tag: {
@@ -52,10 +52,10 @@ export const theme = extendTheme(
       Button: {
         baseStyle: {
           _hover: {
-            cursor: 'pointer'
+            cursor: 'pointer',
           },
         },
       },
-    }
-  }
+    },
+  },
 )

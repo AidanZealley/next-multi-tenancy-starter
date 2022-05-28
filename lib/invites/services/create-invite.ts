@@ -1,9 +1,11 @@
-import { Invite } from '@prisma/client';
-import { prisma } from 'utils/prisma'
+import { Invite } from '@prisma/client'
+import { prisma } from 'lib/prisma'
 
-export const createInvite = async (data: Pick<Invite, 'email' | 'organisationId' | 'userId'>) => {
+export const createInvite = async (
+  data: Pick<Invite, 'email' | 'organisationId' | 'userId'>,
+) => {
   try {
-    const invite = await prisma.invite.create({ data });
+    const invite = await prisma.invite.create({ data })
 
     if (!invite) {
       throw 'Error creating invite.'

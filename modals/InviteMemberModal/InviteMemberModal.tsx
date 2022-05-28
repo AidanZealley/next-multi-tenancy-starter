@@ -21,7 +21,11 @@ interface IProps {
   onClose: () => void
 }
 
-export const InviteMemberModal = ({ organisationId, isOpen, onClose }: IProps) => {
+export const InviteMemberModal = ({
+  organisationId,
+  isOpen,
+  onClose,
+}: IProps) => {
   const { mutate } = useOrganisationInvitesQuery(organisationId)
   const { createInvite, reset, status } = useCreateInviteMutation(mutate)
   const methods = useForm()
@@ -74,9 +78,13 @@ export const InviteMemberModal = ({ organisationId, isOpen, onClose }: IProps) =
           </Form>
         </ModalBody>
         <ModalFooter display="flex" justifyContent="space-between">
-          <Button onClick={onClose} colorScheme="gray">Cancel</Button>
+          <Button onClick={onClose} colorScheme="gray">
+            Cancel
+          </Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>Invite Member</Button>
+          <Button onClick={submitHandler} isLoading={status === 'loading'}>
+            Invite Member
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

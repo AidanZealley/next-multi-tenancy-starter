@@ -10,19 +10,13 @@ interface IProps {
   initialLoggedInUser: LoggedInUser
 }
 
-const InvitesPage = ({
-  initialLoggedInUser,
-}: IProps) => {
+const InvitesPage = ({ initialLoggedInUser }: IProps) => {
   const { loggedInUser } = useLoggedInUserQuery({
-    fallbackData: initialLoggedInUser
+    fallbackData: initialLoggedInUser,
   })
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={4}
-    >
+    <Box display="flex" flexDirection="column" gap={4}>
       <Heading>Invites</Heading>
       <Text>Hi, {loggedInUser.name}!</Text>
       <Text>Invites page is WIP.</Text>
@@ -31,9 +25,7 @@ const InvitesPage = ({
 }
 
 InvitesPage.layout = (page: React.ReactElement) => {
-  return (
-    <DashboardLayout page={page}/>
-  )
+  return <DashboardLayout page={page} />
 }
 
 export default InvitesPage

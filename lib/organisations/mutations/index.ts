@@ -1,5 +1,3 @@
 export * from './use-add-organisation-mutation'
-export * from './use-create-invite-mutation'
-export * from './use-remove-invite-mutation'
 export * from './use-remove-organisation-mutation'
 export * from './use-switch-organisation-mutation'

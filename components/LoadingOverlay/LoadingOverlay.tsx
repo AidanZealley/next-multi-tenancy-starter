@@ -1,4 +1,4 @@
-import { Box, Spinner } from "@chakra-ui/react"
+import { Box, Spinner } from '@chakra-ui/react'
 
 export const LoadingOverlay = () => {
   return (
@@ -7,11 +7,11 @@ export const LoadingOverlay = () => {
       placeItems="center"
       bg="whiteAlpha.600"
       backdropFilter="blur(5px)"
-      zIndex={10}
+      zIndex="overlay"
       position="absolute"
       inset={0}
     >
-      <Spinner/>
+      <Spinner />
     </Box>
   )
 }

@@ -10,19 +10,13 @@ interface IProps {
   initialLoggedInUser: LoggedInUser
 }
 
-const ActivityPage = ({
-  initialLoggedInUser,
-}: IProps) => {
+const ActivityPage = ({ initialLoggedInUser }: IProps) => {
   const { loggedInUser } = useLoggedInUserQuery({
-    fallbackData: initialLoggedInUser
+    fallbackData: initialLoggedInUser,
   })
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={4}
-    >
+    <Box display="flex" flexDirection="column" gap={4}>
       <Heading>Activity</Heading>
       <Text>Hi, {loggedInUser.name}!</Text>
       <Text>Activity page is WIP.</Text>
@@ -31,9 +25,7 @@ const ActivityPage = ({
 }
 
 ActivityPage.layout = (page: React.ReactElement) => {
-  return (
-    <DashboardLayout page={page}/>
-  )
+  return <DashboardLayout page={page} />
 }
 
 export default ActivityPage

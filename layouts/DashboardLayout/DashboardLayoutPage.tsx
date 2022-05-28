@@ -8,20 +8,14 @@ interface IProps {
 }
 
 export const DashboardLayoutPage = ({ children }: IProps) => {
-  const { switchingStatus } = useDashboardLayoutValuesContext()
+  const { loggedInUserDataStatus, switchingStatus } =
+    useDashboardLayoutValuesContext()
 
   return (
-    <Box
-      display="grid"
-      px={6}
-      py={8}
-      position="relative"
-    >
-      {switchingStatus === 'loading' ? (
-        <SkeletonPage/>
-      ) : (
-        children
-      )}
+    <Box display="grid" px={6} py={8} position="relative">
+      {(switchingStatus === 'loading' ||
+        loggedInUserDataStatus === 'refreshing') && <LoadingOverlay />}
+      {children}
     </Box>
   )
 }

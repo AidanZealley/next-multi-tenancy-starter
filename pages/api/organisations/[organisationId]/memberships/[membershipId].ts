@@ -1,13 +1,13 @@
 import { Membership } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { MembershipWithUserAndOrganisation, MutationResponse, QueryResponse } from 'types'
+import { MutationResponse, QueryResponse } from 'types'
 
-import { prisma } from 'utils/prisma'
+import { prisma } from 'lib/prisma'
 import { withMembershipAuthorisation, withRoleAuthorisation } from 'utils/auth'
 
 const getMembership = async (
   req: NextApiRequest,
-  res: NextApiResponse<QueryResponse<Membership>>
+  res: NextApiResponse<QueryResponse<Membership>>,
 ) => {
   try {
     const id = req.query.membershipId as string
@@ -41,7 +41,7 @@ const editMembership = withRoleAuthorisation(
   },
   async (
     req: NextApiRequest,
-    res: NextApiResponse<MutationResponse<Membership>>
+    res: NextApiResponse<MutationResponse<Membership>>,
   ) => {
     try {
       const id = req.query.membershipId as string
@@ -53,18 +53,18 @@ const editMembership = withRoleAuthorisation(
       const membership = await prisma.membership.update({
         where: { id },
         data: req.body,
-      });
+      })
 
       if (!membership) {
         throw 'Membership failed to update.'
       }
-    
+
       res.status(200).json({ success: true, record: membership })
     } catch (error) {
       console.error(error)
       res.status(400).json({ success: false, error })
     }
-  }
+  },
 )
 
 const removeMembership = withRoleAuthorisation(
@@ -73,7 +73,7 @@ const removeMembership = withRoleAuthorisation(
   },
   async (
     req: NextApiRequest,
-    res: NextApiResponse<MutationResponse<Membership>>
+    res: NextApiResponse<MutationResponse<Membership>>,
   ) => {
     try {
       const id = req.query.membershipId as string
@@ -84,21 +84,18 @@ const removeMembership = withRoleAuthorisation(
 
       const deletedMembership = await prisma.membership.delete({
         where: { id },
-      });
-    
+      })
+
       res.status(200).json({ success: true, record: deletedMembership })
     } catch (error: any) {
       console.error(error)
       res.status(400).json({ success: false, error })
     }
-  }
+  },
 )
 
 export default withMembershipAuthorisation(
-  async (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {  
+  async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case 'GET':
         await getMembership(req, res)
@@ -112,5 +109,5 @@ export default withMembershipAuthorisation(
       default:
         res.status(400).json({ success: false })
     }
-  }
+  },
 )

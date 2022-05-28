@@ -1,10 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next'
 
-export const assertReqRes = (req: NextApiRequest, res: NextApiResponse): void => {
+export const assertReqRes = (
+  req: NextApiRequest,
+  res: NextApiResponse,
+): void => {
   if (!req) {
-    throw new Error('Request is not available');
+    throw new Error('Request is not available')
   }
   if (!res) {
-    throw new Error('Response is not available');
+    throw new Error('Response is not available')
   }
-};
+}
