@@ -52,8 +52,7 @@ model User {
   sessions             Session[]
   memberships          Membership[]
   invitesSent          Invite[]
-  posts                Post[]
-  comments             Comment[]
+  messages             Message[]
   reactions            Reaction[]
   ownedOrganisations   Organisation[] @relation("OwnerOfOrganisation")
   selectedOrganisation Organisation?  @relation("SelectedOrganisation", fields: [organisationId], references: [id], onDelete: SetNull)
@@ -71,8 +70,7 @@ model Organisation {
   userId      String
   invites     Invite[]
   isActive    Boolean?     @default(true)
-  posts       Post[]
-  comments    Comment[]
+  messages    Message[]
   reactions   Reaction[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -100,26 +98,14 @@ model Invite {
   organisationId String
 }
 
-model Post {
-  id             String       @id @default(cuid())
-  text           String
-  user           User         @relation(fields: [userId], references: [id])
-  userId         String
-  comments       Comment[]
-  reactions      Reaction[]
-  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
-  organisationId String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-}
-
-model Comment {
+model Message {
   id             String       @id @default(cuid())
   text           String
   user           User?        @relation(fields: [userId], references: [id])
   userId         String?
-  post           Post?        @relation(fields: [postId], references: [id])
-  postId         String?
+  parentMessage  Message?     @relation("Replies", fields: [messageId], references: [id])
+  messageId      String?
+  replies        Message[]    @relation("Replies")
   reactions      Reaction[]
   organisation   Organisation @relation(fields: [organisationId], references: [id])
   organisationId String
@@ -132,10 +118,8 @@ model Reaction {
   emoji          String
   user           User         @relation(fields: [userId], references: [id])
   userId         String
-  post           Post?        @relation(fields: [postId], references: [id])
-  postId         String?
-  comment        Comment?     @relation(fields: [commentId], references: [id])
-  commentId      String?
+  message        Message?     @relation(fields: [messageId], references: [id])
+  messageId      String?
   organisation   Organisation @relation(fields: [organisationId], references: [id])
   organisationId String
   createdAt      DateTime     @default(now())

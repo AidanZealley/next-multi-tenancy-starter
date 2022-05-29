@@ -1,7 +1,6 @@
 import { extendType, nonNull, objectType, stringArg } from 'nexus'
-import { Comment } from './Comment'
 import { Organisation } from './Organisation'
-import { Post } from './Post'
+import { Message } from './Message'
 import { User } from './User'
 
 export const Reaction = objectType({
@@ -23,8 +22,8 @@ export const Reaction = objectType({
       },
     })
     t.string('userId')
-    t.field('post', {
-      type: Post,
+    t.field('message', {
+      type: Message,
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.reaction
           .findUnique({
@@ -32,23 +31,10 @@ export const Reaction = objectType({
               id: _parent.id,
             },
           })
-          .post()
+          .message()
       },
     })
-    t.string('postId')
-    t.field('comment', {
-      type: Comment,
-      async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.reaction
-          .findUnique({
-            where: {
-              id: _parent.id,
-            },
-          })
-          .comment()
-      },
-    })
-    t.string('commentId')
+    t.string('messageId')
     t.field('organisation', {
       type: Organisation,
       async resolve(_parent, _args, ctx) {

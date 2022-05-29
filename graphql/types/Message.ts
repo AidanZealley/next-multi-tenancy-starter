@@ -1,18 +1,17 @@
 import { extendType, nonNull, objectType, stringArg } from 'nexus'
 import { Organisation } from './Organisation'
-import { Post } from './Post'
 import { Reaction } from './Reaction'
 import { User } from './User'
 
-export const Comment = objectType({
-  name: 'Comment',
+export const Message = objectType({
+  name: 'Message',
   definition(t) {
     t.nonNull.string('id')
     t.string('text')
     t.field('user', {
       type: User,
       async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.comment
+        return await ctx.prisma.message
           .findUnique({
             where: {
               id: _parent.id,
@@ -22,23 +21,35 @@ export const Comment = objectType({
       },
     })
     t.string('userId')
-    t.field('post', {
-      type: Post,
+    t.field('parentMessage', {
+      type: Message,
       async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.comment
+        return await ctx.prisma.message
           .findUnique({
             where: {
               id: _parent.id,
             },
           })
-          .post()
+          .parentMessage()
       },
     })
-    t.string('postId')
+    t.string('messageId')
+    t.list.field('replies', {
+      type: Message,
+      async resolve(_parent, _args, ctx) {
+        return await ctx.prisma.message
+          .findUnique({
+            where: {
+              id: _parent.id,
+            },
+          })
+          .replies()
+      },
+    })
     t.list.field('reactions', {
       type: Reaction,
       async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.comment
+        return await ctx.prisma.message
           .findUnique({
             where: {
               id: _parent.id,
@@ -50,7 +61,7 @@ export const Comment = objectType({
     t.field('organisation', {
       type: Organisation,
       async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.comment
+        return await ctx.prisma.message
           .findUnique({
             where: {
               id: _parent.id,
@@ -65,22 +76,22 @@ export const Comment = objectType({
   },
 })
 
-export const CommentsQuery = extendType({
+export const MessagesQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('comments', {
-      type: 'Comment',
+    t.list.field('messages', {
+      type: 'Message',
       resolve(_parent, _args, ctx) {
-        return ctx.prisma.comment.findMany()
+        return ctx.prisma.message.findMany()
       },
     })
-    t.field('comment', {
-      type: 'Comment',
+    t.field('message', {
+      type: 'Message',
       args: {
         id: nonNull(stringArg()),
       },
       resolve(_root, args, ctx) {
-        return ctx.prisma.comment.findUnique({
+        return ctx.prisma.message.findUnique({
           where: { id: args.id },
         })
       },

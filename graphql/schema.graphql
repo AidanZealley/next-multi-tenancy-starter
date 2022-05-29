@@ -2,20 +2,6 @@
 ### Do not make changes to this file directly
 
 
-type Comment {
-  createdAt: DateTime
-  id: String!
-  organisation: Organisation
-  organisationId: String
-  post: Post
-  postId: String
-  reactions: [Reaction]
-  text: String
-  updatedAt: DateTime
-  user: User
-  userId: String
-}
-
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -51,46 +37,45 @@ type Membership {
   userId: String
 }
 
-type Organisation {
-  comments: [Comment]
+type Message {
   createdAt: DateTime
   id: String!
-  invites: [Invite]
-  isActive: Boolean
-  memberships: [Membership]
-  name: String
-  owner: User
-  posts: [Post]
-  reactions: [Reaction]
-  selectedBy: [User]
-  updatedAt: DateTime
-  userId: String
-}
-
-type Post {
-  comments: [Comment]
-  createdAt: DateTime
-  id: String!
+  messageId: String
   organisation: Organisation
   organisationId: String
+  parentMessage: Message
   reactions: [Reaction]
+  replies: [Message]
   text: String
   updatedAt: DateTime
   user: User
   userId: String
 }
 
+type Organisation {
+  createdAt: DateTime
+  id: String!
+  invites: [Invite]
+  isActive: Boolean
+  memberships: [Membership]
+  messages: [Message]
+  name: String
+  owner: User
+  reactions: [Reaction]
+  selectedBy: [User]
+  updatedAt: DateTime
+  userId: String
+}
+
 type Query {
-  comment(id: String!): Comment
-  comments: [Comment]
   invite(id: String!): Invite
   invites: [Invite]
   membership(id: String!): Membership
   memberships: [Membership]
+  message(id: String!): Message
+  messages: [Message]
   organisation(id: String!): Organisation
   organisations: [Organisation]
-  post(id: String!): Post
-  posts: [Post]
   reaction(id: String!): Reaction
   reactions: [Reaction]
   user(id: String!): User
@@ -98,15 +83,13 @@ type Query {
 }
 
 type Reaction {
-  comment: Comment
-  commentId: String
   createdAt: DateTime
   emoji: String
   id: String!
+  message: Message
+  messageId: String
   organisation: Organisation
   organisationId: String
-  post: Post
-  postId: String
   text: String
   updatedAt: DateTime
   user: User
@@ -119,7 +102,6 @@ enum Role {
 }
 
 type User {
-  comments: [Comment]
   createdAt: DateTime
   email: String
   emailVerified: DateTime
@@ -127,10 +109,10 @@ type User {
   image: String
   invitesSent: [Invite]
   memberships: [Membership]
+  messages: [Message]
   name: String
   organisationId: String
   ownedOrganisations: [Organisation]
-  posts: [Post]
   reactions: [Reaction]
   selectedOrganisation: Organisation
   updatedAt: DateTime

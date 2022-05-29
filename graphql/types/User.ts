@@ -1,9 +1,8 @@
 import { extendType, nonNull, objectType, stringArg } from 'nexus'
-import { Comment } from './Comment'
+import { Message } from './Message'
 import { Invite } from './Invite'
 import { Membership } from './Membership'
 import { Organisation } from './Organisation'
-import { Post } from './Post'
 import { Reaction } from './Reaction'
 
 export const User = objectType({
@@ -38,8 +37,8 @@ export const User = objectType({
           .invitesSent()
       },
     })
-    t.list.field('posts', {
-      type: Post,
+    t.list.field('messages', {
+      type: Message,
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
@@ -47,19 +46,7 @@ export const User = objectType({
               id: _parent.id,
             },
           })
-          .posts()
-      },
-    })
-    t.list.field('comments', {
-      type: Comment,
-      async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.user
-          .findUnique({
-            where: {
-              id: _parent.id,
-            },
-          })
-          .comments()
+          .messages()
       },
     })
     t.list.field('reactions', {

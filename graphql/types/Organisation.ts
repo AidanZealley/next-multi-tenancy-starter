@@ -1,8 +1,7 @@
 import { extendType, nonNull, objectType, stringArg } from 'nexus'
-import { Comment } from './Comment'
+import { Message } from './Message'
 import { Invite } from './Invite'
 import { Membership } from './Membership'
-import { Post } from './Post'
 import { Reaction } from './Reaction'
 import { User } from './User'
 
@@ -61,8 +60,8 @@ export const Organisation = objectType({
       },
     })
     t.boolean('isActive')
-    t.list.field('posts', {
-      type: Post,
+    t.list.field('messages', {
+      type: Message,
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.organisation
           .findUnique({
@@ -70,19 +69,7 @@ export const Organisation = objectType({
               id: _parent.id,
             },
           })
-          .posts()
-      },
-    })
-    t.list.field('comments', {
-      type: Comment,
-      async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.organisation
-          .findUnique({
-            where: {
-              id: _parent.id,
-            },
-          })
-          .comments()
+          .messages()
       },
     })
     t.list.field('reactions', {
