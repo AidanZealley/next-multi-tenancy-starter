@@ -7,6 +7,8 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import { theme } from 'theme'
 import { Wrapper } from 'layouts/Wrapper'
+import { ApolloProvider } from '@apollo/client'
+import { apolloClient } from 'lib/apollo'
 
 type NextPageWithLayout = NextPage & {
   layout?: (page: ReactElement) => ReactNode
@@ -36,11 +38,13 @@ export default function App({
         ></link>
       </Head>
 
-      <ChakraProvider theme={theme}>
-        <SessionProvider session={session}>
-          <Wrapper>{layout(<Component {...pageProps} />)}</Wrapper>
-        </SessionProvider>
-      </ChakraProvider>
+      <ApolloProvider client={apolloClient}>
+        <ChakraProvider theme={theme}>
+          <SessionProvider session={session}>
+            <Wrapper>{layout(<Component {...pageProps} />)}</Wrapper>
+          </SessionProvider>
+        </ChakraProvider>
+      </ApolloProvider>
     </>
   )
 }

@@ -82,7 +82,18 @@ export const MessagesQuery = extendType({
     t.list.field('messages', {
       type: 'Message',
       resolve(_parent, _args, ctx) {
-        return ctx.prisma.message.findMany()
+        console.log(ctx.session)
+        if (!ctx.session) {
+          return []
+        }
+        if (!ctx.session.organisation.id) {
+          return []
+        }
+        return ctx.prisma.organisation
+          .findUnique({
+            where: { id: ctx.session.organisation.id },
+          })
+          .messages()
       },
     })
     t.field('message', {
@@ -90,7 +101,7 @@ export const MessagesQuery = extendType({
       args: {
         id: nonNull(stringArg()),
       },
-      resolve(_root, args, ctx) {
+      resolve(_parent, args, ctx) {
         return ctx.prisma.message.findUnique({
           where: { id: args.id },
         })

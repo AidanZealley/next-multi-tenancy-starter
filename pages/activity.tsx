@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client'
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { retrieveLoggedInUser } from 'lib/users/services'
@@ -10,10 +11,22 @@ interface IProps {
   initialLoggedInUser: LoggedInUser
 }
 
+const AllPostsQuery = gql`
+  query {
+    messages {
+      id
+      text
+    }
+  }
+`
+
 const ActivityPage = ({ initialLoggedInUser }: IProps) => {
   const { loggedInUser } = useLoggedInUserQuery({
     fallbackData: initialLoggedInUser,
   })
+  const { data, loading, error } = useQuery(AllPostsQuery)
+
+  console.log(data, loading, error)
 
   return (
     <Box display="flex" flexDirection="column" gap={4}>
