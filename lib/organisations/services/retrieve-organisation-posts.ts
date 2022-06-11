@@ -1,22 +1,16 @@
-import { PostWithUserCommentsReactions } from 'lib/posts/types'
+import { MessageWithUserReactions } from 'lib/messages/types'
 import { prisma } from 'lib/prisma'
 
 export const retrieveOrganisationPosts = async (
   id: string,
-): Promise<PostWithUserCommentsReactions[]> => {
+): Promise<MessageWithUserReactions[]> => {
   try {
     const organisation = await prisma.organisation.findUnique({
       where: { id },
       include: {
-        posts: {
+        messages: {
           include: {
             user: true,
-            comments: {
-              include: {
-                user: true,
-                reactions: { include: { user: true } },
-              },
-            },
             reactions: { include: { user: true } },
           },
         },
@@ -27,7 +21,7 @@ export const retrieveOrganisationPosts = async (
       throw 'Organisation not found'
     }
 
-    return organisation.posts
+    return organisation.messages
   } catch (error) {
     throw error
   }

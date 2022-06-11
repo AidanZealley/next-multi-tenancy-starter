@@ -15,11 +15,11 @@ export const User = objectType({
     t.string('image')
     t.list.field('memberships', {
       type: Membership,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .memberships()
@@ -27,11 +27,11 @@ export const User = objectType({
     })
     t.list.field('invitesSent', {
       type: Invite,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .invitesSent()
@@ -39,11 +39,11 @@ export const User = objectType({
     })
     t.list.field('messages', {
       type: Message,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .messages()
@@ -51,11 +51,11 @@ export const User = objectType({
     })
     t.list.field('reactions', {
       type: Reaction,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .reactions()
@@ -63,11 +63,11 @@ export const User = objectType({
     })
     t.list.field('ownedOrganisations', {
       type: Organisation,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .ownedOrganisations()
@@ -75,11 +75,11 @@ export const User = objectType({
     })
     t.field('selectedOrganisation', {
       type: Organisation,
-      async resolve(_parent, _args, ctx) {
+      async resolve(parent, _args, ctx) {
         return await ctx.prisma.user
           .findUnique({
             where: {
-              id: _parent.id,
+              id: parent.id,
             },
           })
           .selectedOrganisation()
@@ -100,6 +100,12 @@ export const UsersQuery = extendType({
         return ctx.prisma.user.findMany()
       },
     })
+  },
+})
+
+export const UserQuery = extendType({
+  type: 'Query',
+  definition(t) {
     t.field('user', {
       type: 'User',
       args: {
@@ -108,6 +114,23 @@ export const UsersQuery = extendType({
       resolve(_root, args, ctx) {
         return ctx.prisma.user.findUnique({
           where: { id: args.id },
+        })
+      },
+    })
+  },
+})
+
+export const LoggedInUserQuery = extendType({
+  type: 'Query',
+  definition(t) {
+    t.field('loggedInUser', {
+      type: 'User',
+      resolve(_root, _args, ctx) {
+        if (!ctx?.session?.user.id) {
+          return null
+        }
+        return ctx.prisma.user.findUnique({
+          where: { id: ctx.session.user.id },
         })
       },
     })

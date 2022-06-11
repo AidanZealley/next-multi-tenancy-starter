@@ -5,7 +5,7 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 import { AddtionalSessionData, getAdditionalSessionData } from 'graphql/utils'
 
-type SessionWithAdditionalData = (Session & AddtionalSessionData) | null
+export type SessionWithAdditionalData = (Session & AddtionalSessionData) | null
 
 export type Context = {
   prisma: PrismaClient
@@ -18,7 +18,6 @@ export const createContext = async ({
   req: IncomingMessage
 }): Promise<Context> => {
   const session = await getSession({ req })
-
   if (!session) {
     return {
       prisma,

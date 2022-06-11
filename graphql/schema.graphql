@@ -40,16 +40,17 @@ type Membership {
 type Message {
   createdAt: DateTime
   id: String!
-  messageId: String
   organisation: Organisation
   organisationId: String
-  parentMessage: Message
   reactions: [Reaction]
-  replies: [Message]
   text: String
   updatedAt: DateTime
   user: User
   userId: String
+}
+
+type Mutation {
+  addMessage(text: String!): Message!
 }
 
 type Organisation {
@@ -70,6 +71,7 @@ type Organisation {
 type Query {
   invite(id: String!): Invite
   invites: [Invite]
+  loggedInUser: User
   membership(id: String!): Membership
   memberships: [Membership]
   message(id: String!): Message

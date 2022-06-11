@@ -13,8 +13,8 @@ export const DashboardLayoutPage = ({ children }: IProps) => {
 
   return (
     <Box display="grid" px={6} py={8} position="relative">
-      {(switchingStatus === 'loading' ||
-        loggedInUserDataStatus === 'refreshing') && <LoadingOverlay />}
+      {/* {(switchingStatus === 'loading' ||
+        loggedInUserDataStatus === 'refreshing') && <LoadingOverlay />} */}
       {children}
     </Box>
   )

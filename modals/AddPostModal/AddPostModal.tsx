@@ -12,8 +12,11 @@ import { Form } from 'components/Form'
 import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAddPostMutation } from 'lib/posts/mutations'
-import { useOrganisationPostsQuery } from 'lib/organisations/queries/use-organisation-posts-query'
+import { ALL_MESSAGES_QUERY } from 'graphql/queries'
+import { useQuery } from 'utils/queries'
+import { useMutation } from 'utils/mutations'
+import { ADD_MESSAGE_MUTATION } from 'graphql/mutations'
+import { Message } from '@prisma/client'
 
 interface IProps {
   userId: string
@@ -28,8 +31,14 @@ export const AddPostModal = ({
   isOpen,
   onClose,
 }: IProps) => {
-  const { mutate } = useOrganisationPostsQuery(organisationId)
-  const { addPost, reset, status } = useAddPostMutation(mutate)
+  const { mutate } = useQuery({
+    query: ALL_MESSAGES_QUERY,
+  })
+  const [addMessage, { data, status, error, reset }] = useMutation(
+    ADD_MESSAGE_MUTATION,
+    mutate,
+  )
+
   const methods = useForm()
 
   const submitHandler = async () => {
@@ -42,7 +51,7 @@ export const AddPostModal = ({
 
       const values = methods.getValues()
 
-      addPost({
+      addMessage({
         ...values,
         userId,
         organisationId,

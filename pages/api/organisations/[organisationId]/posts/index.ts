@@ -4,7 +4,7 @@ import { prisma } from 'lib/prisma'
 import { withMembershipAuthorisation } from 'utils/auth'
 import { QueryResponse } from 'types'
 import { Post } from '@prisma/client'
-import { createPost } from 'lib/posts/services'
+import { createPost } from 'lib/messages/services'
 import { MutationResponse } from 'types'
 import { retrieveOrganisationPosts } from 'lib/organisations/services/retrieve-organisation-posts'
 

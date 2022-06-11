@@ -38,7 +38,7 @@ const MembersPage = ({
       fallbackData: initialOrganisationMemberships,
     },
   )
-  console.log(organisation)
+
   return (
     <Box display="flex" flexDirection="column" gap={4}>
       <Heading>Members</Heading>

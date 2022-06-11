@@ -15,9 +15,9 @@ const mainLinks = [
     text: 'Activity',
   },
   {
-    action: '/posts',
+    action: '/messages',
     icon: <Icon as={MessageSquare} w={4} h={4} color="gray.600" />,
-    text: 'Posts',
+    text: 'Messages',
   },
   {
     action: '/members',

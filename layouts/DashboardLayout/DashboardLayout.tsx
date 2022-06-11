@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import { DashboardSidebar } from 'components/DashboardSidebar'
-import { useLoggedInUserQuery } from 'lib/users/queries'
+import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
+import { useQuery } from 'utils/queries'
 import { DashboardLayoutPage } from './DashboardLayoutPage'
 import { DashboardLayoutProvider } from './DashboardLayoutProvider'
 
@@ -12,8 +13,12 @@ export const DashboardLayout = ({ page }: IProps) => {
   const { props } = page
   const { layoutData } = props
   const { loggedInUser } = layoutData
-  const { loggedInUser: user } = useLoggedInUserQuery({
-    fallbackData: loggedInUser,
+  const { data: user } = useQuery({
+    query: LOGGED_IN_USER_QUERY,
+    variables: { email: loggedInUser.email },
+    config: {
+      fallbackData: loggedInUser,
+    },
   })
   const { selectedOrganisation, memberships } = user
 
