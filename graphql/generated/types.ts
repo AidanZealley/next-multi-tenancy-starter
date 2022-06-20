@@ -159,6 +159,11 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     addMessage: NexusGenRootTypes['Message']; // Message!
+    deleteMessage: NexusGenRootTypes['Message']; // Message!
+    deleteUser: NexusGenRootTypes['User']; // User!
+    switchOrganisation: NexusGenRootTypes['User']; // User!
+    updateMessage: NexusGenRootTypes['Message']; // Message!
+    updateUser: NexusGenRootTypes['User']; // User!
   }
   Organisation: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -175,13 +180,13 @@ export interface NexusGenFieldTypes {
     userId: string | null; // String
   }
   Query: { // field return type
+    allMessages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     invite: NexusGenRootTypes['Invite'] | null; // Invite
     invites: Array<NexusGenRootTypes['Invite'] | null> | null; // [Invite]
     loggedInUser: NexusGenRootTypes['User'] | null; // User
     membership: NexusGenRootTypes['Membership'] | null; // Membership
     memberships: Array<NexusGenRootTypes['Membership'] | null> | null; // [Membership]
     message: NexusGenRootTypes['Message'] | null; // Message
-    messages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     organisation: NexusGenRootTypes['Organisation'] | null; // Organisation
     organisations: Array<NexusGenRootTypes['Organisation'] | null> | null; // [Organisation]
     reaction: NexusGenRootTypes['Reaction'] | null; // Reaction
@@ -256,6 +261,11 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     addMessage: 'Message'
+    deleteMessage: 'Message'
+    deleteUser: 'User'
+    switchOrganisation: 'User'
+    updateMessage: 'Message'
+    updateUser: 'User'
   }
   Organisation: { // field return type name
     createdAt: 'DateTime'
@@ -272,13 +282,13 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Query: { // field return type name
+    allMessages: 'Message'
     invite: 'Invite'
     invites: 'Invite'
     loggedInUser: 'User'
     membership: 'Membership'
     memberships: 'Membership'
     message: 'Message'
-    messages: 'Message'
     organisation: 'Organisation'
     organisations: 'Organisation'
     reaction: 'Reaction'
@@ -322,8 +332,28 @@ export interface NexusGenArgTypes {
     addMessage: { // args
       text: string; // String!
     }
+    deleteMessage: { // args
+      id: string; // String!
+    }
+    deleteUser: { // args
+      id: string; // String!
+    }
+    switchOrganisation: { // args
+      organisationId: string; // String!
+    }
+    updateMessage: { // args
+      id: string; // String!
+      text: string; // String!
+    }
+    updateUser: { // args
+      id: string; // String!
+      organisationId?: string | null; // String
+    }
   }
   Query: {
+    allMessages: { // args
+      organisationId: string; // String!
+    }
     invite: { // args
       id: string; // String!
     }

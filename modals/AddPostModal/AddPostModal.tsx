@@ -33,8 +33,9 @@ export const AddPostModal = ({
 }: IProps) => {
   const { mutate } = useQuery({
     query: ALL_MESSAGES_QUERY,
+    variables: { organisationId },
   })
-  const [addMessage, { data, status, error, reset }] = useMutation(
+  const [addMessage, { status, reset }] = useMutation(
     ADD_MESSAGE_MUTATION,
     mutate,
   )

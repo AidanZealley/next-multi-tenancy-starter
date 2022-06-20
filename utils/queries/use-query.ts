@@ -1,5 +1,6 @@
 import request, { RequestDocument } from 'graphql-request'
 import useSWR, { SWRConfiguration } from 'swr'
+import { QueryStatus } from 'utils/queries'
 
 interface IUseQuery {
   query: RequestDocument
@@ -7,12 +8,16 @@ interface IUseQuery {
   config?: SWRConfiguration
 }
 
-const queryStatus = (data: any, error: any, isValidating: boolean) => {
+const queryStatus = (
+  data: any,
+  error: any,
+  isValidating: boolean,
+): QueryStatus => {
   if (!error && !data && !isValidating) {
     return 'loading'
   }
   if (data && isValidating) {
-    return 'refreshing'
+    return 'revalidating'
   }
   if (error) {
     return 'error'

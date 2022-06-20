@@ -1,6 +1,6 @@
 export const ALL_MESSAGES_QUERY = `
-  query Messages {
-    messages {
+  query AllMessagesQuery($organisationId: String!) {
+    allMessages(organisationId: $organisationId) {
       id
       text
       user {

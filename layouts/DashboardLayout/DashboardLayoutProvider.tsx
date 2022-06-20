@@ -1,16 +1,16 @@
 import { User } from '@prisma/client'
-import { useSwitchOrganisationMutation } from 'lib/organisations/mutations'
-import { useLoggedInUserQuery } from 'lib/users/queries'
+import { SWITCH_ORGANISATION_MUTATION } from 'graphql/mutations'
+import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { createContext, useContext, useMemo } from 'react'
+import { useMutation } from 'utils/mutations'
 import { MutationStatusTypes } from 'utils/mutations/types'
-import { QueryStatus } from 'utils/queries/types'
+import { useQuery } from 'utils/queries'
 
 interface IProps {
   children: React.ReactNode
 }
 
 interface IDashboardValuesContext {
-  loggedInUserDataStatus: QueryStatus
   switchingStatus: MutationStatusTypes
 }
 
@@ -50,16 +50,19 @@ export const useDashboardLayoutActionsContext = () => {
 }
 
 export const DashboardLayoutProvider = ({ children }: IProps) => {
-  const { status: loggedInUserDataStatus, mutate } = useLoggedInUserQuery()
-  const { switchOrganisation, status: switchingStatus } =
-    useSwitchOrganisationMutation(mutate)
+  const { mutate } = useQuery({
+    query: LOGGED_IN_USER_QUERY,
+  })
+  const [switchOrganisation, { status: switchingStatus }] = useMutation(
+    SWITCH_ORGANISATION_MUTATION,
+    mutate,
+  )
 
   const values = useMemo(
     () => ({
-      loggedInUserDataStatus,
       switchingStatus,
     }),
-    [loggedInUserDataStatus, switchingStatus],
+    [switchingStatus],
   )
 
   const actions = useMemo(

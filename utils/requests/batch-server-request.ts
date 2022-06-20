@@ -1,8 +1,4 @@
-import {
-  BatchRequestDocument,
-  batchRequests,
-  RequestDocument,
-} from 'graphql-request'
+import { BatchRequestDocument, batchRequests } from 'graphql-request'
 import { NextPageContext } from 'next'
 
 export const batchServerRequest = async (

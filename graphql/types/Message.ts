@@ -1,3 +1,4 @@
+import { isMember } from 'graphql/utils'
 import { extendType, nonNull, objectType, stringArg } from 'nexus'
 import { Organisation } from './Organisation'
 import { Reaction } from './Reaction'
@@ -51,22 +52,34 @@ export const Message = objectType({
   },
 })
 
-export const MessagesQuery = extendType({
+export const AllMessagesQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('messages', {
+    t.list.field('allMessages', {
       type: 'Message',
-      resolve(_parent, _args, ctx) {
-        if (!ctx?.session?.organisation.id) {
-          return []
+      args: {
+        organisationId: nonNull(stringArg()),
+      },
+      async resolve(_parent, args, ctx) {
+        const hasMembership = await isMember(args.organisationId, ctx)
+
+        if (!hasMembership) {
+          throw 'Not a member'
         }
+
         return ctx.prisma.organisation
           .findUnique({
-            where: { id: ctx.session?.organisation.id || '1' },
+            where: { id: args.organisationId },
           })
           .messages()
       },
     })
+  },
+})
+
+export const MessageQuery = extendType({
+  type: 'Query',
+  definition(t) {
     t.field('message', {
       type: 'Message',
       args: {
@@ -93,10 +106,10 @@ export const CreateMessageMutation = extendType({
         console.log(ctx?.session?.user.id, ctx?.session?.organisation.id)
         try {
           if (!ctx?.session?.user.role) {
-            throw new Error(`Unauthorised`)
+            throw new Error('Unauthorised')
           }
           if (!ctx?.session?.user.id || !ctx?.session?.organisation.id) {
-            throw new Error(`Bad Request`)
+            throw new Error('Bad Request')
           }
           const newMessage = {
             text: args.text,
@@ -118,45 +131,40 @@ export const CreateMessageMutation = extendType({
   },
 })
 
-// // update Message
-// export const UpdateMessageMutation = extendType({
-//   type: 'Mutation',
-//   definition(t) {
-//     t.nonNull.field('updateMessage', {
-//       type: 'Message',
-//       args: {
-//         id: stringArg(),
-//         text: stringArg(),
-//       },
-//       resolve(_parent, args, ctx) {
-//         return ctx.prisma.message.update({
-//           where: { id: args.id },
-//           data: {
-//             title: args.title,
-//             url: args.url,
-//             imageUrl: args.imageUrl,
-//             category: args.category,
-//             description: args.description,
-//           },
-//         })
-//       },
-//     })
-//   },
-// })
+export const UpdateMessageMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('updateMessage', {
+      type: 'Message',
+      args: {
+        id: nonNull(stringArg()),
+        text: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.message.update({
+          where: { id: args.id! },
+          data: {
+            text: args.text!,
+          },
+        })
+      },
+    })
+  },
+})
 
-// export const DeleteMessageMutation = extendType({
-//   type: 'Mutation',
-//   definition(t) {
-//     t.nonNull.field('deleteMessage', {
-//       type: 'Message',
-//       args: {
-//         id: nonNull(stringArg()),
-//       },
-//       resolve(_parent, args, ctx) {
-//         return ctx.prisma.message.delete({
-//           where: { id: args.id },
-//         })
-//       },
-//     })
-//   },
-// })
+export const DeleteMessageMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('deleteMessage', {
+      type: 'Message',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.message.delete({
+          where: { id: args.id },
+        })
+      },
+    })
+  },
+})

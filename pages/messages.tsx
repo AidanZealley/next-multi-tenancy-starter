@@ -8,6 +8,7 @@ import { MessagesList } from 'components/MessagesList'
 import { ALL_MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { useQuery } from 'utils/queries'
 import { batchServerRequest } from 'utils/requests'
+import { getAdditionalSessionData } from 'graphql/utils'
 
 interface IProps {
   initialData: any
@@ -15,18 +16,18 @@ interface IProps {
 }
 
 const MessagesPage = ({ initialData }: IProps) => {
-  const { data: messages } = useQuery({
-    query: ALL_MESSAGES_QUERY,
+  const { data: loggedInUser } = useQuery({
+    query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData?.messages,
+      fallbackData: initialData.loggedInUser,
     },
   })
 
-  const { data: loggedInUser } = useQuery({
+  const { data: messages } = useQuery({
     query: ALL_MESSAGES_QUERY,
-    variables: { email: initialData?.loggedInUser.email },
+    variables: { organisationId: loggedInUser.organisationId },
     config: {
-      fallbackData: initialData?.loggedInUser,
+      fallbackData: initialData.allMessages,
     },
   })
 
@@ -76,12 +77,15 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
+  const bigSession = await getAdditionalSessionData(session)
+
   const data = await batchServerRequest(
     [
-      { document: ALL_MESSAGES_QUERY },
       {
-        document: LOGGED_IN_USER_QUERY,
+        document: ALL_MESSAGES_QUERY,
+        variables: { organisationId: bigSession.organisation.id },
       },
+      { document: LOGGED_IN_USER_QUERY },
     ],
     context,
   )

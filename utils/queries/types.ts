@@ -1,6 +1,6 @@
 import { KeyedMutator, SWRConfiguration } from 'swr'
 
-export type QueryStatus = 'idle' | 'loading' | 'refreshing' | 'error'
+export type QueryStatus = 'idle' | 'loading' | 'revalidating' | 'error'
 
 export type QueryData<T> = {
   data: T

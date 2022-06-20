@@ -9,4 +9,9 @@ export type MutationResponse<T> = {
   error?: MutationRequestError[]
 }
 
-export type MutationStatusTypes = 'idle' | 'loading' | 'success' | 'error'
+export type MutationStatusTypes =
+  | 'idle'
+  | 'loading'
+  | 'revalidating'
+  | 'success'
+  | 'error'

@@ -1,9 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import { DashboardNav } from 'components/DashboardNav'
-import { LoadingOverlay } from 'components/LoadingOverlay'
 import { SidebarAccountNav } from 'components/SidebarAccountNav'
 import { SidebarOrganisationSwitcher } from 'components/SidebarOrganisationSwitcher'
-import { useDashboardLayoutValuesContext } from 'layouts/DashboardLayout/DashboardLayoutProvider'
 import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'
 import { OrganisationWithMemberships } from 'lib/organisations/types'
 import { LoggedInUser } from 'lib/users/types'
@@ -20,12 +18,10 @@ export const DashboardSidebar = ({
   selectedOrganisation,
   userMemberships,
 }: IProps) => {
-  const { loggedInUserDataStatus, switchingStatus } =
-    useDashboardLayoutValuesContext()
   const dashboardRef = useRef(null)
 
   return (
-    <Box ref={dashboardRef} height="100vh" position="relative" zIndex="popover">
+    <Box height="100vh">
       <Box
         overflow="auto"
         position="relative"
@@ -52,10 +48,7 @@ export const DashboardSidebar = ({
           />
         </Box>
 
-        <Box py={3} position="relative">
-          {switchingStatus === 'loading' &&
-            loggedInUserDataStatus === 'refreshing' && <LoadingOverlay />}
-
+        <Box py={3}>
           <DashboardNav />
         </Box>
 
@@ -72,6 +65,7 @@ export const DashboardSidebar = ({
           <SidebarAccountNav user={user} dashboardRef={dashboardRef} />
         </Box>
       </Box>
+      <Box ref={dashboardRef} position="relative" zIndex="popover" />
     </Box>
   )
 }

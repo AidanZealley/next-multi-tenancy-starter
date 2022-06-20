@@ -1,20 +1,12 @@
-import { Box, Skeleton } from '@chakra-ui/react'
-import { LoadingOverlay } from 'components/LoadingOverlay'
-import { SkeletonPage } from 'components/SkeletonPage'
-import { useDashboardLayoutValuesContext } from './DashboardLayoutProvider'
+import { Box } from '@chakra-ui/react'
 
 interface IProps {
   children: React.ReactNode
 }
 
 export const DashboardLayoutPage = ({ children }: IProps) => {
-  const { loggedInUserDataStatus, switchingStatus } =
-    useDashboardLayoutValuesContext()
-
   return (
-    <Box display="grid" px={6} py={8} position="relative">
-      {/* {(switchingStatus === 'loading' ||
-        loggedInUserDataStatus === 'refreshing') && <LoadingOverlay />} */}
+    <Box display="grid" px={6} py={8}>
       {children}
     </Box>
   )

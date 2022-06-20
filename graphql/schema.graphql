@@ -51,6 +51,11 @@ type Message {
 
 type Mutation {
   addMessage(text: String!): Message!
+  deleteMessage(id: String!): Message!
+  deleteUser(id: String!): User!
+  switchOrganisation(organisationId: String!): User!
+  updateMessage(id: String!, text: String!): Message!
+  updateUser(id: String!, organisationId: String): User!
 }
 
 type Organisation {
@@ -69,13 +74,13 @@ type Organisation {
 }
 
 type Query {
+  allMessages(organisationId: String!): [Message]
   invite(id: String!): Invite
   invites: [Invite]
   loggedInUser: User
   membership(id: String!): Membership
   memberships: [Membership]
   message(id: String!): Message
-  messages: [Message]
   organisation(id: String!): Organisation
   organisations: [Organisation]
   reaction(id: String!): Reaction

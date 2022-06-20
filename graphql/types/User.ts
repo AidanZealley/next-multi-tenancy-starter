@@ -4,6 +4,7 @@ import { Invite } from './Invite'
 import { Membership } from './Membership'
 import { Organisation } from './Organisation'
 import { Reaction } from './Reaction'
+import { isMember } from 'graphql/utils'
 
 export const User = objectType({
   name: 'User',
@@ -131,6 +132,74 @@ export const LoggedInUserQuery = extendType({
         }
         return ctx.prisma.user.findUnique({
           where: { id: ctx.session.user.id },
+        })
+      },
+    })
+  },
+})
+
+export const UpdateUserMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('updateUser', {
+      type: 'User',
+      args: {
+        id: nonNull(stringArg()),
+        organisationId: stringArg(),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.user.update({
+          where: { id: args.id! },
+          data: {
+            organisationId: args.organisationId,
+          },
+        })
+      },
+    })
+  },
+})
+
+export const DeleteUserMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('deleteUser', {
+      type: 'User',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.user.delete({
+          where: { id: args.id },
+        })
+      },
+    })
+  },
+})
+
+export const SwitchOrganisationMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('switchOrganisation', {
+      type: 'User',
+      args: {
+        organisationId: nonNull(stringArg()),
+      },
+      async resolve(_parent, args, ctx) {
+        if (!ctx.session?.user.id) {
+          throw 'Requires authentication'
+        }
+
+        const hasMembership = await isMember(args.organisationId, ctx)
+
+        if (!hasMembership) {
+          throw 'Not a member'
+        }
+
+        return ctx.prisma.user.update({
+          where: { id: ctx.session?.user.id },
+          data: {
+            organisationId: args.organisationId,
+          },
         })
       },
     })

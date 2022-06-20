@@ -8,17 +8,17 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { Check } from 'react-feather'
-import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'
-import { useLoggedInUserQuery } from 'lib/users/queries'
 import { LoggedInUser } from 'lib/users/types'
 import {
   useDashboardLayoutActionsContext,
   useDashboardLayoutValuesContext,
 } from 'layouts/DashboardLayout/DashboardLayoutProvider'
 import { UserTags } from 'components/UserTags'
+import { useQuery } from 'utils/queries'
+import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
 
 interface IProps {
-  membership: MembershipWithOrganisationMemberships
+  membership: any
   loggedInUser: LoggedInUser
   isSelected: boolean
 }
@@ -29,8 +29,11 @@ export const MembershipsListItem = ({
   isSelected,
 }: IProps) => {
   const { organisationId, organisation, role } = membership
-  const { loggedInUser: user } = useLoggedInUserQuery({
-    fallbackData: loggedInUser,
+  const { data: user } = useQuery({
+    query: LOGGED_IN_USER_QUERY,
+    config: {
+      fallbackData: loggedInUser,
+    },
   })
   const { switchingStatus } = useDashboardLayoutValuesContext()
   const { switchOrganisation } = useDashboardLayoutActionsContext()
@@ -54,7 +57,7 @@ export const MembershipsListItem = ({
     >
       <Box position="relative">
         <Avatar borderRadius="md" name={organisation?.name} />
-        {isSelected && (
+        {isSelected ? (
           <Circle
             size={5}
             bg="green.500"
@@ -65,18 +68,20 @@ export const MembershipsListItem = ({
           >
             <Icon as={Check} w={3} h={3} color="white" />
           </Circle>
-        )}
-        {switchingStatus === 'loading' && (
-          <Circle
-            size={5}
-            bg="white"
-            position="absolute"
-            top={-1}
-            right={-1}
-            boxShadow="sm"
-          >
-            <Spinner size="xs" color="green.500" />
-          </Circle>
+        ) : (
+          (switchingStatus === 'loading' ||
+            switchingStatus === 'revalidating') && (
+            <Circle
+              size={5}
+              bg="white"
+              position="absolute"
+              top={-1}
+              right={-1}
+              boxShadow="sm"
+            >
+              <Spinner size="xs" color="green.500" />
+            </Circle>
+          )
         )}
       </Box>
       <Box display="grid" gap={1} justifyContent="flex-start">

@@ -1,2 +1,2 @@
-export * from './create-query'
+export * from './types'
 export * from './use-query'

@@ -12,7 +12,6 @@ import {
 import { VerticalNav } from 'components/VerticalNav'
 import { LoggedInUser } from 'lib/users/types'
 import { signOut } from 'next-auth/react'
-import { useRef } from 'react'
 import { LogOut, MoreVertical, Plus, Settings } from 'react-feather'
 
 const accountLinks = [
