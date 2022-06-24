@@ -1,15 +1,11 @@
 import { PrismaClient } from '@prisma/client'
 import { IncomingMessage } from 'http'
 import { prisma } from 'lib/prisma'
-import { Session } from 'next-auth'
-import { getSession } from 'next-auth/react'
-import { AddtionalSessionData, getAdditionalSessionData } from 'graphql/utils'
-
-export type SessionWithAdditionalData = (Session & AddtionalSessionData) | null
+import { getUserSession, UserSession } from 'utils/auth'
 
 export type Context = {
   prisma: PrismaClient
-  session: SessionWithAdditionalData
+  session: UserSession
 }
 
 export const createContext = async ({
@@ -17,25 +13,10 @@ export const createContext = async ({
 }: {
   req: IncomingMessage
 }): Promise<Context> => {
-  const session = await getSession({ req })
-  if (!session) {
-    return {
-      prisma,
-      session: null,
-    }
-  }
-
-  const additionalSessionData = await getAdditionalSessionData(session)
+  const session = await getUserSession(req)
 
   return {
     prisma,
-    session: {
-      ...session,
-      user: {
-        ...session.user,
-        ...additionalSessionData.user,
-      },
-      organisation: additionalSessionData.organisation,
-    },
+    session,
   }
 }

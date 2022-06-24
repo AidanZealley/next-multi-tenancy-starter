@@ -9,14 +9,12 @@ import {
 } from '@chakra-ui/react'
 import { MembersTableRow } from 'components/MembersTableRow'
 import { MembershipWithUser } from 'lib/memberships/types'
-import { OrganisationWithMemberships } from 'lib/organisations/types'
 
 interface IProps {
-  organisation: OrganisationWithMemberships
   memberships: MembershipWithUser[]
 }
 
-export const MembersTable = ({ organisation, memberships }: IProps) => {
+export const MembersTable = ({ memberships }: IProps) => {
   return (
     <TableContainer>
       <Table variant="simple" colorScheme="gray">
@@ -30,11 +28,7 @@ export const MembersTable = ({ organisation, memberships }: IProps) => {
         </Thead>
         <Tbody>
           {memberships.map(membership => (
-            <MembersTableRow
-              key={membership.id}
-              organisation={organisation}
-              membership={membership}
-            />
+            <MembersTableRow key={membership.id} membership={membership} />
           ))}
         </Tbody>
       </Table>

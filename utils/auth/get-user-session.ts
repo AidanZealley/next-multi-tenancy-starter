@@ -1,21 +1,22 @@
-import { Session } from 'next-auth'
 import { prisma } from 'lib/prisma'
 import { Role } from '@prisma/client'
+import { getSession } from 'next-auth/react'
+import { IncomingMessage } from 'http'
 
-type AdditionalUserSessionData = {
+type SessionUserData = {
   id: string | null
   role: Role | null
   isOwner: boolean
 }
 
-type AdditionalOrganisationSessionData = {
+type SessionOrganisationData = {
   id: string | null
 }
 
-export type AddtionalSessionData = {
-  user: AdditionalUserSessionData
-  organisation: AdditionalOrganisationSessionData
-}
+export type UserSession = {
+  user: SessionUserData
+  organisation: SessionOrganisationData
+} | null
 
 const defaultData = {
   user: {
@@ -28,10 +29,16 @@ const defaultData = {
   },
 }
 
-export const getAdditionalSessionData = async (
-  session: Session,
-): Promise<AddtionalSessionData> => {
+export const getUserSession = async (
+  req: IncomingMessage,
+): Promise<UserSession | null> => {
   try {
+    const session = await getSession({ req })
+
+    if (!session) {
+      return null
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: session?.user?.email! },
       include: {
@@ -41,7 +48,7 @@ export const getAdditionalSessionData = async (
     })
 
     if (!user) {
-      throw 'User not found.'
+      return null
     }
 
     if (!user.organisationId) {

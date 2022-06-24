@@ -1,33 +1,37 @@
 import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { NextPageContext } from 'next'
-import { getSession } from 'next-auth/react'
 import { Plus } from 'react-feather'
 import { AddPostModal } from 'modals/AddPostModal'
 import { MessagesList } from 'components/MessagesList'
-import { ALL_MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
+import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { useQuery } from 'utils/queries'
 import { batchServerRequest } from 'utils/requests'
-import { getAdditionalSessionData } from 'graphql/utils'
+import { getUserSession } from 'utils/auth'
+import { LoggedInUser } from 'lib/users/types'
+import { MessageWithUserReactions } from 'lib/messages/types'
 
-interface IProps {
-  initialData: any
-  messages: any[]
+type IProps = {
+  initialData: {
+    loggedInUser: LoggedInUser
+    messages: MessageWithUserReactions[]
+  }
+  organisationId: string
 }
 
-const MessagesPage = ({ initialData }: IProps) => {
-  const { data: loggedInUser } = useQuery({
+const MessagesPage = ({ initialData, organisationId }: IProps) => {
+  const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
       fallbackData: initialData.loggedInUser,
     },
   })
 
-  const { data: messages } = useQuery({
-    query: ALL_MESSAGES_QUERY,
-    variables: { organisationId: loggedInUser.organisationId },
+  const { data: messages } = useQuery<MessageWithUserReactions[]>({
+    query: MESSAGES_QUERY,
+    variables: { organisationId },
     config: {
-      fallbackData: initialData.allMessages,
+      fallbackData: initialData.messages,
     },
   })
 
@@ -66,7 +70,7 @@ MessagesPage.layout = (page: React.ReactElement) => {
 export default MessagesPage
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession(context)
+  const session = await getUserSession(context.req!)
 
   if (!session) {
     return {
@@ -77,13 +81,20 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
-  const bigSession = await getAdditionalSessionData(session)
+  if (!session.organisation.id) {
+    return {
+      redirect: {
+        destination: '/organisations',
+        permanent: false,
+      },
+    }
+  }
 
   const data = await batchServerRequest(
     [
       {
-        document: ALL_MESSAGES_QUERY,
-        variables: { organisationId: bigSession.organisation.id },
+        document: MESSAGES_QUERY,
+        variables: { organisationId: session.organisation.id },
       },
       { document: LOGGED_IN_USER_QUERY },
     ],
@@ -96,6 +107,7 @@ export async function getServerSideProps(context: NextPageContext) {
         JSON.stringify({ loggedInUser: data.loggedInUser }),
       ),
       initialData: JSON.parse(JSON.stringify(data)),
+      organisationId: session.organisation.id,
     },
   }
 }

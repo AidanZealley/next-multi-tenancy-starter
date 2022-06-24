@@ -1,5 +1,5 @@
-import { Box, ChakraTheme, Tag } from '@chakra-ui/react'
-import { Membership, Organisation, Role, User } from '@prisma/client'
+import { Box, Tag } from '@chakra-ui/react'
+import { Organisation, Role, User } from '@prisma/client'
 
 interface RoleValues {
   label: string
@@ -23,7 +23,7 @@ const getRoleValues = (role: Role): RoleValues =>
 
 interface IProps {
   user: User
-  organisation: Organisation
+  organisation: Pick<Organisation, 'userId'>
   role: Role
 }
 
@@ -32,7 +32,7 @@ export const UserTags = ({ user, organisation, role }: IProps) => {
 
   return (
     <Box display="flex" gap={1} alignItems="center">
-      {user.id === organisation?.userId && (
+      {user.id === organisation.userId && (
         <Tag size="sm" variant="subtle" colorScheme="green">
           Owner
         </Tag>

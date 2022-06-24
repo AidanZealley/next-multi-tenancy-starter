@@ -1,15 +1,22 @@
 import request, { RequestDocument } from 'graphql-request'
-import useSWR, { SWRConfiguration } from 'swr'
+import useSWR, { KeyedMutator, SWRConfiguration } from 'swr'
 import { QueryStatus } from 'utils/queries'
 
-interface IUseQuery {
+interface IUseQuery<T> {
   query: RequestDocument
   variables?: { [key: string]: string }
-  config?: SWRConfiguration
+  config?: SWRConfiguration<T>
 }
 
-const queryStatus = (
-  data: any,
+type UseQuery<T> = {
+  data: T
+  status: QueryStatus
+  error: any
+  mutate: KeyedMutator<T>
+}
+
+const queryStatus = <T>(
+  data: T,
   error: any,
   isValidating: boolean,
 ): QueryStatus => {
@@ -39,13 +46,17 @@ const fetcher = async (
   return data
 }
 
-export const useQuery = ({ query, variables, config }: IUseQuery) => {
+export const useQuery = <T = any>({
+  query,
+  variables,
+  config,
+}: IUseQuery<T>): UseQuery<T> => {
   const { data, error, mutate, isValidating } = useSWR(
     [query, variables],
     fetcher,
     config,
   )
-  const status = queryStatus(data, error, isValidating)
+  const status: QueryStatus = queryStatus<T>(data, error, isValidating)
 
   return {
     data,

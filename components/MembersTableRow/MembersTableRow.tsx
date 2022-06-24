@@ -1,16 +1,14 @@
 import { Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
 import { UserTags } from 'components/UserTags'
 import { MembershipWithUser } from 'lib/memberships/types'
-import { OrganisationWithMemberships } from 'lib/organisations/types'
 import { Edit2 } from 'react-feather'
 
 interface IProps {
-  organisation: OrganisationWithMemberships
   membership: MembershipWithUser
 }
 
-export const MembersTableRow = ({ organisation, membership }: IProps) => {
-  const { user, role } = membership
+export const MembersTableRow = ({ membership }: IProps) => {
+  const { user, organisation, role } = membership
 
   return (
     <Tr>

@@ -52,10 +52,10 @@ export const Message = objectType({
   },
 })
 
-export const AllMessagesQuery = extendType({
+export const MessagesQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('allMessages', {
+    t.list.field('messages', {
       type: 'Message',
       args: {
         organisationId: nonNull(stringArg()),

@@ -180,13 +180,13 @@ export interface NexusGenFieldTypes {
     userId: string | null; // String
   }
   Query: { // field return type
-    allMessages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     invite: NexusGenRootTypes['Invite'] | null; // Invite
     invites: Array<NexusGenRootTypes['Invite'] | null> | null; // [Invite]
     loggedInUser: NexusGenRootTypes['User'] | null; // User
     membership: NexusGenRootTypes['Membership'] | null; // Membership
     memberships: Array<NexusGenRootTypes['Membership'] | null> | null; // [Membership]
     message: NexusGenRootTypes['Message'] | null; // Message
+    messages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     organisation: NexusGenRootTypes['Organisation'] | null; // Organisation
     organisations: Array<NexusGenRootTypes['Organisation'] | null> | null; // [Organisation]
     reaction: NexusGenRootTypes['Reaction'] | null; // Reaction
@@ -282,13 +282,13 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Query: { // field return type name
-    allMessages: 'Message'
     invite: 'Invite'
     invites: 'Invite'
     loggedInUser: 'User'
     membership: 'Membership'
     memberships: 'Membership'
     message: 'Message'
+    messages: 'Message'
     organisation: 'Organisation'
     organisations: 'Organisation'
     reaction: 'Reaction'
@@ -351,17 +351,20 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    allMessages: { // args
-      organisationId: string; // String!
-    }
     invite: { // args
       id: string; // String!
     }
     membership: { // args
       id: string; // String!
     }
+    memberships: { // args
+      organisationId: string; // String!
+    }
     message: { // args
       id: string; // String!
+    }
+    messages: { // args
+      organisationId: string; // String!
     }
     organisation: { // args
       id: string; // String!

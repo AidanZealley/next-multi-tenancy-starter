@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react'
 import { MessagesListItem } from 'components/MessagesListItem'
+import { MessageWithUserReactions } from 'lib/messages/types'
 
 interface IProps {
-  messages: any[]
+  messages: MessageWithUserReactions[]
 }
 
 export const MessagesList = ({ messages }: IProps) => {

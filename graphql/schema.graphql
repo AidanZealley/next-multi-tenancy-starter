@@ -74,13 +74,13 @@ type Organisation {
 }
 
 type Query {
-  allMessages(organisationId: String!): [Message]
   invite(id: String!): Invite
   invites: [Invite]
   loggedInUser: User
   membership(id: String!): Membership
-  memberships: [Membership]
+  memberships(organisationId: String!): [Membership]
   message(id: String!): Message
+  messages(organisationId: String!): [Message]
   organisation(id: String!): Organisation
   organisations: [Organisation]
   reaction(id: String!): Reaction

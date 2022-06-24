@@ -48,8 +48,15 @@ export const MembershipsQuery = extendType({
   definition(t) {
     t.list.field('memberships', {
       type: 'Membership',
-      resolve(_parent, _args, ctx) {
-        return ctx.prisma.membership.findMany()
+      args: {
+        organisationId: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.organisation
+          .findUnique({
+            where: { id: args.organisationId },
+          })
+          .memberships()
       },
     })
     t.field('membership', {

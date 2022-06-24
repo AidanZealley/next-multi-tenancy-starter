@@ -1,52 +1,40 @@
 import { Box, Heading } from '@chakra-ui/react'
 import { MembersTable } from 'components/MembersTable'
+import {
+  LOGGED_IN_USER_QUERY,
+  MEMBERSHIPS_QUERY,
+  MESSAGES_QUERY,
+} from 'graphql/queries'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { MembershipWithUser } from 'lib/memberships/types'
-import { useOrganisationMembershipsQuery } from 'lib/organisations/queries'
-import { useOrganisationWithMembershipsQuery } from 'lib/organisations/queries/use-organisation-with-memberships-query'
-import { retrieveOrganisationMemberships } from 'lib/organisations/services'
-import { OrganisationWithMemberships } from 'lib/organisations/types'
-import { useLoggedInUserQuery } from 'lib/users/queries'
-import { retrieveLoggedInUser } from 'lib/users/services'
 import { LoggedInUser } from 'lib/users/types'
 import { NextPageContext } from 'next'
-import { getSession } from 'next-auth/react'
+import { getUserSession } from 'utils/auth'
+import { useQuery } from 'utils/queries'
+import { batchServerRequest } from 'utils/requests'
 
-interface IProps {
-  initialLoggedInUser: LoggedInUser
-  initialOrganisation: OrganisationWithMemberships
-  initialOrganisationMemberships: MembershipWithUser
+type IProps = {
+  initialData: {
+    loggedInUser: LoggedInUser
+    memberships: MembershipWithUser[]
+  }
+  organisationId: string
 }
 
-const MembersPage = ({
-  initialLoggedInUser,
-  initialOrganisation,
-  initialOrganisationMemberships,
-}: IProps) => {
-  const { loggedInUser } = useLoggedInUserQuery({
-    fallbackData: initialLoggedInUser,
+const MembersPage = ({ initialData, organisationId }: IProps) => {
+  const { data: memberships } = useQuery<MembershipWithUser[]>({
+    query: MEMBERSHIPS_QUERY,
+    variables: { organisationId },
+    config: {
+      fallbackData: initialData.memberships,
+    },
   })
-  const { organisation } = useOrganisationWithMembershipsQuery(
-    initialOrganisation.id,
-    {
-      fallbackData: initialOrganisationMemberships,
-    },
-  )
-  const { organisationMemberships } = useOrganisationMembershipsQuery(
-    loggedInUser.selectedOrganisation?.id!,
-    {
-      fallbackData: initialOrganisationMemberships,
-    },
-  )
 
   return (
     <Box display="flex" flexDirection="column" gap={4}>
       <Heading>Members</Heading>
 
-      <MembersTable
-        organisation={organisation}
-        memberships={organisationMemberships}
-      />
+      <MembersTable memberships={memberships} />
     </Box>
   )
 }
@@ -58,8 +46,7 @@ MembersPage.layout = (page: React.ReactElement) => {
 export default MembersPage
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession(context)
-  const { req } = context
+  const session = await getUserSession(context.req!)
 
   if (!session) {
     return {
@@ -70,28 +57,33 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   }
 
-  const loggedInUser = await retrieveLoggedInUser(req!)
-  const memberships = await retrieveOrganisationMemberships(
-    loggedInUser?.organisationId!,
-  )
-
-  if (!memberships) {
+  if (!session.organisation.id) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/organisations',
         permanent: false,
       },
     }
   }
 
+  const data = await batchServerRequest(
+    [
+      {
+        document: MEMBERSHIPS_QUERY,
+        variables: { organisationId: session.organisation.id },
+      },
+      { document: LOGGED_IN_USER_QUERY },
+    ],
+    context,
+  )
+
   return {
     props: {
-      layoutData: JSON.parse(JSON.stringify({ loggedInUser })),
-      initialLoggedInUser: JSON.parse(JSON.stringify(loggedInUser)),
-      initialOrganisation: JSON.parse(
-        JSON.stringify(loggedInUser?.selectedOrganisation),
+      layoutData: JSON.parse(
+        JSON.stringify({ loggedInUser: data.loggedInUser }),
       ),
-      initialOrganisationMemberships: JSON.parse(JSON.stringify(memberships)),
+      organisationId: session.organisation.id,
+      initialData: JSON.parse(JSON.stringify(data)),
     },
   }
 }

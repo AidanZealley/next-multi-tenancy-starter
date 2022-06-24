@@ -1,8 +1,9 @@
 import { Avatar, Box, Text } from '@chakra-ui/react'
 import { formatRelative } from 'date-fns'
+import { MessageWithUserReactions } from 'lib/messages/types'
 
 interface IProps {
-  message: any
+  message: MessageWithUserReactions
 }
 
 export const MessagesListItem = ({ message }: IProps) => {
