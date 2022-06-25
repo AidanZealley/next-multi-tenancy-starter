@@ -2,7 +2,7 @@ import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { NextPageContext } from 'next'
 import { Plus } from 'react-feather'
-import { AddMessageModal } from 'modals/AddMessageModal'
+import { CreateMessageModal } from 'modals/CreateMessageModal'
 import { MessagesList } from 'components/MessagesList'
 import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { useQuery } from 'utils/queries'
@@ -55,8 +55,7 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
 
       <MessagesList messages={messages} />
 
-      <AddMessageModal
-        userId={loggedInUser.id}
+      <CreateMessageModal
         organisationId={loggedInUser.organisationId!}
         isOpen={isOpen}
         onClose={onClose}

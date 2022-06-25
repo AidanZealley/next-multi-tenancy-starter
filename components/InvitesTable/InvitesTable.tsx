@@ -12,9 +12,10 @@ import { InviteWithInvitedBy } from 'lib/invites/types'
 
 interface IProps {
   invites: InviteWithInvitedBy[]
+  organisationId: string
 }
 
-export const InvitesTable = ({ invites }: IProps) => {
+export const InvitesTable = ({ invites, organisationId }: IProps) => {
   return (
     <TableContainer>
       <Table variant="simple" colorScheme="gray">
@@ -30,7 +31,11 @@ export const InvitesTable = ({ invites }: IProps) => {
         </Thead>
         <Tbody>
           {invites.map(invite => (
-            <InvitesTableRow key={invite.id} invite={invite} />
+            <InvitesTableRow
+              key={invite.id}
+              invite={invite}
+              organisationId={organisationId}
+            />
           ))}
         </Tbody>
       </Table>

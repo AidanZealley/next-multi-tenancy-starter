@@ -1,15 +1,31 @@
-import { Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
+import { Box, Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
 import { InviteTags } from 'components/InviteTags'
 import { formatRelative } from 'date-fns'
+import { DELETE_INVITE_MUTATION } from 'graphql/mutations'
+import { INVITES_QUERY } from 'graphql/queries'
 import { InviteWithInvitedBy } from 'lib/invites/types'
-import { Edit2 } from 'react-feather'
+import { Edit2, Trash } from 'react-feather'
+import { useMutation } from 'utils/mutations'
+import { useQuery } from 'utils/queries'
 
 interface IProps {
   invite: InviteWithInvitedBy
+  organisationId: string
 }
 
-export const InvitesTableRow = ({ invite }: IProps) => {
-  const { email, status, invitedBy, createdAt } = invite
+export const InvitesTableRow = ({ invite, organisationId }: IProps) => {
+  const { id, email, status, invitedBy, createdAt } = invite
+  const { mutate } = useQuery({
+    query: INVITES_QUERY,
+    variables: { organisationId },
+  })
+  const [deleteInvite, { status: createInviteStatus }] = useMutation(
+    DELETE_INVITE_MUTATION,
+    mutate,
+  )
+  const handleDelete = () => {
+    deleteInvite({ id })
+  }
 
   return (
     <Tr>
@@ -20,23 +36,34 @@ export const InvitesTableRow = ({ invite }: IProps) => {
         <InviteTags status={status} />
       </Td>
       <Td>
-        <Text fontWeight="bold">{invitedBy.name}</Text>
+        <Text>{invitedBy.name}</Text>
       </Td>
       <Td>
-        <Text fontWeight="bold">
+        <Text>
           {formatRelative(new Date(createdAt), Date.now(), {
             weekStartsOn: 1,
           })}
         </Text>
       </Td>
       <Td isNumeric>
-        <Button
-          size="sm"
-          colorScheme="gray"
-          leftIcon={<Icon as={Edit2} w={3} h={3} />}
-        >
-          Edit
-        </Button>
+        <Box display="flex" gap={2} justifyContent="flex-end">
+          <Button
+            size="sm"
+            colorScheme="gray"
+            leftIcon={<Icon as={Edit2} w={3} h={3} />}
+          >
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            colorScheme="gray"
+            leftIcon={<Icon as={Trash} w={3} h={3} />}
+            onClick={handleDelete}
+            isLoading={createInviteStatus === 'loading'}
+          >
+            Delete
+          </Button>
+        </Box>
       </Td>
     </Tr>
   )

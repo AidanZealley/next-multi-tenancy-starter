@@ -9,6 +9,7 @@ import { getUserSession } from 'utils/auth'
 import { LoggedInUser } from 'lib/users/types'
 import { InvitesTable } from 'components/InvitesTable'
 import { InviteWithInvitedBy } from 'lib/invites/types'
+import { CreateInviteModal } from 'modals/CreateInviteModal'
 
 type IProps = {
   initialData: {
@@ -52,14 +53,16 @@ const InvitesPage = ({ initialData, organisationId }: IProps) => {
         </Button>
       </Box>
 
-      <InvitesTable invites={invites} />
+      <InvitesTable
+        invites={invites}
+        organisationId={loggedInUser.organisationId ?? organisationId}
+      />
 
-      {/* <InviteModal
-        userId={loggedInUser.id}
+      <CreateInviteModal
         organisationId={loggedInUser.organisationId!}
         isOpen={isOpen}
         onClose={onClose}
-      /> */}
+      />
     </Box>
   )
 }

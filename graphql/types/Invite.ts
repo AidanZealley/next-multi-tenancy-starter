@@ -87,3 +87,53 @@ export const InviteQuery = extendType({
     })
   },
 })
+
+export const CreateInviteMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('createInvite', {
+      type: Invite,
+      args: {
+        email: nonNull(stringArg()),
+      },
+      async resolve(_parent, args, ctx) {
+        if (!ctx?.session?.user.role) {
+          throw new Error('Unauthorised')
+        }
+
+        if (!ctx?.session?.user.id || !ctx?.session?.organisation.id) {
+          throw new Error('Bad Request')
+        }
+
+        const newInvite = {
+          email: args.email,
+          userId: ctx?.session?.user.id!,
+          organisationId: ctx?.session?.organisation.id!,
+        }
+
+        const invite = await ctx.prisma.invite.create({
+          data: newInvite,
+        })
+
+        return invite
+      },
+    })
+  },
+})
+
+export const DeleteInviteMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('deleteInvite', {
+      type: 'Invite',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.invite.delete({
+          where: { id: args.id },
+        })
+      },
+    })
+  },
+})

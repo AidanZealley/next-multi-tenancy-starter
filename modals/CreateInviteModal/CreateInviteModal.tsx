@@ -12,31 +12,29 @@ import { Form } from 'components/Form'
 import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { MESSAGES_QUERY } from 'graphql/queries'
+import { INVITES_QUERY } from 'graphql/queries'
 import { useQuery } from 'utils/queries'
 import { useMutation } from 'utils/mutations'
-import { ADD_MESSAGE_MUTATION } from 'graphql/mutations'
+import { CREATE_INVITE_MUTATION } from 'graphql/mutations'
 import { MessageWithUserReactions } from 'lib/messages/types'
 
 interface IProps {
-  userId: string
   organisationId: string
   isOpen: boolean
   onClose: () => void
 }
 
-export const AddMessageModal = ({
-  userId,
+export const CreateInviteModal = ({
   organisationId,
   isOpen,
   onClose,
 }: IProps) => {
-  const { mutate } = useQuery<MessageWithUserReactions>({
-    query: MESSAGES_QUERY,
+  const { mutate } = useQuery({
+    query: INVITES_QUERY,
     variables: { organisationId },
   })
-  const [addMessage, { status, reset }] = useMutation(
-    ADD_MESSAGE_MUTATION,
+  const [createInvite, { status, reset }] = useMutation(
+    CREATE_INVITE_MUTATION,
     mutate,
   )
 
@@ -52,11 +50,7 @@ export const AddMessageModal = ({
 
       const values = methods.getValues()
 
-      addMessage({
-        ...values,
-        userId,
-        organisationId,
-      })
+      createInvite({ ...values })
     } catch (error) {
       console.log(error)
     }
@@ -77,7 +71,7 @@ export const AddMessageModal = ({
     <Modal onClose={close} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add Post</ModalHeader>
+        <ModalHeader>Create Invite</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Form
@@ -86,7 +80,8 @@ export const AddMessageModal = ({
             includeSubmit={false}
           >
             <FormInput
-              name="text"
+              name="email"
+              type="email"
               validation={{ required: true }}
               autoComplete="false"
             />
@@ -98,7 +93,7 @@ export const AddMessageModal = ({
           </Button>
 
           <Button onClick={submitHandler} isLoading={status === 'loading'}>
-            Create Post
+            Send Invite
           </Button>
         </ModalFooter>
       </ModalContent>

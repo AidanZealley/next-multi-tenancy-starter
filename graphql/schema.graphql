@@ -50,7 +50,9 @@ type Message {
 }
 
 type Mutation {
-  addMessage(text: String!): Message!
+  createInvite(email: String!): Invite!
+  createMessage(text: String!): Message!
+  deleteInvite(id: String!): Invite!
   deleteMessage(id: String!): Message!
   deleteUser(id: String!): User!
   switchOrganisation(organisationId: String!): User!

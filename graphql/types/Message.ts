@@ -97,34 +97,31 @@ export const MessageQuery = extendType({
 export const CreateMessageMutation = extendType({
   type: 'Mutation',
   definition(t) {
-    t.nonNull.field('addMessage', {
+    t.nonNull.field('createMessage', {
       type: Message,
       args: {
         text: nonNull(stringArg()),
       },
       async resolve(_parent, args, ctx) {
-        try {
-          if (!ctx?.session?.user.role) {
-            throw new Error('Unauthorised')
-          }
-          if (!ctx?.session?.user.id || !ctx?.session?.organisation.id) {
-            throw new Error('Bad Request')
-          }
-          const newMessage = {
-            text: args.text,
-            userId: ctx?.session?.user.id!,
-            organisationId: ctx?.session?.organisation.id!,
-          }
-
-          const message = await ctx.prisma.message.create({
-            data: newMessage,
-          })
-
-          return message
-        } catch (error) {
-          console.log(error)
-          throw error
+        if (!ctx?.session?.user.role) {
+          throw new Error('Unauthorised')
         }
+
+        if (!ctx?.session?.user.id || !ctx?.session?.organisation.id) {
+          throw new Error('Bad Request')
+        }
+
+        const newMessage = {
+          text: args.text,
+          userId: ctx?.session?.user.id!,
+          organisationId: ctx?.session?.organisation.id!,
+        }
+
+        const message = await ctx.prisma.message.create({
+          data: newMessage,
+        })
+
+        return message
       },
     })
   },

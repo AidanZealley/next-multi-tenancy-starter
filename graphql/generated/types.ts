@@ -158,7 +158,9 @@ export interface NexusGenFieldTypes {
     userId: string | null; // String
   }
   Mutation: { // field return type
-    addMessage: NexusGenRootTypes['Message']; // Message!
+    createInvite: NexusGenRootTypes['Invite']; // Invite!
+    createMessage: NexusGenRootTypes['Message']; // Message!
+    deleteInvite: NexusGenRootTypes['Invite']; // Invite!
     deleteMessage: NexusGenRootTypes['Message']; // Message!
     deleteUser: NexusGenRootTypes['User']; // User!
     switchOrganisation: NexusGenRootTypes['User']; // User!
@@ -260,7 +262,9 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Mutation: { // field return type name
-    addMessage: 'Message'
+    createInvite: 'Invite'
+    createMessage: 'Message'
+    deleteInvite: 'Invite'
     deleteMessage: 'Message'
     deleteUser: 'User'
     switchOrganisation: 'User'
@@ -329,8 +333,14 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    addMessage: { // args
+    createInvite: { // args
+      email: string; // String!
+    }
+    createMessage: { // args
       text: string; // String!
+    }
+    deleteInvite: { // args
+      id: string; // String!
     }
     deleteMessage: { // args
       id: string; // String!
