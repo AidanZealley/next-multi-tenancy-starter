@@ -37,7 +37,7 @@ export const MessagesListItem = ({ message, organisationId }: IProps) => {
       action: handleDelete,
       icon: <Icon as={Trash} w={4} h={4} color="gray.600" />,
       text: 'Delete Message',
-      loading: status === 'loading',
+      loading: status === 'loading' || status === 'revalidating',
     },
   ]
 

@@ -5,12 +5,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react'
-import { VerticalNav } from 'components/VerticalNav'
-import { IVerticalNavLink } from 'components/VerticalNavLink/types'
+import { NavLink, VerticalNav } from 'components/VerticalNav'
 import { MoreVertical } from 'react-feather'
 
 interface IProps {
-  options: IVerticalNavLink[]
+  options: NavLink[]
 }
 
 export const OptionsMenu = ({ options }: IProps) => {

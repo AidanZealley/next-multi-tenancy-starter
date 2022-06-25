@@ -1,11 +1,10 @@
 import { Box, Text } from '@chakra-ui/react'
-import { IVerticalNavLink } from 'components/VerticalNavLink/types'
-import { VerticalNavLink } from 'components/VerticalNavLink'
+import { NavLink, VerticalNavLink } from 'components/VerticalNav'
 import { isActivePage } from 'utils/navigation'
 
 interface IProps {
   heading?: string
-  navLinks: IVerticalNavLink[]
+  navLinks: NavLink[]
 }
 
 export const VerticalNav = ({ heading, navLinks }: IProps) => {

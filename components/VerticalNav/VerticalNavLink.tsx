@@ -1,9 +1,8 @@
 import { Button } from '@chakra-ui/react'
 import Link from 'next/link'
-import { IVerticalNavLink } from './types'
+import { NavLink } from 'components/VerticalNav'
 
-interface IProps
-  extends Pick<IVerticalNavLink, 'action' | 'icon' | 'text' | 'loading'> {
+interface IProps extends Pick<NavLink, 'action' | 'icon' | 'text' | 'loading'> {
   isActive?: boolean
 }
 
