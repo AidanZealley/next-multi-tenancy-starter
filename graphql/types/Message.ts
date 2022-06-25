@@ -64,7 +64,7 @@ export const MessagesQuery = extendType({
         const hasMembership = await isMember(args.organisationId, ctx)
 
         if (!hasMembership) {
-          throw 'Not a member'
+          return []
         }
 
         return ctx.prisma.organisation
@@ -103,7 +103,6 @@ export const CreateMessageMutation = extendType({
         text: nonNull(stringArg()),
       },
       async resolve(_parent, args, ctx) {
-        console.log(ctx?.session?.user.id, ctx?.session?.organisation.id)
         try {
           if (!ctx?.session?.user.role) {
             throw new Error('Unauthorised')
@@ -120,7 +119,7 @@ export const CreateMessageMutation = extendType({
           const message = await ctx.prisma.message.create({
             data: newMessage,
           })
-          console.log(message)
+
           return message
         } catch (error) {
           console.log(error)

@@ -60,8 +60,8 @@ export interface NexusGenObjects {
     dateSent?: NexusGenScalars['DateTime'] | null; // DateTime
     email?: string | null; // String
     id: string; // String!
-    inviteStatus?: NexusGenEnums['InviteStatus'] | null; // InviteStatus
     organisationId?: string | null; // String
+    status?: NexusGenEnums['InviteStatus'] | null; // InviteStatus
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
     userId?: string | null; // String
   }
@@ -129,10 +129,10 @@ export interface NexusGenFieldTypes {
     dateSent: NexusGenScalars['DateTime'] | null; // DateTime
     email: string | null; // String
     id: string; // String!
-    inviteStatus: NexusGenEnums['InviteStatus'] | null; // InviteStatus
     invitedBy: NexusGenRootTypes['User'] | null; // User
     organisation: NexusGenRootTypes['Organisation'] | null; // Organisation
     organisationId: string | null; // String
+    status: NexusGenEnums['InviteStatus'] | null; // InviteStatus
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
     userId: string | null; // String
   }
@@ -231,10 +231,10 @@ export interface NexusGenFieldTypeNames {
     dateSent: 'DateTime'
     email: 'String'
     id: 'String'
-    inviteStatus: 'InviteStatus'
     invitedBy: 'User'
     organisation: 'Organisation'
     organisationId: 'String'
+    status: 'InviteStatus'
     updatedAt: 'DateTime'
     userId: 'String'
   }
@@ -353,6 +353,9 @@ export interface NexusGenArgTypes {
   Query: {
     invite: { // args
       id: string; // String!
+    }
+    invites: { // args
+      organisationId: string; // String!
     }
     membership: { // args
       id: string; // String!

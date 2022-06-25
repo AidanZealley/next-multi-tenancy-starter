@@ -7,7 +7,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
-import { MembersTableRow } from 'components/MembersTableRow'
+import { MembersTableRow } from 'components/MembersTable'
 import { MembershipWithUser } from 'lib/memberships/types'
 
 interface IProps {

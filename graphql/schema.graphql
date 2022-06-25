@@ -12,10 +12,10 @@ type Invite {
   dateSent: DateTime
   email: String
   id: String!
-  inviteStatus: InviteStatus
   invitedBy: User
   organisation: Organisation
   organisationId: String
+  status: InviteStatus
   updatedAt: DateTime
   userId: String
 }
@@ -75,7 +75,7 @@ type Organisation {
 
 type Query {
   invite(id: String!): Invite
-  invites: [Invite]
+  invites(organisationId: String!): [Invite]
   loggedInUser: User
   membership(id: String!): Membership
   memberships(organisationId: String!): [Membership]

@@ -1,19 +1,8 @@
 import { Box, Divider, Icon } from '@chakra-ui/react'
 import { VerticalNav } from 'components/VerticalNav'
-import {
-  Activity,
-  MessageSquare,
-  Settings,
-  UserPlus,
-  Users,
-} from 'react-feather'
+import { MessageSquare, Settings, UserPlus, Users } from 'react-feather'
 
 const mainLinks = [
-  {
-    action: '/activity',
-    icon: <Icon as={Activity} w={4} h={4} color="gray.600" />,
-    text: 'Activity',
-  },
   {
     action: '/messages',
     icon: <Icon as={MessageSquare} w={4} h={4} color="gray.600" />,

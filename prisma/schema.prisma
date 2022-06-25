@@ -65,7 +65,7 @@ model Organisation {
   id          String       @id @default(cuid())
   name        String
   memberships Membership[]
-  owner       User?        @relation("OwnerOfOrganisation", fields: [userId], references: [id], onDelete: Cascade)
+  owner       User         @relation("OwnerOfOrganisation", fields: [userId], references: [id], onDelete: Cascade)
   selectedBy  User[]       @relation("SelectedOrganisation")
   userId      String
   invites     Invite[]
@@ -88,39 +88,40 @@ model Membership {
 }
 
 model Invite {
-  id             String        @id @default(cuid())
-  dateSent       DateTime      @default(now())
+  id             String       @id @default(cuid())
   email          String
-  status         InviteStatus  @default(PENDING)
-  invitedBy      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status         InviteStatus @default(PENDING)
+  invitedBy      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  organisation   Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Message {
-  id             String        @id @default(cuid())
+  id             String       @id @default(cuid())
   text           String
-  user           User?         @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
   userId         String
   reactions      Reaction[]
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
   organisationId String
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Reaction {
-  id             String        @id @default(cuid())
+  id             String       @id @default(cuid())
   emoji          String
-  user           User          @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
   userId         String
-  message        Message?      @relation(fields: [messageId], references: [id])
-  messageId      String?
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  message        Message      @relation(fields: [messageId], references: [id])
+  messageId      String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
   organisationId String
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 enum Role {

@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { DashboardNav } from 'components/DashboardNav'
+import { DashboardNav } from 'components/DashboardSidebar/DashboardNav'
 import { SidebarAccountNav } from 'components/SidebarAccountNav'
 import { SidebarOrganisationSwitcher } from 'components/SidebarOrganisationSwitcher'
 import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'

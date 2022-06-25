@@ -1,10 +1,6 @@
 import { Box, Heading } from '@chakra-ui/react'
 import { MembersTable } from 'components/MembersTable'
-import {
-  LOGGED_IN_USER_QUERY,
-  MEMBERSHIPS_QUERY,
-  MESSAGES_QUERY,
-} from 'graphql/queries'
+import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from 'graphql/queries'
 import { DashboardLayout } from 'layouts/DashboardLayout'
 import { MembershipWithUser } from 'lib/memberships/types'
 import { LoggedInUser } from 'lib/users/types'
@@ -22,9 +18,18 @@ type IProps = {
 }
 
 const MembersPage = ({ initialData, organisationId }: IProps) => {
+  const { data: loggedInUser } = useQuery<LoggedInUser>({
+    query: LOGGED_IN_USER_QUERY,
+    config: {
+      fallbackData: initialData.loggedInUser,
+    },
+  })
+
   const { data: memberships } = useQuery<MembershipWithUser[]>({
     query: MEMBERSHIPS_QUERY,
-    variables: { organisationId },
+    variables: {
+      organisationId: loggedInUser.organisationId ?? organisationId,
+    },
     config: {
       fallbackData: initialData.memberships,
     },
@@ -32,7 +37,7 @@ const MembersPage = ({ initialData, organisationId }: IProps) => {
 
   return (
     <Box display="flex" flexDirection="column" gap={4}>
-      <Heading>Members</Heading>
+      <Heading fontSize="3xl">Members</Heading>
 
       <MembersTable memberships={memberships} />
     </Box>
