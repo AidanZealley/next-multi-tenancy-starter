@@ -1,10 +1,10 @@
-import { Box, Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
+import { Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
 import { InviteTags } from 'components/InviteTags'
 import { formatRelative } from 'date-fns'
 import { DELETE_INVITE_MUTATION } from 'graphql/mutations'
 import { INVITES_QUERY } from 'graphql/queries'
 import { InviteWithInvitedBy } from 'lib/invites/types'
-import { Edit2, Trash } from 'react-feather'
+import { X } from 'react-feather'
 import { useMutation } from 'utils/mutations'
 import { useQuery } from 'utils/queries'
 
@@ -15,14 +15,12 @@ interface IProps {
 
 export const InvitesTableRow = ({ invite, organisationId }: IProps) => {
   const { id, email, status, invitedBy, createdAt } = invite
-  const { mutate } = useQuery({
+  const { mutate } = useQuery<InviteWithInvitedBy>({
     query: INVITES_QUERY,
     variables: { organisationId },
   })
-  const [deleteInvite, { status: createInviteStatus }] = useMutation(
-    DELETE_INVITE_MUTATION,
-    mutate,
-  )
+  const [deleteInvite, { status: createInviteStatus }] =
+    useMutation<InviteWithInvitedBy>(DELETE_INVITE_MUTATION, mutate)
   const handleDelete = () => {
     deleteInvite({ id })
   }
@@ -46,24 +44,15 @@ export const InvitesTableRow = ({ invite, organisationId }: IProps) => {
         </Text>
       </Td>
       <Td isNumeric>
-        <Box display="flex" gap={2} justifyContent="flex-end">
-          <Button
-            size="sm"
-            colorScheme="gray"
-            leftIcon={<Icon as={Edit2} w={3} h={3} />}
-          >
-            Edit
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="gray"
-            leftIcon={<Icon as={Trash} w={3} h={3} />}
-            onClick={handleDelete}
-            isLoading={createInviteStatus === 'loading'}
-          >
-            Delete
-          </Button>
-        </Box>
+        <Button
+          size="sm"
+          colorScheme="gray"
+          leftIcon={<Icon as={X} w={3} h={3} />}
+          onClick={handleDelete}
+          isLoading={createInviteStatus === 'loading'}
+        >
+          Cancel
+        </Button>
       </Td>
     </Tr>
   )

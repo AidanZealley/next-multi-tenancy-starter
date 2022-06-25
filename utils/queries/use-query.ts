@@ -9,7 +9,7 @@ interface IUseQuery<T> {
 }
 
 type UseQuery<T> = {
-  data: T
+  data: T & T[]
   status: QueryStatus
   error: any
   mutate: KeyedMutator<T>

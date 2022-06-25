@@ -2,20 +2,28 @@ import { Button } from '@chakra-ui/react'
 import Link from 'next/link'
 import { IVerticalNavLink } from './types'
 
-interface IProps extends Pick<IVerticalNavLink, 'action' | 'icon' | 'text'> {
+interface IProps
+  extends Pick<IVerticalNavLink, 'action' | 'icon' | 'text' | 'loading'> {
   isActive?: boolean
 }
 
-export const VerticalNavLink = ({ action, icon, text, isActive }: IProps) => {
+export const VerticalNavLink = ({
+  action,
+  icon,
+  text,
+  isActive,
+  loading,
+}: IProps) => {
   return typeof action === 'function' ? (
     <Button
       variant={isActive ? 'solid' : 'ghost'}
-      justifyContent="flex-start"
+      justifyContent={loading ? 'center' : 'flex-start'}
       leftIcon={icon}
       colorScheme="gray"
       px={3}
       gap={2}
       onClick={action}
+      isLoading={loading}
     >
       {text}
     </Button>

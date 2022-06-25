@@ -1,9 +1,12 @@
 import { Context } from 'graphql/context'
 
-export const isMember = async (organisationId: string, ctx: Context) => {
+export const isMember = async (
+  organisationId: string | null,
+  ctx: Context,
+): Promise<boolean> => {
   try {
-    if (!ctx?.session?.user.id) {
-      return null
+    if (!ctx?.session?.user.id || !organisationId) {
+      return false
     }
     const memberships = await ctx.prisma.user
       .findUnique({
@@ -16,7 +19,7 @@ export const isMember = async (organisationId: string, ctx: Context) => {
     )
 
     if (!membership) {
-      throw 'Not a member'
+      return false
     }
 
     return true

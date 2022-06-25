@@ -12,23 +12,38 @@ import { Form } from 'components/Form'
 import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useCreateInviteMutation } from 'lib/organisations/mutations'
-import { useOrganisationInvitesQuery } from 'lib/organisations/queries'
+import { MESSAGES_QUERY } from 'graphql/queries'
+import { useQuery } from 'utils/queries'
+import { useMutation } from 'utils/mutations'
+import { UPDATE_MESSAGE_MUTATION } from 'graphql/mutations'
+import { MessageWithUserReactions } from 'lib/messages/types'
 
 interface IProps {
+  message: MessageWithUserReactions
   organisationId: string
   isOpen: boolean
   onClose: () => void
 }
 
-export const InviteMemberModal = ({
+export const UpdateMessageModal = ({
+  message,
   organisationId,
   isOpen,
   onClose,
 }: IProps) => {
-  const { mutate } = useOrganisationInvitesQuery(organisationId)
-  const { createInvite, reset, status } = useCreateInviteMutation(mutate)
-  const methods = useForm()
+  const { id, text } = message
+  const { mutate } = useQuery<MessageWithUserReactions>({
+    query: MESSAGES_QUERY,
+    variables: { organisationId },
+  })
+  const [editMessage, { status, reset }] =
+    useMutation<MessageWithUserReactions>(UPDATE_MESSAGE_MUTATION, mutate)
+
+  const methods = useForm({
+    defaultValues: {
+      text,
+    },
+  })
 
   const submitHandler = async () => {
     try {
@@ -40,27 +55,28 @@ export const InviteMemberModal = ({
 
       const values = methods.getValues()
 
-      createInvite({
-        ...values,
-        organisationId,
-      })
+      editMessage({ ...values, id })
     } catch (error) {
       console.log(error)
     }
   }
 
+  const close = () => {
+    onClose()
+    reset()
+  }
+
   useEffect(() => {
     if (status === 'success') {
-      onClose()
-      reset()
+      close()
     }
   }, [status])
 
   return (
-    <Modal onClose={onClose} isOpen={isOpen} isCentered>
+    <Modal onClose={close} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite Member</ModalHeader>
+        <ModalHeader>Edit Message</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Form
@@ -69,9 +85,7 @@ export const InviteMemberModal = ({
             includeSubmit={false}
           >
             <FormInput
-              type="email"
-              name="email"
-              label="Email"
+              name="text"
               validation={{ required: true }}
               autoComplete="false"
             />
@@ -82,8 +96,11 @@ export const InviteMemberModal = ({
             Cancel
           </Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>
-            Invite Member
+          <Button
+            onClick={submitHandler}
+            isLoading={status === 'loading' || status === 'revalidating'}
+          >
+            Save
           </Button>
         </ModalFooter>
       </ModalContent>

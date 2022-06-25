@@ -29,14 +29,12 @@ export const CreateMessageModal = ({
   isOpen,
   onClose,
 }: IProps) => {
-  const { mutate } = useQuery({
+  const { mutate } = useQuery<MessageWithUserReactions>({
     query: MESSAGES_QUERY,
     variables: { organisationId },
   })
-  const [createMessage, { status, reset }] = useMutation(
-    CREATE_MESSAGE_MUTATION,
-    mutate,
-  )
+  const [createMessage, { status, reset }] =
+    useMutation<MessageWithUserReactions>(CREATE_MESSAGE_MUTATION, mutate)
 
   const methods = useForm()
 
@@ -64,6 +62,7 @@ export const CreateMessageModal = ({
   useEffect(() => {
     if (status === 'success') {
       close()
+      methods.reset()
     }
   }, [status])
 
@@ -91,7 +90,10 @@ export const CreateMessageModal = ({
             Cancel
           </Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>
+          <Button
+            onClick={submitHandler}
+            isLoading={status === 'loading' || status === 'revalidating'}
+          >
             Send
           </Button>
         </ModalFooter>

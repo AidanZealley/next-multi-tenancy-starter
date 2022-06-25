@@ -103,12 +103,13 @@ export const CreateMessageMutation = extendType({
         text: nonNull(stringArg()),
       },
       async resolve(_parent, args, ctx) {
-        if (!ctx?.session?.user.role) {
-          throw new Error('Unauthorised')
-        }
+        const hasMembership = await isMember(
+          ctx?.session?.organisation.id!,
+          ctx,
+        )
 
-        if (!ctx?.session?.user.id || !ctx?.session?.organisation.id) {
-          throw new Error('Bad Request')
+        if (!hasMembership) {
+          throw new Error('Unauthorised')
         }
 
         const newMessage = {
@@ -136,7 +137,31 @@ export const UpdateMessageMutation = extendType({
         id: nonNull(stringArg()),
         text: nonNull(stringArg()),
       },
-      resolve(_parent, args, ctx) {
+      async resolve(_parent, args, ctx) {
+        const hasMembership = await isMember(
+          ctx?.session?.organisation.id!,
+          ctx,
+        )
+
+        if (!hasMembership) {
+          throw new Error('Unauthorised')
+        }
+
+        const message = await ctx.prisma.message.findUnique({
+          where: { id: args.id },
+        })
+
+        if (!message) {
+          throw new Error('Message not found')
+        }
+
+        if (
+          message.userId !== ctx?.session?.user.id &&
+          ctx?.session?.user.role !== 'ADMIN'
+        ) {
+          throw new Error('Unauthorised')
+        }
+
         return ctx.prisma.message.update({
           where: { id: args.id! },
           data: {
@@ -156,7 +181,31 @@ export const DeleteMessageMutation = extendType({
       args: {
         id: nonNull(stringArg()),
       },
-      resolve(_parent, args, ctx) {
+      async resolve(_parent, args, ctx) {
+        const hasMembership = await isMember(
+          ctx?.session?.organisation.id!,
+          ctx,
+        )
+
+        if (!hasMembership) {
+          throw new Error('Unauthorised')
+        }
+
+        const message = await ctx.prisma.message.findUnique({
+          where: { id: args.id },
+        })
+
+        if (!message) {
+          throw new Error('Message not found')
+        }
+
+        if (
+          message.userId !== ctx?.session?.user.id &&
+          ctx?.session?.user.role !== 'ADMIN'
+        ) {
+          throw new Error('Unauthorised')
+        }
+
         return ctx.prisma.message.delete({
           where: { id: args.id },
         })

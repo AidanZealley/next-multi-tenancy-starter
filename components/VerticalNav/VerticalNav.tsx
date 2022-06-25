@@ -17,19 +17,22 @@ export const VerticalNav = ({ heading, navLinks }: IProps) => {
         </Text>
       )}
       <Box as="nav" display="flex" flexDirection="column" gap={1}>
-        {navLinks.map(({ action, icon, text, getActiveStatus }, index) => (
-          <VerticalNavLink
-            key={index}
-            action={action}
-            icon={icon}
-            text={text}
-            isActive={
-              typeof action === 'string' && getActiveStatus
-                ? getActiveStatus(action)
-                : isActivePage(action as string)
-            }
-          />
-        ))}
+        {navLinks.map(
+          ({ action, icon, text, getActiveStatus, loading }, index) => (
+            <VerticalNavLink
+              key={index}
+              action={action}
+              icon={icon}
+              text={text}
+              isActive={
+                typeof action === 'string' && getActiveStatus
+                  ? getActiveStatus(action)
+                  : isActivePage(action as string)
+              }
+              loading={loading}
+            />
+          ),
+        )}
       </Box>
     </Box>
   )

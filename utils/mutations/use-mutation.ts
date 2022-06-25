@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { MutationStatusTypes } from 'utils/mutations/types'
 
-export const useMutation = <T, M>(
+export const useMutation = <T, M = T>(
   mutation: RequestDocument,
   mutate: KeyedMutator<M>,
 ): [

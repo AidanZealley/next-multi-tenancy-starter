@@ -53,10 +53,13 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
         </Button>
       </Box>
 
-      <MessagesList messages={messages} />
+      <MessagesList
+        messages={messages}
+        organisationId={loggedInUser.organisationId ?? organisationId}
+      />
 
       <CreateMessageModal
-        organisationId={loggedInUser.organisationId!}
+        organisationId={loggedInUser.organisationId ?? organisationId}
         isOpen={isOpen}
         onClose={onClose}
       />

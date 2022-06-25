@@ -16,7 +16,6 @@ import { INVITES_QUERY } from 'graphql/queries'
 import { useQuery } from 'utils/queries'
 import { useMutation } from 'utils/mutations'
 import { CREATE_INVITE_MUTATION } from 'graphql/mutations'
-import { MessageWithUserReactions } from 'lib/messages/types'
 
 interface IProps {
   organisationId: string
@@ -92,7 +91,10 @@ export const CreateInviteModal = ({
             Cancel
           </Button>
 
-          <Button onClick={submitHandler} isLoading={status === 'loading'}>
+          <Button
+            onClick={submitHandler}
+            isLoading={status === 'loading' || status === 'revalidating'}
+          >
             Send Invite
           </Button>
         </ModalFooter>
