@@ -1,37 +1,30 @@
 import { Box, Tag } from '@chakra-ui/react'
 import { InviteStatus } from '@prisma/client'
 
-interface InviteValues {
-  label: string
-  variant: string
-  color: string
+const getInviteValues = {
+  PENDING: {
+    label: 'Pending',
+    variant: 'subtle',
+    color: 'blue',
+  },
+  ACCEPTED: {
+    label: 'Accepted',
+    variant: 'subtle',
+    color: 'green',
+  },
+  DECLINED: {
+    label: 'Declined',
+    variant: 'subtle',
+    color: 'red',
+  },
 }
-
-const getInviteValues = (status: InviteStatus): InviteValues =>
-  ({
-    PENDING: {
-      label: 'Pending',
-      variant: 'subtle',
-      color: 'blue',
-    },
-    ACCEPTED: {
-      label: 'Accepted',
-      variant: 'subtle',
-      color: 'green',
-    },
-    DECLINED: {
-      label: 'Declined',
-      variant: 'subtle',
-      color: 'red',
-    },
-  }[status])
 
 interface IProps {
   status: InviteStatus
 }
 
 export const InviteTags = ({ status }: IProps) => {
-  const inviteValues = getInviteValues(status)
+  const inviteValues = getInviteValues[status]
 
   return (
     <Box display="flex" gap={1} alignItems="center">

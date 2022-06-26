@@ -5,11 +5,10 @@ import { Plus } from 'react-feather'
 import { CreateMessageModal } from 'modals/CreateMessageModal'
 import { MessagesList } from 'components/MessagesList'
 import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
-import { useQuery } from 'utils/queries'
-import { batchServerRequest } from 'utils/requests'
+import { useQuery } from 'graphql/hooks'
+import { batchServerRequest } from 'graphql/utils'
 import { getUserSession } from 'utils/auth'
-import { LoggedInUser } from 'lib/users/types'
-import { MessageWithUserReactions } from 'lib/messages/types'
+import { LoggedInUser, MessageWithUserReactions } from 'types'
 
 type IProps = {
   initialData: {

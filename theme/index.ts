@@ -5,6 +5,8 @@ export const theme = extendTheme(
     colorScheme: 'blue',
   }),
   {
+    initialColorMode: 'light',
+    useSystemColorMode: true,
     colors: {
       green: {
         50: '#EFF8EC',

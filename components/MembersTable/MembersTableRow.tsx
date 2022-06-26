@@ -1,6 +1,6 @@
 import { Button, Icon, Td, Text, Tr } from '@chakra-ui/react'
 import { UserTags } from 'components/UserTags'
-import { MembershipWithUser } from 'lib/memberships/types'
+import { MembershipWithUser } from 'types'
 import { Edit2 } from 'react-feather'
 
 interface IProps {

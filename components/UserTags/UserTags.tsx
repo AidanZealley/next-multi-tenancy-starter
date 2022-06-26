@@ -7,19 +7,18 @@ interface RoleValues {
   color: string
 }
 
-const getRoleValues = (role: Role): RoleValues =>
-  ({
-    ADMIN: {
-      label: 'Admin',
-      variant: 'subtle',
-      color: 'blue',
-    },
-    USER: {
-      label: 'User',
-      variant: 'subtle',
-      color: 'gray',
-    },
-  }[role])
+const getRoleValues = {
+  ADMIN: {
+    label: 'Admin',
+    variant: 'subtle',
+    color: 'blue',
+  },
+  USER: {
+    label: 'User',
+    variant: 'subtle',
+    color: 'gray',
+  },
+}
 
 interface IProps {
   user: User
@@ -28,7 +27,7 @@ interface IProps {
 }
 
 export const UserTags = ({ user, organisation, role }: IProps) => {
-  const roleValues = getRoleValues(role)
+  const roleValues = getRoleValues[role]
 
   return (
     <Box display="flex" gap={1} alignItems="center">

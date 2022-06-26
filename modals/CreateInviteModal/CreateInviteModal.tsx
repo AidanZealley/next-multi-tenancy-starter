@@ -13,8 +13,7 @@ import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { INVITES_QUERY } from 'graphql/queries'
-import { useQuery } from 'utils/queries'
-import { useMutation } from 'utils/mutations'
+import { useMutation, useQuery } from 'graphql/hooks'
 import { CREATE_INVITE_MUTATION } from 'graphql/mutations'
 
 interface IProps {

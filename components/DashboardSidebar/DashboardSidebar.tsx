@@ -2,9 +2,11 @@ import { Box } from '@chakra-ui/react'
 import { DashboardNav } from 'components/DashboardSidebar/DashboardNav'
 import { SidebarAccountNav } from 'components/SidebarAccountNav'
 import { SidebarOrganisationSwitcher } from 'components/SidebarOrganisationSwitcher'
-import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'
-import { OrganisationWithMemberships } from 'lib/organisations/types'
-import { LoggedInUser } from 'lib/users/types'
+import {
+  LoggedInUser,
+  MembershipWithOrganisationMemberships,
+  OrganisationWithMemberships,
+} from 'types'
 import { useRef } from 'react'
 
 interface IProps {

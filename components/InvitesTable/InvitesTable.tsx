@@ -8,7 +8,7 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import { InvitesTableRow } from 'components/InvitesTable'
-import { InviteWithInvitedBy } from 'lib/invites/types'
+import { InviteWithInvitedBy } from 'types'
 
 interface IProps {
   invites: InviteWithInvitedBy[]

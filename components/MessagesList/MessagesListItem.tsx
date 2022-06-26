@@ -3,11 +3,10 @@ import { OptionsMenu } from 'components/OptionsMenu'
 import { formatRelative } from 'date-fns'
 import { DELETE_MESSAGE_MUTATION } from 'graphql/mutations'
 import { MESSAGES_QUERY } from 'graphql/queries'
-import { MessageWithUserReactions } from 'lib/messages/types'
+import { MessageWithUserReactions } from 'types'
 import { UpdateMessageModal } from 'modals/UpdateMessageModal'
 import { Edit2, Trash } from 'react-feather'
-import { useMutation } from 'utils/mutations'
-import { useQuery } from 'utils/queries'
+import { useMutation, useQuery } from 'graphql/hooks'
 
 interface IProps {
   message: MessageWithUserReactions

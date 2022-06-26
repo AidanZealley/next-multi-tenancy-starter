@@ -1,6 +1,6 @@
 import request, { RequestDocument } from 'graphql-request'
 import useSWR, { KeyedMutator, SWRConfiguration } from 'swr'
-import { QueryStatus } from 'utils/queries'
+import { QueryStatus } from 'types'
 
 interface IUseQuery<T> {
   query: RequestDocument

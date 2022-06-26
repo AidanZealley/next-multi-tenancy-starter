@@ -1,7 +1,8 @@
 import request, { RequestDocument } from 'graphql-request'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 import { useCallback, useState } from 'react'
 import { KeyedMutator } from 'swr'
-import { MutationStatusTypes } from 'utils/mutations/types'
+import { MutationStatus } from 'types'
 
 export const useMutation = <T, M = T>(
   mutation: RequestDocument,
@@ -9,14 +10,14 @@ export const useMutation = <T, M = T>(
 ): [
   <S>(data: S) => Promise<T | void>,
   {
-    data: T | null
-    status: MutationStatusTypes
+    data: GraphQLResponse<T> | null
+    status: MutationStatus
     error: string | null
     reset: () => void
   },
 ] => {
-  const [data, setData] = useState<T | null>(null)
-  const [status, setStatus] = useState<MutationStatusTypes>('idle')
+  const [data, setData] = useState<GraphQLResponse<T> | null>(null)
+  const [status, setStatus] = useState<MutationStatus>('idle')
   const [error, setError] = useState<string | null>(null)
 
   const reset = useCallback(() => {

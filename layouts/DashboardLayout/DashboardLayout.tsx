@@ -1,8 +1,8 @@
 import { Box } from '@chakra-ui/react'
 import { DashboardSidebar } from 'components/DashboardSidebar'
 import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
-import { LoggedInUser } from 'lib/users/types'
-import { useQuery } from 'utils/queries'
+import { LoggedInUser } from 'types'
+import { useQuery } from 'graphql/hooks'
 import { DashboardLayoutPage } from './DashboardLayoutPage'
 import { DashboardLayoutProvider } from './DashboardLayoutProvider'
 

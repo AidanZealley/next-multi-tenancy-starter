@@ -8,13 +8,13 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { Check } from 'react-feather'
-import { LoggedInUser } from 'lib/users/types'
+import { LoggedInUser } from 'types'
 import {
   useDashboardLayoutActionsContext,
   useDashboardLayoutValuesContext,
 } from 'layouts/DashboardLayout/DashboardLayoutProvider'
 import { UserTags } from 'components/UserTags'
-import { useQuery } from 'utils/queries'
+import { useQuery } from 'graphql/hooks'
 import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
 
 interface IProps {

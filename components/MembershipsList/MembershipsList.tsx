@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react'
-import { MembershipsListItem } from 'components/MembershipsListItem'
-import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'
-import { LoggedInUser } from 'lib/users/types'
+import { MembershipsListItem } from 'components/MembershipsList'
+import { LoggedInUser, MembershipWithOrganisationMemberships } from 'types'
 
 interface IProps {
   memberships: MembershipWithOrganisationMemberships[]

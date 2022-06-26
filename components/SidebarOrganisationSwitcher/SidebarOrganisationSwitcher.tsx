@@ -11,9 +11,11 @@ import {
   useOutsideClick,
 } from '@chakra-ui/react'
 import { MembershipsList } from 'components/MembershipsList'
-import { MembershipWithOrganisationMemberships } from 'lib/memberships/types'
-import { OrganisationWithMemberships } from 'lib/organisations/types'
-import { LoggedInUser } from 'lib/users/types'
+import {
+  LoggedInUser,
+  MembershipWithOrganisationMemberships,
+  OrganisationWithMemberships,
+} from 'types'
 import { useRef, useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
 

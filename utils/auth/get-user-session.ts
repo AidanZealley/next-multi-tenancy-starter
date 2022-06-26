@@ -1,4 +1,4 @@
-import { prisma } from 'lib/prisma'
+import { prisma } from 'prisma/client'
 import { Role } from '@prisma/client'
 import { getSession } from 'next-auth/react'
 import { IncomingMessage } from 'http'

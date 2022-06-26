@@ -8,7 +8,7 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import { MembersTableRow } from 'components/MembersTable'
-import { MembershipWithUser } from 'lib/memberships/types'
+import { MembershipWithUser } from 'types'
 
 interface IProps {
   memberships: MembershipWithUser[]

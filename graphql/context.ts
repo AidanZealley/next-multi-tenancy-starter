@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { IncomingMessage } from 'http'
-import { prisma } from 'lib/prisma'
+import { prisma } from 'prisma/client'
 import { getUserSession, UserSession } from 'utils/auth'
 
 export type Context = {

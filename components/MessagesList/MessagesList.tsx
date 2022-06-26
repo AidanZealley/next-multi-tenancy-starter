@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import { MessagesListItem } from 'components/MessagesList'
-import { MessageWithUserReactions } from 'lib/messages/types'
+import { MessageWithUserReactions } from 'types'
 
 interface IProps {
   messages: MessageWithUserReactions[]

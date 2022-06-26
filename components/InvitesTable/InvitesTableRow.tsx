@@ -3,10 +3,9 @@ import { InviteTags } from 'components/InviteTags'
 import { formatRelative } from 'date-fns'
 import { DELETE_INVITE_MUTATION } from 'graphql/mutations'
 import { INVITES_QUERY } from 'graphql/queries'
-import { InviteWithInvitedBy } from 'lib/invites/types'
+import { InviteWithInvitedBy } from 'types'
 import { X } from 'react-feather'
-import { useMutation } from 'utils/mutations'
-import { useQuery } from 'utils/queries'
+import { useMutation, useQuery } from 'graphql/hooks'
 
 interface IProps {
   invite: InviteWithInvitedBy

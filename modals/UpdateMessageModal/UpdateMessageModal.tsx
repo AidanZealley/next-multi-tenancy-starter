@@ -13,10 +13,9 @@ import { FormInput } from 'components/FormInput'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { MESSAGES_QUERY } from 'graphql/queries'
-import { useQuery } from 'utils/queries'
-import { useMutation } from 'utils/mutations'
+import { useMutation, useQuery } from 'graphql/hooks'
 import { UPDATE_MESSAGE_MUTATION } from 'graphql/mutations'
-import { MessageWithUserReactions } from 'lib/messages/types'
+import { MessageWithUserReactions } from 'types'
 
 interface IProps {
   message: MessageWithUserReactions

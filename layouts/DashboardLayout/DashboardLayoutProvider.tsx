@@ -2,16 +2,15 @@ import { User } from '@prisma/client'
 import { SWITCH_ORGANISATION_MUTATION } from 'graphql/mutations'
 import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { createContext, useContext, useMemo } from 'react'
-import { useMutation } from 'utils/mutations'
-import { MutationStatusTypes } from 'utils/mutations/types'
-import { useQuery } from 'utils/queries'
+import { MutationStatus } from 'types'
+import { useMutation, useQuery } from 'graphql/hooks'
 
 interface IProps {
   children: React.ReactNode
 }
 
 interface IDashboardValuesContext {
-  switchingStatus: MutationStatusTypes
+  switchingStatus: MutationStatus
 }
 
 interface IDashboardActionsContext {
