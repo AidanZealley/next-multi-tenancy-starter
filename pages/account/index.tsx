@@ -7,21 +7,20 @@ import { NextPageContext } from 'next'
 import { getUserSession } from 'utils/auth'
 import { useQuery } from 'graphql/hooks'
 import { batchServerRequest } from 'graphql/utils'
-import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {
-    loggedInUser: GraphQLResponse<LoggedInUser>
-    memberships: GraphQLResponse<MembershipWithUser[]>
+    loggedInUser: LoggedInUser
+    memberships: MembershipWithUser[]
   }
   organisationId: string
 }
 
-const MembersPage = ({ initialData, organisationId }: IProps) => {
+const AccountPage = ({ initialData, organisationId }: IProps) => {
   const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData.loggedInUser.data,
+      fallbackData: initialData.loggedInUser,
     },
   })
 
@@ -31,7 +30,7 @@ const MembersPage = ({ initialData, organisationId }: IProps) => {
       organisationId: loggedInUser.organisationId ?? organisationId,
     },
     config: {
-      fallbackData: initialData.memberships.data,
+      fallbackData: initialData.memberships,
     },
   })
 
@@ -44,11 +43,11 @@ const MembersPage = ({ initialData, organisationId }: IProps) => {
   )
 }
 
-MembersPage.layout = (page: React.ReactElement) => {
+AccountPage.layout = (page: React.ReactElement) => {
   return <DashboardLayout page={page} />
 }
 
-export default MembersPage
+export default AccountPage
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getUserSession(context.req!)

@@ -9,11 +9,12 @@ import { getUserSession } from 'utils/auth'
 import { InviteWithInvitedBy, LoggedInUser } from 'types'
 import { InvitesTable } from 'components/InvitesTable'
 import { CreateInviteModal } from 'modals/CreateInviteModal'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {
-    loggedInUser: LoggedInUser
-    invites: InviteWithInvitedBy[]
+    loggedInUser: GraphQLResponse<LoggedInUser>
+    invites: GraphQLResponse<InviteWithInvitedBy[]>
   }
   organisationId: string
 }
@@ -22,7 +23,7 @@ const InvitesPage = ({ initialData, organisationId }: IProps) => {
   const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData.loggedInUser,
+      fallbackData: initialData.loggedInUser.data,
     },
   })
 
@@ -32,7 +33,7 @@ const InvitesPage = ({ initialData, organisationId }: IProps) => {
       organisationId: loggedInUser.organisationId ?? organisationId,
     },
     config: {
-      fallbackData: initialData.invites,
+      fallbackData: initialData.invites.data,
     },
   })
 

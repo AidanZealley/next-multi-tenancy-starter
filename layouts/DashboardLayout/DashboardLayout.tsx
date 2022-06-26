@@ -17,7 +17,7 @@ export const DashboardLayout = ({ page }: IProps) => {
   const { data: user } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: loggedInUser,
+      fallbackData: loggedInUser.data,
     },
   })
   const { selectedOrganisation, memberships } = user

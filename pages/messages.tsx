@@ -9,11 +9,12 @@ import { useQuery } from 'graphql/hooks'
 import { batchServerRequest } from 'graphql/utils'
 import { getUserSession } from 'utils/auth'
 import { LoggedInUser, MessageWithUserReactions } from 'types'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {
-    loggedInUser: LoggedInUser
-    messages: MessageWithUserReactions[]
+    loggedInUser: GraphQLResponse<LoggedInUser>
+    messages: GraphQLResponse<MessageWithUserReactions[]>
   }
   organisationId: string
 }
@@ -22,7 +23,7 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
   const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData.loggedInUser,
+      fallbackData: initialData.loggedInUser.data,
     },
   })
 
@@ -32,7 +33,7 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
       organisationId: loggedInUser.organisationId ?? organisationId,
     },
     config: {
-      fallbackData: initialData.messages,
+      fallbackData: initialData.messages.data,
     },
   })
 

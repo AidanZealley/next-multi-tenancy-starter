@@ -1,15 +1,35 @@
-import request, { RequestDocument } from 'graphql-request'
+import { BASE_URL } from 'constants/urls'
+import { GraphQLError } from 'graphql'
+import request, {
+  RequestDocument,
+  Variables,
+  ClientError,
+  rawRequest,
+} from 'graphql-request'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 import { NextPageContext } from 'next'
 
-export const serverRequest = async (
-  document: RequestDocument,
-  context: NextPageContext,
-) => {
-  const response = await request({
-    url: 'http://localhost:3000/api/graphql',
+export const serverRequest = async <T>(
+  {
     document,
-    requestHeaders: { cookie: context?.req?.headers.cookie! },
-  })
+    variables,
+  }: {
+    document: string
+    variables?: Variables
+  },
+  context: NextPageContext,
+): Promise<GraphQLResponse<T>> => {
+  const response = await rawRequest(
+    `${BASE_URL}/api/graphql`,
+    document,
+    variables,
+    { cookie: context?.req?.headers.cookie! },
+  )
 
-  return response
+  const [key] = Object.entries(response.data)[0]
+
+  return {
+    ...response,
+    data: response.data[key],
+  }
 }
