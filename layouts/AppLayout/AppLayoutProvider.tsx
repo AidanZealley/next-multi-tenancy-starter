@@ -9,46 +9,44 @@ interface IProps {
   children: React.ReactNode
 }
 
-interface IDashboardValuesContext {
+interface IAppValuesContext {
   switchingStatus: MutationStatus
 }
 
-interface IDashboardActionsContext {
+interface IAppActionsContext {
   switchOrganisation: (data: Partial<User>) => void
 }
 
-const DashboardLayoutValuesContext = createContext<
-  IDashboardValuesContext | undefined
->(undefined)
-const DashboardLayoutActionsContext = createContext<
-  IDashboardActionsContext | undefined
->(undefined)
+const AppLayoutValuesContext = createContext<IAppValuesContext | undefined>(
+  undefined,
+)
+const AppLayoutActionsContext = createContext<IAppActionsContext | undefined>(
+  undefined,
+)
 
-export const useDashboardLayoutValuesContext = () => {
-  const context = useContext(DashboardLayoutValuesContext)
+export const useAppLayoutValuesContext = () => {
+  const context = useContext(AppLayoutValuesContext)
+
+  if (!context) {
+    throw Error('You are using this component outside of AppLayoutContext')
+  }
+
+  return context
+}
+
+export const useAppLayoutActionsContext = () => {
+  const context = useContext(AppLayoutActionsContext)
 
   if (!context) {
     throw Error(
-      'You are using this component outside of DashboardLayoutContext',
+      'You are using this component outside of AppLayoutActionsContext',
     )
   }
 
   return context
 }
 
-export const useDashboardLayoutActionsContext = () => {
-  const context = useContext(DashboardLayoutActionsContext)
-
-  if (!context) {
-    throw Error(
-      'You are using this component outside of DashboardLayoutActionsContext',
-    )
-  }
-
-  return context
-}
-
-export const DashboardLayoutProvider = ({ children }: IProps) => {
+export const AppLayoutProvider = ({ children }: IProps) => {
   const { mutate } = useQuery({
     query: LOGGED_IN_USER_QUERY,
   })
@@ -72,10 +70,10 @@ export const DashboardLayoutProvider = ({ children }: IProps) => {
   )
 
   return (
-    <DashboardLayoutValuesContext.Provider value={values}>
-      <DashboardLayoutActionsContext.Provider value={actions}>
+    <AppLayoutValuesContext.Provider value={values}>
+      <AppLayoutActionsContext.Provider value={actions}>
         {children}
-      </DashboardLayoutActionsContext.Provider>
-    </DashboardLayoutValuesContext.Provider>
+      </AppLayoutActionsContext.Provider>
+    </AppLayoutValuesContext.Provider>
   )
 }

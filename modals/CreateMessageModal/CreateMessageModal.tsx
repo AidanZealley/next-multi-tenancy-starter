@@ -8,8 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
-import { Form } from 'components/Form'
-import { FormInput } from 'components/FormInput'
+import { Form, FormInput } from 'components/Form'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { MESSAGES_QUERY } from 'graphql/queries'

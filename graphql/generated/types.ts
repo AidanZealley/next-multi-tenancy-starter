@@ -160,11 +160,14 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createInvite: NexusGenRootTypes['Invite']; // Invite!
     createMessage: NexusGenRootTypes['Message']; // Message!
+    createOrganisation: NexusGenRootTypes['Organisation']; // Organisation!
     deleteInvite: NexusGenRootTypes['Invite']; // Invite!
     deleteMessage: NexusGenRootTypes['Message']; // Message!
+    deleteOrganisation: NexusGenRootTypes['Organisation']; // Organisation!
     deleteUser: NexusGenRootTypes['User']; // User!
     switchOrganisation: NexusGenRootTypes['User']; // User!
     updateMessage: NexusGenRootTypes['Message']; // Message!
+    updateOrganisation: NexusGenRootTypes['Organisation']; // Organisation!
     updateUser: NexusGenRootTypes['User']; // User!
   }
   Organisation: { // field return type
@@ -264,11 +267,14 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     createInvite: 'Invite'
     createMessage: 'Message'
+    createOrganisation: 'Organisation'
     deleteInvite: 'Invite'
     deleteMessage: 'Message'
+    deleteOrganisation: 'Organisation'
     deleteUser: 'User'
     switchOrganisation: 'User'
     updateMessage: 'Message'
+    updateOrganisation: 'Organisation'
     updateUser: 'User'
   }
   Organisation: { // field return type name
@@ -339,10 +345,16 @@ export interface NexusGenArgTypes {
     createMessage: { // args
       text: string; // String!
     }
+    createOrganisation: { // args
+      name: string; // String!
+    }
     deleteInvite: { // args
       id: string; // String!
     }
     deleteMessage: { // args
+      id: string; // String!
+    }
+    deleteOrganisation: { // args
       id: string; // String!
     }
     deleteUser: { // args
@@ -354,6 +366,10 @@ export interface NexusGenArgTypes {
     updateMessage: { // args
       id: string; // String!
       text: string; // String!
+    }
+    updateOrganisation: { // args
+      id: string; // String!
+      name: string; // String!
     }
     updateUser: { // args
       id: string; // String!

@@ -4,7 +4,6 @@ import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
 import { LoggedInUser } from 'types'
 import { useQuery } from 'graphql/hooks'
 import { DashboardLayoutPage } from './DashboardLayoutPage'
-import { DashboardLayoutProvider } from './DashboardLayoutProvider'
 
 interface IProps {
   page: React.ReactElement
@@ -23,18 +22,16 @@ export const DashboardLayout = ({ page }: IProps) => {
   const { selectedOrganisation, memberships } = user
 
   return (
-    <DashboardLayoutProvider>
-      <Box display="grid" gridTemplateColumns="18rem 1fr">
-        <Box display="grid" borderRight="1px solid" borderColor="gray.200">
-          <DashboardSidebar
-            user={user}
-            selectedOrganisation={selectedOrganisation!}
-            userMemberships={memberships}
-          />
-        </Box>
-
-        <DashboardLayoutPage>{page}</DashboardLayoutPage>
+    <Box display="grid" gridTemplateColumns="18rem 1fr">
+      <Box display="grid" borderRight="1px solid" borderColor="gray.200">
+        <DashboardSidebar
+          user={user}
+          selectedOrganisation={selectedOrganisation!}
+          userMemberships={memberships}
+        />
       </Box>
-    </DashboardLayoutProvider>
+
+      <DashboardLayoutPage>{page}</DashboardLayoutPage>
+    </Box>
   )
 }

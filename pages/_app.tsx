@@ -6,7 +6,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 
 import { theme } from 'theme'
-import { Wrapper } from 'layouts/Wrapper'
+import { AppLayout } from 'layouts/AppLayout'
 
 type NextPageWithLayout = NextPage & {
   layout?: (page: ReactElement) => ReactNode
@@ -38,7 +38,7 @@ export default function App({
 
       <ChakraProvider theme={theme}>
         <SessionProvider session={session}>
-          <Wrapper>{layout(<Component {...pageProps} />)}</Wrapper>
+          <AppLayout>{layout(<Component {...pageProps} />)}</AppLayout>
         </SessionProvider>
       </ChakraProvider>
     </>

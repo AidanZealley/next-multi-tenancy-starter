@@ -52,11 +52,14 @@ type Message {
 type Mutation {
   createInvite(email: String!): Invite!
   createMessage(text: String!): Message!
+  createOrganisation(name: String!): Organisation!
   deleteInvite(id: String!): Invite!
   deleteMessage(id: String!): Message!
+  deleteOrganisation(id: String!): Organisation!
   deleteUser(id: String!): User!
   switchOrganisation(organisationId: String!): User!
   updateMessage(id: String!, text: String!): Message!
+  updateOrganisation(id: String!, name: String!): Organisation!
   updateUser(id: String!, organisationId: String): User!
 }
 

@@ -18,17 +18,6 @@ export type UserSession = {
   organisation: SessionOrganisationData
 } | null
 
-const defaultData = {
-  user: {
-    id: null,
-    role: null,
-    isOwner: false,
-  },
-  organisation: {
-    id: null,
-  },
-}
-
 export const getUserSession = async (
   req: IncomingMessage,
 ): Promise<UserSession | null> => {
@@ -51,11 +40,24 @@ export const getUserSession = async (
       return null
     }
 
+    const defaultSession = {
+      ...session,
+      user: {
+        ...session.user,
+        id: null,
+        role: null,
+        isOwner: false,
+      },
+      organisation: {
+        id: null,
+      },
+    }
+
     if (!user.organisationId) {
       return {
-        ...defaultData,
+        ...defaultSession,
         user: {
-          ...defaultData.user,
+          ...defaultSession.user,
           id: user.id,
         },
       }
@@ -67,13 +69,13 @@ export const getUserSession = async (
 
     if (!membership) {
       return {
-        ...defaultData,
+        ...defaultSession,
         user: {
-          ...defaultData.user,
+          ...defaultSession.user,
           id: user.id,
         },
         organisation: {
-          ...defaultData.organisation,
+          ...defaultSession.organisation,
           id: user.organisationId,
         },
       }

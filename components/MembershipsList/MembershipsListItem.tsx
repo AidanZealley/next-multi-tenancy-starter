@@ -10,9 +10,9 @@ import {
 import { Check } from 'react-feather'
 import { LoggedInUser } from 'types'
 import {
-  useDashboardLayoutActionsContext,
-  useDashboardLayoutValuesContext,
-} from 'layouts/DashboardLayout/DashboardLayoutProvider'
+  useAppLayoutActionsContext,
+  useAppLayoutValuesContext,
+} from 'layouts/AppLayout/AppLayoutProvider'
 import { UserTags } from 'components/UserTags'
 import { useQuery } from 'graphql/hooks'
 import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
@@ -35,11 +35,13 @@ export const MembershipsListItem = ({
       fallbackData: loggedInUser,
     },
   })
-  const { switchingStatus } = useDashboardLayoutValuesContext()
-  const { switchOrganisation } = useDashboardLayoutActionsContext()
+  const { switchingStatus } = useAppLayoutValuesContext()
+  const { switchOrganisation } = useAppLayoutActionsContext()
   const handleClick = async () => {
     switchOrganisation({ organisationId })
   }
+
+  console.log(organisation)
 
   return (
     <Button

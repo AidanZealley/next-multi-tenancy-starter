@@ -1,38 +1,39 @@
-import { Box, Heading } from '@chakra-ui/react'
-import { MembersTable } from 'components/MembersTable'
-import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from 'graphql/queries'
-import { DashboardLayout } from 'layouts/DashboardLayout'
-import { LoggedInUser, MembershipWithUser } from 'types'
+import { Box } from '@chakra-ui/react'
+import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
+import { LoggedInUser } from 'types'
 import { NextPageContext } from 'next'
 import { getUserSession } from 'utils/auth'
 import { useQuery } from 'graphql/hooks'
-import { batchServerRequest, serverRequest } from 'graphql/utils'
+import { serverRequest } from 'graphql/utils'
+import { MembershipsList } from 'components/MembershipsList'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {
-    loggedInUser: LoggedInUser
-    memberships: MembershipWithUser[]
+    loggedInUser: GraphQLResponse<LoggedInUser>
   }
-  organisationId: string
 }
 
-const OrganisationsPage = ({ initialData, organisationId }: IProps) => {
+const OrganisationsPage = ({ initialData }: IProps) => {
   const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData.loggedInUser,
+      fallbackData: initialData.loggedInUser.data,
     },
   })
+  const { memberships } = loggedInUser
 
   return (
-    <Box display="flex" flexDirection="column" gap={4}>
-      Hi
+    <Box display="grid" placeItems="center" p={6}>
+      <Box w="100%" maxW="sm">
+        <MembershipsList
+          memberships={memberships}
+          loggedInUser={loggedInUser}
+          showNew={true}
+        />
+      </Box>
     </Box>
   )
-}
-
-OrganisationsPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
 }
 
 export default OrganisationsPage
@@ -57,7 +58,6 @@ export async function getServerSideProps(context: NextPageContext) {
   return {
     props: {
       layoutData: JSON.parse(JSON.stringify({ loggedInUser })),
-      organisationId: session.organisation.id,
       initialData: JSON.parse(JSON.stringify({ loggedInUser })),
     },
   }

@@ -118,11 +118,9 @@ export const CreateMessageMutation = extendType({
           organisationId: ctx?.session?.organisation.id!,
         }
 
-        const message = await ctx.prisma.message.create({
+        return ctx.prisma.message.create({
           data: newMessage,
         })
-
-        return message
       },
     })
   },
