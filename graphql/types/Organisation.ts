@@ -14,7 +14,7 @@ export const Organisation = objectType({
     t.list.field('memberships', {
       type: Membership,
       async resolve(_parent, _args, ctx) {
-        return await ctx.prisma.user
+        return await ctx.prisma.organisation
           .findUnique({
             where: {
               id: _parent.id,
