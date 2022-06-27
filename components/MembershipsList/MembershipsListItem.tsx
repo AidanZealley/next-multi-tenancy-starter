@@ -41,8 +41,6 @@ export const MembershipsListItem = ({
     switchOrganisation({ organisationId })
   }
 
-  console.log(organisation)
-
   return (
     <Button
       display="grid"
