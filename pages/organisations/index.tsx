@@ -1,11 +1,11 @@
 import { Box } from '@chakra-ui/react'
-import { LOGGED_IN_USER_QUERY } from 'graphql/queries'
-import { LoggedInUser } from 'types'
+import { LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { LoggedInUser } from '@/types'
 import { NextPageContext } from 'next'
-import { getUserSession } from 'utils/auth'
-import { useQuery } from 'graphql/hooks'
-import { serverRequest } from 'graphql/utils'
-import { MembershipsList } from 'components/MembershipsList'
+import { getUserSession } from '@/utils/auth'
+import { useQuery } from '@/graphql/hooks'
+import { serverRequest } from '@/graphql/utils'
+import { MembershipsList } from '@/components/MembershipsList'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {

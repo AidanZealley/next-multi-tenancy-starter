@@ -9,7 +9,7 @@ import { Home } from 'react-feather'
 import {
   membershipsErrorMessages,
   MembershipsErrorMessages,
-} from 'constants/error-messages'
+} from '@/constants/error-messages'
 import Link from 'next/link'
 import { findExistingMembership } from 'lib/memberships/services/find-existing-membership'
 

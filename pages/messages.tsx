@@ -1,14 +1,14 @@
 import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
-import { DashboardLayout } from 'layouts/DashboardLayout'
+import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { NextPageContext } from 'next'
 import { Plus } from 'react-feather'
-import { CreateMessageModal } from 'modals/CreateMessageModal'
-import { MessagesList } from 'components/MessagesList'
-import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from 'graphql/queries'
-import { useQuery } from 'graphql/hooks'
-import { batchServerRequest } from 'graphql/utils'
-import { getUserSession } from 'utils/auth'
-import { LoggedInUser, MessageWithUserReactions } from 'types'
+import { CreateMessageModal } from '@/modals/CreateMessageModal'
+import { MessagesList } from '@/components/MessagesList'
+import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { useQuery } from '@/graphql/hooks'
+import { batchServerRequest } from '@/graphql/utils'
+import { getUserSession } from '@/utils/auth'
+import { LoggedInUser, MessageWithUserReactions } from '@/types'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
@@ -36,7 +36,6 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
       fallbackData: initialData.messages.data,
     },
   })
-
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (

@@ -16,7 +16,7 @@ import { ThumbsDown, ThumbsUp } from 'react-feather'
 import {
   invitesErrorMessages,
   InvitesErrorMessages,
-} from 'constants/error-messages'
+} from '@/constants/error-messages'
 import { useDeclineInviteMutation } from 'lib/invites/mutations'
 import { useEffect } from 'react'
 

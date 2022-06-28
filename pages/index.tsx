@@ -1,5 +1,5 @@
 import { Box, Button, Heading, Icon, Text } from '@chakra-ui/react'
-import { LoadingOverlay } from 'components/LoadingOverlay'
+import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Box as BoxIcon, LogIn } from 'react-feather'

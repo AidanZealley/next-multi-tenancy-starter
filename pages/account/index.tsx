@@ -1,12 +1,12 @@
 import { Box, Heading } from '@chakra-ui/react'
-import { MembersTable } from 'components/MembersTable'
-import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from 'graphql/queries'
-import { DashboardLayout } from 'layouts/DashboardLayout'
-import { LoggedInUser, MembershipWithUser } from 'types'
+import { MembersTable } from '@/components/MembersTable'
+import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from '@/graphql/queries'
+import { DashboardLayout } from '@/layouts/DashboardLayout'
+import { LoggedInUser, MembershipWithUser } from '@/types'
 import { NextPageContext } from 'next'
-import { getUserSession } from 'utils/auth'
-import { useQuery } from 'graphql/hooks'
-import { batchServerRequest } from 'graphql/utils'
+import { getUserSession } from '@/utils/auth'
+import { useQuery } from '@/graphql/hooks'
+import { batchServerRequest } from '@/graphql/utils'
 
 type IProps = {
   initialData: {
