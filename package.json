@@ -10,6 +10,9 @@
     "lint": "next lint",
     "format": "prettier --write '**/*.{ts,tsx}'"
   },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.0.0-next.0",
     "@emotion/react": "^11",
