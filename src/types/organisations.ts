@@ -6,6 +6,13 @@ export type OrganisationWithMemberships = Prisma.OrganisationGetPayload<{
   }
 }>
 
+export type OrganisationWithMembershipsOwner = Prisma.OrganisationGetPayload<{
+  include: {
+    memberships: true
+    owner: true
+  }
+}>
+
 export type OrganisationWithMembershipsOwnerSelectedBy =
   Prisma.OrganisationGetPayload<{
     include: {

@@ -1,12 +1,13 @@
-import request, { RequestDocument } from 'graphql-request'
+import request from 'graphql-request'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 import { useCallback, useState } from 'react'
-import { KeyedMutator } from 'swr'
+import { KeyedMutator, useSWRConfig } from 'swr'
 import { MutationStatus } from '@/types'
+import { GRAPHQL_API } from '@/constants'
 
-export const useMutation = <T, M = T>(
-  mutation: RequestDocument,
-  mutate: KeyedMutator<M>,
+export const useMutation = <T>(
+  mutation: string,
+  invalidates?: KeyedMutator<any>[],
 ): [
   <S>(data: S) => Promise<T | void>,
   {
@@ -19,6 +20,7 @@ export const useMutation = <T, M = T>(
   const [data, setData] = useState<GraphQLResponse<T> | null>(null)
   const [status, setStatus] = useState<MutationStatus>('idle')
   const [error, setError] = useState<string | null>(null)
+  const { mutate, cache } = useSWRConfig()
 
   const reset = useCallback(() => {
     setData(null)
@@ -33,7 +35,7 @@ export const useMutation = <T, M = T>(
 
     try {
       const response = await request({
-        url: 'http://localhost:3000/api/graphql',
+        url: GRAPHQL_API,
         document: mutation,
         variables: data,
       })
@@ -44,7 +46,9 @@ export const useMutation = <T, M = T>(
 
       setStatus('revalidating')
 
-      mutate && (await mutate())
+      if (invalidates) {
+        await Promise.all(invalidates.map(mutator => mutator()))
+      }
 
       setStatus('success')
       setData(response)

@@ -1,9 +1,10 @@
-import request, { RequestDocument } from 'graphql-request'
+import request from 'graphql-request'
 import useSWR, { KeyedMutator, SWRConfiguration } from 'swr'
 import { QueryStatus } from '@/types'
+import { GRAPHQL_API } from '@/constants'
 
 interface IUseQuery<T> {
-  query: RequestDocument
+  query: string
   variables?: { [key: string]: string }
   config?: SWRConfiguration<T>
 }
@@ -33,14 +34,10 @@ const queryStatus = <T>(
 }
 
 const fetcher = async (
-  query: RequestDocument,
+  query: string,
   variables?: { [key: string]: string },
 ) => {
-  const response = await request(
-    'http://localhost:3000/api/graphql',
-    query,
-    variables,
-  )
+  const response = await request(GRAPHQL_API, query, variables)
   const [_, data] = Object.entries(response)[0]
 
   return data
@@ -52,7 +49,7 @@ export const useQuery = <T = any>({
   config,
 }: IUseQuery<T>): UseQuery<T> => {
   const { data, error, mutate, isValidating } = useSWR(
-    [query, variables],
+    variables ? [query, variables] : query,
     fetcher,
     config,
   )

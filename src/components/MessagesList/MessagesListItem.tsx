@@ -22,7 +22,7 @@ export const MessagesListItem = ({ message, organisationId }: IProps) => {
   })
   const [deleteMessage, { status }] = useMutation<MessageWithUserReactions>(
     DELETE_MESSAGE_MUTATION,
-    mutate,
+    [mutate],
   )
   const handleEdit = () => onOpen()
   const handleDelete = () => deleteMessage({ id })

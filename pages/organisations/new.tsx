@@ -31,12 +31,12 @@ const NewOrganisationPage = ({ initialData }: IProps) => {
 
   const [createOrganisation, { data, status }] = useMutation(
     CREATE_ORGANISATION_MUTATION,
-    mutate,
+    [mutate],
   )
 
   const [switchOrganisation, { status: switchingStatus }] = useMutation(
     SWITCH_ORGANISATION_MUTATION,
-    mutate,
+    [mutate],
   )
 
   const methods = useForm()

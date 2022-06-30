@@ -35,7 +35,7 @@ export const UpdateMessageModal = ({
     variables: { organisationId },
   })
   const [editMessage, { status, reset }] =
-    useMutation<MessageWithUserReactions>(UPDATE_MESSAGE_MUTATION, mutate)
+    useMutation<MessageWithUserReactions>(UPDATE_MESSAGE_MUTATION, [mutate])
 
   const methods = useForm({
     defaultValues: {

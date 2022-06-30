@@ -1,12 +1,12 @@
 import { Box } from '@chakra-ui/react'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
 import { LOGGED_IN_USER_QUERY } from '@/graphql/queries'
 import { LoggedInUser } from '@/types'
-import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
 import { useQuery } from '@/graphql/hooks'
 import { serverRequest } from '@/graphql/utils'
 import { MembershipsList } from '@/components/MembershipsList'
-import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {

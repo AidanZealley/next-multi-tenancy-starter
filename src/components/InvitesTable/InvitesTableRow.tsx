@@ -19,7 +19,7 @@ export const InvitesTableRow = ({ invite, organisationId }: IProps) => {
     variables: { organisationId },
   })
   const [deleteInvite, { status: createInviteStatus }] =
-    useMutation<InviteWithInvitedBy>(DELETE_INVITE_MUTATION, mutate)
+    useMutation<InviteWithInvitedBy>(DELETE_INVITE_MUTATION, [mutate])
   const handleDelete = () => {
     deleteInvite({ id })
   }

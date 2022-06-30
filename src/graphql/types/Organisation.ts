@@ -128,7 +128,7 @@ export const CreateOrganisationMutation = extendType({
         name: nonNull(stringArg()),
       },
       resolve(_parent, args, ctx) {
-        if (!ctx?.session?.user.id) {
+        if (!ctx.session?.user.id) {
           throw new Error('Unauthorised')
         }
 
@@ -171,10 +171,7 @@ export const UpdateOrganisationMutation = extendType({
         name: nonNull(stringArg()),
       },
       async resolve(_parent, args, ctx) {
-        const hasMembership = await isMember(
-          ctx?.session?.organisation.id!,
-          ctx,
-        )
+        const hasMembership = await isMember(ctx.session?.organisation.id!, ctx)
 
         if (!hasMembership) {
           throw new Error('Unauthorised')
@@ -188,13 +185,9 @@ export const UpdateOrganisationMutation = extendType({
           throw new Error('Organisation not found')
         }
 
-        if (
-          organisation.userId !== ctx?.session?.user.id &&
-          ctx?.session?.user.role !== 'ADMIN'
-        ) {
+        if (ctx.session?.user.role !== 'ADMIN') {
           throw new Error('Unauthorised')
         }
-
         return ctx.prisma.organisation.update({
           where: { id: args.id! },
           data: {
@@ -215,10 +208,7 @@ export const DeleteOrganisationMutation = extendType({
         id: nonNull(stringArg()),
       },
       async resolve(_parent, args, ctx) {
-        const hasMembership = await isMember(
-          ctx?.session?.organisation.id!,
-          ctx,
-        )
+        const hasMembership = await isMember(ctx.session?.organisation.id!, ctx)
 
         if (!hasMembership) {
           throw new Error('Unauthorised')
@@ -232,10 +222,7 @@ export const DeleteOrganisationMutation = extendType({
           throw new Error('Organisation not found')
         }
 
-        if (
-          organisation.userId !== ctx?.session?.user.id &&
-          ctx?.session?.user.role !== 'ADMIN'
-        ) {
+        if (!ctx.session?.user.isOwner) {
           throw new Error('Unauthorised')
         }
 

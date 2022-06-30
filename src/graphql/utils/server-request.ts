@@ -1,11 +1,5 @@
-import { BASE_URL } from '@/constants/urls'
-import { GraphQLError } from 'graphql'
-import request, {
-  RequestDocument,
-  Variables,
-  ClientError,
-  rawRequest,
-} from 'graphql-request'
+import { GRAPHQL_API } from '@/constants/urls'
+import { Variables, rawRequest } from 'graphql-request'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 import { NextPageContext } from 'next'
 
@@ -19,12 +13,9 @@ export const serverRequest = async <T>(
   },
   context: NextPageContext,
 ): Promise<GraphQLResponse<T>> => {
-  const response = await rawRequest(
-    `${BASE_URL}/api/graphql`,
-    document,
-    variables,
-    { cookie: context?.req?.headers.cookie! },
-  )
+  const response = await rawRequest(GRAPHQL_API, document, variables, {
+    cookie: context?.req?.headers.cookie!,
+  })
 
   const [key] = Object.entries(response.data)[0]
 

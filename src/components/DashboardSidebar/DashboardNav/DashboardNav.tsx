@@ -1,6 +1,7 @@
 import { Box, Divider, Icon } from '@chakra-ui/react'
 import { VerticalNav } from '@/components/VerticalNav'
 import { MessageSquare, Settings, UserPlus, Users } from 'react-feather'
+import { isActiveSection } from '@/utils/navigation'
 
 const mainLinks = [
   {
@@ -25,6 +26,7 @@ const adminLinks = [
     action: '/settings',
     icon: <Icon as={Settings} w={4} h={4} color="gray.600" />,
     text: 'Settings',
+    getActiveStatus: isActiveSection,
   },
 ]
 

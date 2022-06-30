@@ -32,7 +32,7 @@ export const CreateInviteModal = ({
   })
   const [createInvite, { status, reset }] = useMutation(
     CREATE_INVITE_MUTATION,
-    mutate,
+    [mutate],
   )
 
   const methods = useForm()

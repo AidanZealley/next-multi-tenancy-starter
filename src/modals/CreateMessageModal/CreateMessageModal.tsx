@@ -32,7 +32,7 @@ export const CreateMessageModal = ({
     variables: { organisationId },
   })
   const [createMessage, { status, reset }] =
-    useMutation<MessageWithUserReactions>(CREATE_MESSAGE_MUTATION, mutate)
+    useMutation<MessageWithUserReactions>(CREATE_MESSAGE_MUTATION, [mutate])
 
   const methods = useForm()
 

@@ -9,10 +9,10 @@ import {
   Portal,
   Text,
 } from '@chakra-ui/react'
-import { VerticalNav } from '@/components/VerticalNav'
-import { LoggedInUser } from '@/types'
 import { signOut } from 'next-auth/react'
 import { LogOut, MoreVertical, Plus, Settings } from 'react-feather'
+import { VerticalNav } from '@/components/VerticalNav'
+import { LoggedInUser } from '@/types'
 
 const accountLinks = [
   {

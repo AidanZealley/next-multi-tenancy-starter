@@ -12,9 +12,10 @@ import {
 import { Form, FormInput } from '@/components/Form'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { INVITES_QUERY } from '@/graphql/queries'
+import { ORGANISATION_QUERY } from '@/graphql/queries'
 import { useMutation, useQuery } from '@/graphql/hooks'
-import { CREATE_INVITE_MUTATION } from '@/graphql/mutations'
+import { DELETE_ORGANISATION_MUTATION } from '@/graphql/mutations'
+import { OrganisationWithMembershipsOwnerSelectedBy } from '@/types'
 
 interface IProps {
   organisationId: string
@@ -29,13 +30,13 @@ export const ConfirmDeleteOrganisationModal = ({
   isOpen,
   onClose,
 }: IProps) => {
-  const { mutate } = useQuery({
-    query: INVITES_QUERY,
+  const { mutate } = useQuery<OrganisationWithMembershipsOwnerSelectedBy>({
+    query: ORGANISATION_QUERY,
     variables: { organisationId },
   })
-  const [createInvite, { status, reset }] = useMutation(
-    CREATE_INVITE_MUTATION,
-    mutate,
+  const [deleteOrganisation, { status, reset }] = useMutation(
+    DELETE_ORGANISATION_MUTATION,
+    [mutate],
   )
 
   const methods = useForm()
@@ -56,6 +57,10 @@ export const ConfirmDeleteOrganisationModal = ({
         })
         throw 'Form invalid'
       }
+
+      deleteOrganisation({
+        organisationId,
+      })
 
       console.log('BOOM')
     } catch (error) {

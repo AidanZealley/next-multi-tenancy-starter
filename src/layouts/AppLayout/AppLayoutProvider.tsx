@@ -52,7 +52,7 @@ export const AppLayoutProvider = ({ children }: IProps) => {
   })
   const [switchOrganisation, { status: switchingStatus }] = useMutation(
     SWITCH_ORGANISATION_MUTATION,
-    mutate,
+    [mutate],
   )
 
   const values = useMemo(

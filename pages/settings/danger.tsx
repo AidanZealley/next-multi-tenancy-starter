@@ -54,6 +54,7 @@ const DangerPage = ({ initialData, organisationId }: IProps) => {
         fallbackData: initialData.organisation.data,
       },
     })
+  const { id } = organisation
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -109,7 +110,7 @@ const DangerPage = ({ initialData, organisationId }: IProps) => {
       </Page>
 
       <ConfirmDeleteOrganisationModal
-        organisationId={loggedInUser.organisationId ?? organisationId}
+        organisationId={id}
         organisationName={name}
         isOpen={isOpen}
         onClose={onClose}

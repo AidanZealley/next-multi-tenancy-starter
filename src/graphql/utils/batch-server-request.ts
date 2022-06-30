@@ -1,4 +1,4 @@
-import { BASE_URL } from '@/constants'
+import { GRAPHQL_API } from '@/constants'
 import { BatchRequestDocument, batchRequests } from 'graphql-request'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 import { NextPageContext } from 'next'
@@ -7,7 +7,7 @@ export const batchServerRequest = async (
   documents: BatchRequestDocument[],
   context: NextPageContext,
 ): Promise<{ [key: string]: GraphQLResponse }> => {
-  const responses = await batchRequests(`${BASE_URL}/api/graphql`, documents, {
+  const responses = await batchRequests(GRAPHQL_API, documents, {
     cookie: context?.req?.headers.cookie!,
   })
 

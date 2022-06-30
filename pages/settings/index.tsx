@@ -1,4 +1,4 @@
-import { useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Heading } from '@chakra-ui/react'
 import { LOGGED_IN_USER_QUERY, ORGANISATION_QUERY } from '@/graphql/queries'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
 import {
@@ -7,11 +7,15 @@ import {
 } from '@/types'
 import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
-import { useQuery } from '@/graphql/hooks'
+import { useMutation, useQuery } from '@/graphql/hooks'
 import { batchServerRequest } from '@/graphql/utils'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 import { Page, PageHeader } from '@/components/Page'
 import { settingsLinks } from '@/config'
+import { Form, FormInput } from '@/components/Form'
+import { useForm } from 'react-hook-form'
+import { UPDATE_ORGANISATION_MUTATION } from '@/graphql/mutations'
+import { useSWRConfig } from 'swr'
 
 type IProps = {
   initialData: {
@@ -22,14 +26,14 @@ type IProps = {
 }
 
 const SettingsPage = ({ initialData, organisationId }: IProps) => {
-  const { name } = initialData.organisation.data!
-  const { data: loggedInUser } = useQuery<LoggedInUser>({
-    query: LOGGED_IN_USER_QUERY,
-    config: {
-      fallbackData: initialData.loggedInUser.data,
-    },
-  })
-  const { data: organisation } =
+  const { data: loggedInUser, mutate: mutateLoggedInUser } =
+    useQuery<LoggedInUser>({
+      query: LOGGED_IN_USER_QUERY,
+      config: {
+        fallbackData: initialData.loggedInUser.data,
+      },
+    })
+  const { data: organisation, mutate: mutateOrganisation } =
     useQuery<OrganisationWithMembershipsOwnerSelectedBy>({
       query: ORGANISATION_QUERY,
       variables: {
@@ -39,12 +43,55 @@ const SettingsPage = ({ initialData, organisationId }: IProps) => {
         fallbackData: initialData.organisation.data,
       },
     })
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { id, name } = organisation
+  const [editOrganisation, { status }] =
+    useMutation<OrganisationWithMembershipsOwnerSelectedBy>(
+      UPDATE_ORGANISATION_MUTATION,
+      [mutateOrganisation, mutateLoggedInUser],
+    )
+
+  const methods = useForm({
+    defaultValues: {
+      name,
+    },
+  })
+
+  const submitHandler = async () => {
+    try {
+      const validated = await methods.trigger()
+
+      if (!validated) {
+        throw 'Form invalid'
+      }
+
+      const values = methods.getValues()
+
+      editOrganisation({ ...values, id })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Page>
       <PageHeader heading="Settings" navLinks={settingsLinks} />
-      Details
+      <Box display="flex" flexDirection="column" gap={6}>
+        <Heading fontSize="lg">Organisation Details</Heading>
+        <Form methods={methods} onSubmit={submitHandler} includeSubmit={false}>
+          <FormInput
+            label="Name"
+            name="name"
+            validation={{ required: true }}
+            autoComplete="false"
+          />
+          <Button
+            type="submit"
+            isLoading={status === 'loading' || status === 'revalidating'}
+          >
+            Save
+          </Button>
+        </Form>
+      </Box>
     </Page>
   )
 }
