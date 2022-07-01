@@ -1,5 +1,5 @@
 export const ORGANISATIONS_QUERY = `
-  query organisationsQuery {
+  query OrganisationsQuery {
     organisations {
       id
       name
@@ -8,7 +8,7 @@ export const ORGANISATIONS_QUERY = `
 `
 
 export const ORGANISATION_QUERY = `
-  query organisationQuery($organisationId: String!) {
+  query OrganisationQuery($organisationId: String!) {
     organisation(organisationId: $organisationId) {
       id
       name

@@ -1,53 +1,107 @@
-import { Box, Heading } from '@chakra-ui/react'
-import { MembersTable } from '@/components/MembersTable'
-import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from '@/graphql/queries'
+import { Box, Button, Heading } from '@chakra-ui/react'
+import { LOGGED_IN_USER_QUERY, USER_QUERY } from '@/graphql/queries'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
-import { LoggedInUser, MembershipWithUser } from '@/types'
+import { LoggedInUser } from '@/types'
 import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
-import { useQuery } from '@/graphql/hooks'
+import { useMutation, useQuery } from '@/graphql/hooks'
 import { batchServerRequest } from '@/graphql/utils'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { Page, PageHeader } from '@/components/Page'
+import { accountLinks, settingsLinks } from '@/config'
+import { Form, FormInput } from '@/components/Form'
+import { useForm } from 'react-hook-form'
+import { UPDATE_USER_MUTATION } from '@/graphql/mutations'
+import { User } from '@prisma/client'
 
 type IProps = {
   initialData: {
-    loggedInUser: LoggedInUser
-    memberships: MembershipWithUser[]
+    loggedInUser: GraphQLResponse<LoggedInUser>
+    user: GraphQLResponse<User>
   }
-  organisationId: string
 }
 
-const AccountPage = ({ initialData, organisationId }: IProps) => {
-  const { data: loggedInUser } = useQuery<LoggedInUser>({
-    query: LOGGED_IN_USER_QUERY,
+const SettingsPage = ({ initialData }: IProps) => {
+  const { data: loggedInUser, mutate: mutateLoggedInUser } =
+    useQuery<LoggedInUser>({
+      query: LOGGED_IN_USER_QUERY,
+      config: {
+        fallbackData: initialData.loggedInUser.data,
+      },
+    })
+  const { data: user, mutate: mutateUser } = useQuery<User>({
+    query: USER_QUERY,
+    variables: {
+      id: loggedInUser.id,
+    },
     config: {
-      fallbackData: initialData.loggedInUser,
+      fallbackData: initialData.user.data,
+    },
+  })
+  const { id, name, email } = user
+  const [editUser, { status }] = useMutation<User>(UPDATE_USER_MUTATION, [
+    mutateUser,
+    mutateLoggedInUser,
+  ])
+
+  const methods = useForm({
+    defaultValues: {
+      name,
+      email,
     },
   })
 
-  const { data: memberships } = useQuery<MembershipWithUser[]>({
-    query: MEMBERSHIPS_QUERY,
-    variables: {
-      organisationId: loggedInUser.organisationId ?? organisationId,
-    },
-    config: {
-      fallbackData: initialData.memberships,
-    },
-  })
+  const submitHandler = async () => {
+    try {
+      const validated = await methods.trigger()
+
+      if (!validated) {
+        throw 'Form invalid'
+      }
+
+      const values = methods.getValues()
+
+      editUser({ ...values, id })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
-    <Box display="flex" flexDirection="column" gap={4}>
-      <Heading fontSize="3xl">Members</Heading>
-
-      <MembersTable memberships={memberships} />
-    </Box>
+    <Page>
+      <PageHeader heading="Account Settings" navLinks={accountLinks} />
+      <Box display="flex" flexDirection="column" gap={6}>
+        <Heading fontSize="lg">User Details</Heading>
+        <Form methods={methods} onSubmit={submitHandler} includeSubmit={false}>
+          <FormInput
+            label="Name"
+            name="name"
+            validation={{ required: true }}
+            autoComplete="false"
+          />
+          <FormInput
+            label="Email"
+            name="email"
+            validation={{ required: true }}
+            autoComplete="false"
+          />
+          <Button
+            type="submit"
+            isLoading={status === 'loading' || status === 'revalidating'}
+          >
+            Save
+          </Button>
+        </Form>
+      </Box>
+    </Page>
   )
 }
 
-AccountPage.layout = (page: React.ReactElement) => {
+SettingsPage.layout = (page: React.ReactElement) => {
   return <DashboardLayout page={page} />
 }
 
-export default AccountPage
+export default SettingsPage
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getUserSession(context.req!)
@@ -73,8 +127,8 @@ export async function getServerSideProps(context: NextPageContext) {
   const data = await batchServerRequest(
     [
       {
-        document: MEMBERSHIPS_QUERY,
-        variables: { organisationId: session.organisation.id },
+        document: USER_QUERY,
+        variables: { id: session.user.id },
       },
       { document: LOGGED_IN_USER_QUERY },
     ],
@@ -86,7 +140,6 @@ export async function getServerSideProps(context: NextPageContext) {
       layoutData: JSON.parse(
         JSON.stringify({ loggedInUser: data.loggedInUser }),
       ),
-      organisationId: session.organisation.id,
       initialData: JSON.parse(JSON.stringify(data)),
     },
   }

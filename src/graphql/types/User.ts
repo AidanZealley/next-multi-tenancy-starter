@@ -145,13 +145,15 @@ export const UpdateUserMutation = extendType({
       type: 'User',
       args: {
         id: nonNull(stringArg()),
-        organisationId: stringArg(),
+        name: stringArg(),
+        email: stringArg(),
       },
       resolve(_parent, args, ctx) {
         return ctx.prisma.user.update({
           where: { id: args.id! },
           data: {
-            organisationId: args.organisationId,
+            name: args.name,
+            email: args.email,
           },
         })
       },

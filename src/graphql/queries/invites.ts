@@ -1,5 +1,5 @@
 export const INVITES_QUERY = `
-  query invitesQuery($organisationId: String!) {
+  query InvitesQuery($organisationId: String!) {
     invites(organisationId: $organisationId) {
       id
       email

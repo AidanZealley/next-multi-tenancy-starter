@@ -60,7 +60,7 @@ type Mutation {
   switchOrganisation(organisationId: String!): User!
   updateMessage(id: String!, text: String!): Message!
   updateOrganisation(id: String!, name: String!): Organisation!
-  updateUser(id: String!, organisationId: String): User!
+  updateUser(email: String, id: String!, name: String): User!
 }
 
 type Organisation {

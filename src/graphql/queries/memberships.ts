@@ -1,5 +1,5 @@
 export const MEMBERSHIPS_QUERY = `
-  query membershipsQuery($organisationId: String!) {
+  query MembershipsQuery($organisationId: String!) {
     memberships(organisationId: $organisationId) {
       id
       user {

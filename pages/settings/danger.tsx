@@ -60,7 +60,7 @@ const DangerPage = ({ initialData, organisationId }: IProps) => {
   return (
     <>
       <Page>
-        <PageHeader heading="Settings" navLinks={settingsLinks} />
+        <PageHeader heading="Organisation Settings" navLinks={settingsLinks} />
 
         <Box
           display="flex"

@@ -4,11 +4,16 @@ export const settingsLinks = [
   {
     action: '/settings',
     text: 'Details',
-    getActiveStatus: isActivePage,
   },
   {
     action: '/settings/danger',
     text: 'Danger Zone',
-    getActiveStatus: isActivePage,
+  },
+]
+
+export const accountLinks = [
+  {
+    action: '/account',
+    text: 'Details',
   },
 ]

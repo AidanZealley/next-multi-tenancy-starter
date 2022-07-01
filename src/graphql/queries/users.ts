@@ -31,11 +31,22 @@ export const LOGGED_IN_USER_QUERY = `
   }
 `
 
-export const ALL_USERS_QUERY = `
-  query AllUsers {
+export const USERS_QUERY = `
+  query Users {
     users {
       id
       name
+    }
+  }
+`
+
+export const USER_QUERY = `
+  query User($id: String!) {
+    user(id: $id) {
+      id
+      name
+      email
+      image
     }
   }
 `

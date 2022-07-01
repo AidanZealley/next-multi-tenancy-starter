@@ -1,8 +1,10 @@
 export const UPDATE_USER_MUTATION = `
-  mutation UpdateUser($organisationId: String!) {
-    updateUser(organisationId: $organisationId) {
+  mutation UpdateUser($id: String!, $name: String, $email: String) {
+    updateUser(id: $id, name: $name, email: $email) {
       id
-      organisationId
+      name
+      email
+      image
     }
   }
 `

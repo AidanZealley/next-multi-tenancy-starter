@@ -15,7 +15,6 @@ import { settingsLinks } from '@/config'
 import { Form, FormInput } from '@/components/Form'
 import { useForm } from 'react-hook-form'
 import { UPDATE_ORGANISATION_MUTATION } from '@/graphql/mutations'
-import { useSWRConfig } from 'swr'
 
 type IProps = {
   initialData: {
@@ -74,7 +73,7 @@ const SettingsPage = ({ initialData, organisationId }: IProps) => {
 
   return (
     <Page>
-      <PageHeader heading="Settings" navLinks={settingsLinks} />
+      <PageHeader heading="Organisation Settings" navLinks={settingsLinks} />
       <Box display="flex" flexDirection="column" gap={6}>
         <Heading fontSize="lg">Organisation Details</Heading>
         <Form methods={methods} onSubmit={submitHandler} includeSubmit={false}>
@@ -139,8 +138,8 @@ export async function getServerSideProps(context: NextPageContext) {
       layoutData: JSON.parse(
         JSON.stringify({ loggedInUser: data.loggedInUser }),
       ),
-      organisationId: session.organisation.id,
       initialData: JSON.parse(JSON.stringify(data)),
+      organisationId: session.organisation.id,
     },
   }
 }

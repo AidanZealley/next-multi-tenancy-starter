@@ -1,5 +1,5 @@
 export const MESSAGES_QUERY = `
-  query messagesQuery($organisationId: String!) {
+  query MessagesQuery($organisationId: String!) {
     messages(organisationId: $organisationId) {
       id
       text

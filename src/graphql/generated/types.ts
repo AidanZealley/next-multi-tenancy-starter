@@ -372,8 +372,9 @@ export interface NexusGenArgTypes {
       name: string; // String!
     }
     updateUser: { // args
+      email?: string | null; // String
       id: string; // String!
-      organisationId?: string | null; // String
+      name?: string | null; // String
     }
   }
   Query: {
