@@ -10,6 +10,8 @@ import { batchServerRequest } from '@/graphql/utils'
 import { getUserSession } from '@/utils/auth'
 import { LoggedInUser, MessageWithUserReactions } from '@/types'
 import { GraphQLResponse } from 'graphql-request/dist/types'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 type IProps = {
   initialData: {
@@ -20,23 +22,31 @@ type IProps = {
 }
 
 const MessagesPage = ({ initialData, organisationId }: IProps) => {
+  const router = useRouter()
+
   const { data: loggedInUser } = useQuery<LoggedInUser>({
     query: LOGGED_IN_USER_QUERY,
     config: {
-      fallbackData: initialData.loggedInUser.data,
+      fallbackData: initialData.loggedInUser?.data,
     },
   })
 
   const { data: messages } = useQuery<MessageWithUserReactions[]>({
     query: MESSAGES_QUERY,
     variables: {
-      organisationId: loggedInUser.organisationId ?? organisationId,
+      organisationId: loggedInUser?.organisationId ?? organisationId,
     },
     config: {
       fallbackData: initialData.messages.data,
     },
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect(() => {
+    if (!loggedInUser) {
+      router.push('/')
+    }
+  }, [loggedInUser])
 
   return (
     <Box display="flex" flexDirection="column" gap={8}>
@@ -54,11 +64,11 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
 
       <MessagesList
         messages={messages}
-        organisationId={loggedInUser.organisationId ?? organisationId}
+        organisationId={loggedInUser?.organisationId ?? organisationId}
       />
 
       <CreateMessageModal
-        organisationId={loggedInUser.organisationId ?? organisationId}
+        organisationId={loggedInUser?.organisationId ?? organisationId}
         isOpen={isOpen}
         onClose={onClose}
       />

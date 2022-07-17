@@ -9,28 +9,10 @@ import {
   Portal,
   Text,
 } from '@chakra-ui/react'
-import { signOut } from 'next-auth/react'
-import { LogOut, MoreVertical, Plus, Settings } from 'react-feather'
+import { MoreVertical } from 'react-feather'
 import { VerticalNav } from '@/components/VerticalNav'
 import { LoggedInUser } from '@/types'
-
-const accountLinks = [
-  {
-    action: '/organisations/create',
-    icon: <Icon as={Plus} w={4} h={4} color="gray.600" />,
-    text: 'Create Organisation',
-  },
-  {
-    action: '/account',
-    icon: <Icon as={Settings} w={4} h={4} color="gray.600" />,
-    text: 'Settings',
-  },
-  {
-    action: () => signOut(),
-    icon: <Icon as={LogOut} w={4} h={4} color="gray.600" />,
-    text: 'Log Out',
-  },
-]
+import { accountMenuLinks } from '@/config'
 
 interface IProps {
   user: LoggedInUser
@@ -82,7 +64,7 @@ export const SidebarAccountNav = ({ user, dashboardRef }: IProps) => {
           </PopoverTrigger>
           <Portal containerRef={dashboardRef}>
             <PopoverContent p={1} borderRadius="lg">
-              <VerticalNav navLinks={accountLinks} />
+              <VerticalNav navLinks={accountMenuLinks} />
             </PopoverContent>
           </Portal>
         </>

@@ -65,7 +65,7 @@ export const SidebarOrganisationSwitcher = ({
               variant={isOpen ? 'solid' : 'ghost'}
               onClick={openSwitcher}
             >
-              <Avatar borderRadius="md" name={selectedOrganisation.name} />
+              <Avatar borderRadius="md" name={selectedOrganisation?.name} />
               <Box display="grid" gap={1} justifyContent="flex-start">
                 <Text
                   fontSize="md"
@@ -74,7 +74,7 @@ export const SidebarOrganisationSwitcher = ({
                   textOverflow="ellipsis"
                   overflow="hidden"
                 >
-                  {selectedOrganisation.name}
+                  {selectedOrganisation?.name}
                 </Text>
                 <Text
                   fontSize="sm"

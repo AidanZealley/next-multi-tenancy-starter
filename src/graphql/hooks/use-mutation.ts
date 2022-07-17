@@ -1,9 +1,10 @@
 import request from 'graphql-request'
 import { GraphQLResponse } from 'graphql-request/dist/types'
 import { useCallback, useState } from 'react'
-import { KeyedMutator, useSWRConfig } from 'swr'
+import { KeyedMutator } from 'swr'
 import { MutationStatus } from '@/types'
 import { GRAPHQL_API } from '@/constants'
+import { GraphQLError } from 'graphql'
 
 export const useMutation = <T>(
   mutation: string,
@@ -13,19 +14,18 @@ export const useMutation = <T>(
   {
     data: GraphQLResponse<T> | null
     status: MutationStatus
-    error: string | null
+    errors: GraphQLError[] | null
     reset: () => void
   },
 ] => {
   const [data, setData] = useState<GraphQLResponse<T> | null>(null)
   const [status, setStatus] = useState<MutationStatus>('idle')
-  const [error, setError] = useState<string | null>(null)
-  const { mutate, cache } = useSWRConfig()
+  const [errors, setErrors] = useState<GraphQLError[] | null>(null)
 
   const reset = useCallback(() => {
     setData(null)
     setStatus('idle')
-    setError(null)
+    setErrors(null)
   }, [])
 
   const mutateFunction = async <S>(data: S) => {
@@ -40,10 +40,6 @@ export const useMutation = <T>(
         variables: data,
       })
 
-      if (response?.errors) {
-        throw response?.errors
-      }
-
       setStatus('revalidating')
 
       if (invalidates) {
@@ -54,7 +50,7 @@ export const useMutation = <T>(
       setData(response)
     } catch (error: any) {
       setStatus('error')
-      setError(error)
+      setErrors(error.response?.errors ?? null)
     }
   }
 
@@ -63,7 +59,7 @@ export const useMutation = <T>(
     {
       data,
       status,
-      error,
+      errors,
       reset,
     },
   ]

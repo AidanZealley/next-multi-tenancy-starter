@@ -6,7 +6,7 @@ import { Box as BoxIcon, LogIn } from 'react-feather'
 
 const Home = () => {
   const handleSignInWithGoogle = () => {
-    signIn('google')
+    signIn('google', { callbackUrl: '/messages' }, { prompt: 'login' })
   }
   const { status } = useSession()
 

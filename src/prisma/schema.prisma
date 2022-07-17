@@ -85,6 +85,8 @@ model Membership {
   role           Role         @default(USER)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, organisationId])
 }
 
 model Invite {
@@ -102,10 +104,10 @@ model Invite {
 model Message {
   id             String       @id @default(cuid())
   text           String
-  user           User         @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
   reactions      Reaction[]
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -114,11 +116,11 @@ model Message {
 model Reaction {
   id             String       @id @default(cuid())
   emoji          String
-  user           User         @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
   message        Message      @relation(fields: [messageId], references: [id])
   messageId      String
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt

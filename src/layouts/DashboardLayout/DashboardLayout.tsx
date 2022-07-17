@@ -19,15 +19,14 @@ export const DashboardLayout = ({ page }: IProps) => {
       fallbackData: loggedInUser.data,
     },
   })
-  const { selectedOrganisation, memberships } = user
 
   return (
     <Box display="grid" gridTemplateColumns="18rem 1fr">
       <Box display="grid" borderRight="1px solid" borderColor="gray.200">
         <DashboardSidebar
           user={user}
-          selectedOrganisation={selectedOrganisation!}
-          userMemberships={memberships}
+          selectedOrganisation={user?.selectedOrganisation!}
+          userMemberships={user?.memberships}
         />
       </Box>
 

@@ -48,7 +48,10 @@ export const InvitesTableRow = ({ invite, organisationId }: IProps) => {
           colorScheme="gray"
           leftIcon={<Icon as={X} w={3} h={3} />}
           onClick={handleDelete}
-          isLoading={createInviteStatus === 'loading'}
+          isLoading={
+            createInviteStatus === 'loading' ||
+            createInviteStatus === 'revalidating'
+          }
         >
           Cancel
         </Button>

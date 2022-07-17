@@ -1,40 +1,67 @@
 import {
   Alert,
   AlertIcon,
+  Avatar,
+  AvatarGroup,
   Box,
   Button,
-  Heading,
   Icon,
   Text,
 } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import { retrieveInvite } from 'lib/invites/services'
 import { NextPageContext } from 'next'
-import { InviteWithInviterAndOrg } from 'lib/invites/types'
-import { getSession, signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { ThumbsDown, ThumbsUp } from 'react-feather'
-import {
-  invitesErrorMessages,
-  InvitesErrorMessages,
-} from '@/constants/error-messages'
-import { useDeclineInviteMutation } from 'lib/invites/mutations'
+import { invitesErrorMessages, InvitesErrorMessages } from '@/constants'
+import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { batchServerRequest, serverRequest } from '@/graphql/utils'
+import { InviteWithInvitedByOrg } from '@/types'
+import { useMutation, useQuery } from '@/graphql/hooks'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { DECLINE_INVITE_MUTATION } from '@/graphql/mutations'
+import { WithSiteHeader } from '@/layouts/WithSiteHeader'
+import { InviteStatus } from '@prisma/client'
+import { InviteStatusMessage } from '@/components/InviteStatusMessage'
 
 interface IProps {
-  invite: InviteWithInviterAndOrg
+  initialData: {
+    invite: GraphQLResponse<InviteWithInvitedByOrg>
+  }
+  inviteId: string
+  inviteStatus: InviteStatus
   error: InvitesErrorMessages | null
 }
 
-const JoinPage = ({ invite, error = null }: IProps) => {
-  const { declineInvite, status: declineStatus } = useDeclineInviteMutation()
+const JoinPage = ({
+  initialData,
+  inviteId,
+  inviteStatus,
+  error = null,
+}: IProps) => {
   const router = useRouter()
+  const { data: invite, mutate: mutateInvite } =
+    useQuery<InviteWithInvitedByOrg>({
+      query: INVITE_QUERY,
+      variables: { id: inviteId },
+      config: {
+        fallbackData: initialData.invite.data,
+      },
+    })
+  const [declineInvite, { status: declineStatus, errors }] =
+    useMutation<InviteWithInvitedByOrg>(DECLINE_INVITE_MUTATION, [mutateInvite])
+  const { id } = invite
 
   const handleSignInWithGoogle = () => {
-    signIn('google', { callbackUrl: `/join/${invite.id}/accepted` })
+    signIn(
+      'google',
+      { callbackUrl: `/join/${invite.id}/accepted` },
+      { prompt: 'login' },
+    )
   }
 
   const handleDecline = () => {
-    declineInvite(invite)
+    declineInvite({ id })
   }
 
   useEffect(() => {
@@ -45,31 +72,38 @@ const JoinPage = ({ invite, error = null }: IProps) => {
     router.push('/')
   }, [declineStatus])
 
+  if (inviteStatus === 'ACCEPTED' || inviteStatus === 'DECLINED') {
+    return <InviteStatusMessage inviteStatus={inviteStatus} />
+  }
+
   return (
-    <Box display="grid" placeItems="center" p={6} minH="100vh">
-      <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
-        <Heading as="h2" fontWeight="extrabold">
-          Join {invite.organisation.name}
-        </Heading>
+    <Box display="grid" placeItems="center" p={6}>
+      <Box display="flex" flexDir="column" w="100%" maxW="md" gap={8}>
+        <Box display="flex" flexDir="column" gap={4} alignItems="center">
+          <AvatarGroup alignItems="flex-end">
+            <Avatar
+              name={invite.invitedBy.name ?? ''}
+              src={invite.invitedBy.image ?? ''}
+              size="lg"
+            />
+            <Avatar
+              borderRadius="xl"
+              name={invite.organisation.name}
+              size="xl"
+            />
+          </AvatarGroup>
 
-        <Text>
-          {invite.invitedBy.name} invited you to join {invite.organisation.name}
-          .
-        </Text>
-
-        {invite.status === 'DECLINED' && (
-          <Alert status="warning">
-            <AlertIcon />
-            {invitesErrorMessages['INVITE_DECLINED']}
-          </Alert>
-        )}
-
-        {error && (
-          <Alert status="warning">
-            <AlertIcon />
-            {invitesErrorMessages[error] ?? 'An error occurred.'}
-          </Alert>
-        )}
+          <Text fontSize="lg">
+            <Text as="span" fontWeight="bold">
+              {invite.invitedBy.name}
+            </Text>{' '}
+            invited you to join{' '}
+            <Text as="span" fontWeight="bold">
+              {invite.organisation.name}
+            </Text>
+            .
+          </Text>
+        </Box>
 
         <Box display="flex" gap={4}>
           <Button
@@ -77,7 +111,9 @@ const JoinPage = ({ invite, error = null }: IProps) => {
             onClick={handleDecline}
             leftIcon={<Icon as={ThumbsDown} w={4} h={4} />}
             colorScheme="gray"
-            isLoading={declineStatus === 'loading'}
+            isLoading={
+              declineStatus === 'loading' || declineStatus === 'revalidating'
+            }
             disabled={invite.status === 'DECLINED'}
           >
             Decline Invite
@@ -92,18 +128,48 @@ const JoinPage = ({ invite, error = null }: IProps) => {
             Accept Invite
           </Button>
         </Box>
+
+        {error && (
+          <Alert status="warning">
+            <AlertIcon />
+            <Text>{invitesErrorMessages[error] ?? 'An error occurred.'}</Text>
+          </Alert>
+        )}
+
+        {errors && (
+          <Alert status="warning">
+            <AlertIcon />
+            {errors.map((error, index) => (
+              <Text key={index}>{error.message}</Text>
+            ))}
+          </Alert>
+        )}
       </Box>
     </Box>
   )
 }
 
+JoinPage.layout = (page: React.ReactElement) => {
+  return <WithSiteHeader page={page} />
+}
+
 export default JoinPage
 
 export const getServerSideProps = async (context: NextPageContext) => {
-  const invite = await retrieveInvite(context.query.inviteId as string)
   const { error } = context.query
 
-  if (!invite) {
+  const data = await batchServerRequest(
+    [
+      {
+        document: INVITE_QUERY,
+        variables: { id: context.query.inviteId },
+      },
+      { document: LOGGED_IN_USER_QUERY },
+    ],
+    context,
+  )
+
+  if (!data.invite.data.id) {
     return {
       redirect: {
         destination: '/not-found',
@@ -112,20 +178,14 @@ export const getServerSideProps = async (context: NextPageContext) => {
     }
   }
 
-  const session = await getSession(context)
-
-  if (session) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
-  }
-
   return {
     props: {
-      invite: JSON.parse(JSON.stringify(invite)),
+      layoutData: JSON.parse(
+        JSON.stringify({ loggedInUser: data.loggedInUser }),
+      ),
+      initialData: JSON.parse(JSON.stringify({ invite: data.invite })),
+      inviteId: context.query.inviteId,
+      inviteStatus: data.invite.data.status,
       error: error ?? null,
     },
   }

@@ -122,6 +122,97 @@ export const CreateInviteMutation = extendType({
   },
 })
 
+export const AcceptInviteMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('acceptInvite', {
+      type: Invite,
+      args: {
+        id: nonNull(stringArg()),
+      },
+      async resolve(_parent, args, ctx) {
+        const invite = await ctx.prisma.invite.findUnique({
+          where: { id: args.id },
+        })
+
+        if (!invite) {
+          throw new Error('Invite not found')
+        }
+
+        if (!ctx.session || !ctx.session.user.id) {
+          throw new Error('Not authorised')
+        }
+
+        const isExistingMember = await isMember(invite.organisationId, ctx)
+
+        if (isExistingMember) {
+          throw new Error('Already a member')
+        }
+
+        const updatedInvite = ctx.prisma.invite.update({
+          where: {
+            id: invite.id,
+          },
+          data: {
+            status: 'ACCEPTED',
+          },
+        })
+
+        const newMembership = ctx.prisma.membership.create({
+          data: {
+            userId: ctx.session.user.id,
+            organisationId: invite.organisationId,
+          },
+          include: {
+            organisation: true,
+          },
+        })
+
+        const setSelected = ctx.prisma.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            organisationId: invite.organisationId,
+          },
+        })
+
+        const joined = await ctx.prisma.$transaction([
+          updatedInvite,
+          newMembership,
+          setSelected,
+        ])
+
+        if (!joined) {
+          throw new Error('Join failed')
+        }
+
+        return updatedInvite
+      },
+    })
+  },
+})
+
+export const DeclineInviteMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('declineInvite', {
+      type: 'Invite',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.invite.update({
+          where: { id: args.id },
+          data: {
+            status: 'DECLINED',
+          },
+        })
+      },
+    })
+  },
+})
+
 export const DeleteInviteMutation = extendType({
   type: 'Mutation',
   definition(t) {

@@ -7,6 +7,7 @@ import { getUserSession } from '@/utils/auth'
 import { useQuery } from '@/graphql/hooks'
 import { serverRequest } from '@/graphql/utils'
 import { MembershipsList } from '@/components/MembershipsList'
+import { WithSiteHeader } from '@/layouts/WithSiteHeader'
 
 type IProps = {
   initialData: {
@@ -34,6 +35,10 @@ const OrganisationsPage = ({ initialData }: IProps) => {
       </Box>
     </Box>
   )
+}
+
+OrganisationsPage.layout = (page: React.ReactElement) => {
+  return <WithSiteHeader page={page} />
 }
 
 export default OrganisationsPage

@@ -50,9 +50,11 @@ type Message {
 }
 
 type Mutation {
+  acceptInvite(id: String!): Invite!
   createInvite(email: String!): Invite!
   createMessage(text: String!): Message!
   createOrganisation(name: String!): Organisation!
+  declineInvite(id: String!): Invite!
   deleteInvite(id: String!): Invite!
   deleteMessage(id: String!): Message!
   deleteOrganisation(id: String!): Organisation!

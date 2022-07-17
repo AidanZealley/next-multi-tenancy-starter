@@ -14,6 +14,7 @@ import {
 } from '@/graphql/mutations'
 import { useEffect } from 'react'
 import { LoadingOverlay } from '@/components/LoadingOverlay'
+import { WithSiteHeader } from '@/layouts/WithSiteHeader'
 
 type IProps = {
   initialData: {
@@ -87,6 +88,10 @@ const NewOrganisationPage = ({ initialData }: IProps) => {
       </Box>
     </Box>
   )
+}
+
+NewOrganisationPage.layout = (page: React.ReactElement) => {
+  return <WithSiteHeader page={page} />
 }
 
 export default NewOrganisationPage

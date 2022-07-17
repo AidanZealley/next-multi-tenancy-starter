@@ -1,63 +1,83 @@
-import { Box, Button, Heading, Icon } from '@chakra-ui/react'
-import { retrieveInvite } from 'lib/invites/services'
-import { NextPageContext } from 'next'
-import { getSession } from 'next-auth/react'
-import { MembershipWithUserAndOrganisation } from 'lib/memberships/types'
-import { createMembership } from 'lib/memberships/services'
-import { retrieveLoggedInUser } from 'lib/users/services'
-import { Home } from 'react-feather'
-import {
-  membershipsErrorMessages,
-  MembershipsErrorMessages,
-} from '@/constants/error-messages'
+import { Alert, AlertIcon, Box, Button, Icon, Text } from '@chakra-ui/react'
+import { RefreshCcw } from 'react-feather'
 import Link from 'next/link'
-import { findExistingMembership } from 'lib/memberships/services/find-existing-membership'
+import { getUserSession } from '@/utils/auth'
+import { batchServerRequest, serverRequest } from '@/graphql/utils'
+import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { NextPageContext } from 'next'
+import { InviteWithInvitedByOrg } from '@/types'
+import { ACCEPT_INVITE_MUTATION } from '@/graphql/mutations'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { InviteStatusMessage } from '@/components/InviteStatusMessage'
+import { useQuery } from '@/graphql/hooks'
+import { WithSiteHeader } from '@/layouts/WithSiteHeader'
+import { useRouter } from 'next/router'
 
 interface IProps {
-  membership: MembershipWithUserAndOrganisation
-  error: MembershipsErrorMessages | null
+  initialData: {
+    invite: GraphQLResponse<InviteWithInvitedByOrg>
+  }
+  inviteId: string
 }
 
-const AcceptedPage = ({ membership, error = null }: IProps) => {
-  return (
-    <Box display="grid" placeItems="center" p={6} minH="100vh">
-      <Box display="flex" flexDir="column" w="100%" maxW="25rem" gap={4}>
-        <Heading as="h2" fontWeight="extrabold">
-          {error
-            ? membershipsErrorMessages[error]
-            : `Welcome to ${membership?.organisation?.name}`}
-        </Heading>
+const AcceptedPage = ({ initialData, inviteId }: IProps) => {
+  const router = useRouter()
+  const { data: invite } = useQuery<InviteWithInvitedByOrg>({
+    query: INVITE_QUERY,
+    variables: { id: inviteId },
+    config: {
+      fallbackData: initialData.invite.data,
+    },
+  })
 
-        <Link href="/dashboard">
-          <Button as="a" leftIcon={<Icon as={Home} w={4} h={4} />}>
-            {membership?.organisation?.name} Dashboard
-          </Button>
-        </Link>
+  if (invite.status === 'PENDING') {
+    router.push(`/join/${inviteId}`)
+  }
+
+  return (
+    <Box display="grid" placeItems="center" p={6}>
+      <Box display="flex" flexDir="column" w="100%" maxW="md" gap={8}>
+        {initialData.invite.errors ? (
+          <Box display="flex" flexDir="column" gap={8}>
+            <Box display="flex" gap={4}>
+              <Link href={`/join/${invite.id}`}>
+                <Button
+                  as="a"
+                  flexGrow={1}
+                  leftIcon={<Icon as={RefreshCcw} w={4} h={4} />}
+                  colorScheme="gray"
+                >
+                  Try Again
+                </Button>
+              </Link>
+            </Box>
+
+            <Alert status="warning">
+              <AlertIcon />
+              {initialData.invite.errors.map((error, index) => (
+                <Text key={index}>{error.message}</Text>
+              ))}
+            </Alert>
+          </Box>
+        ) : (
+          <InviteStatusMessage inviteStatus={invite.status} />
+        )}
       </Box>
     </Box>
   )
+}
+
+AcceptedPage.layout = (page: React.ReactElement) => {
+  return <WithSiteHeader page={page} />
 }
 
 export default AcceptedPage
 
 export const getServerSideProps = async (context: NextPageContext) => {
   const inviteId = context.query.inviteId as string
-  const invite = await retrieveInvite(inviteId)
+  const session = await getUserSession(context.req!)
 
-  if (!invite) {
-    return {
-      redirect: {
-        destination: '/not-found',
-        permanent: false,
-      },
-    }
-  }
-
-  const session = await getSession(context)
-  const { req } = context
-  const loggedInUser = await retrieveLoggedInUser(req!)
-
-  if (!session || !loggedInUser) {
+  if (!session) {
     return {
       redirect: {
         destination: `/join/${inviteId}?error=SIGNIN_UNSUCCESSFUL`,
@@ -66,38 +86,46 @@ export const getServerSideProps = async (context: NextPageContext) => {
     }
   }
 
-  try {
-    const existingMembership = await findExistingMembership(
-      loggedInUser.id,
-      invite.organisationId,
-    )
+  const queryData = await batchServerRequest(
+    [
+      {
+        document: INVITE_QUERY,
+        variables: { id: context.query.inviteId },
+      },
+      { document: LOGGED_IN_USER_QUERY },
+    ],
+    context,
+  )
 
-    if (existingMembership) {
-      return {
-        props: {
-          membership: JSON.parse(JSON.stringify(existingMembership)),
-          error: 'EXISTING_MEMBER',
-        },
-      }
-    }
-
-    const membership = await createMembership(inviteId, {
-      userId: loggedInUser?.id,
-      organisationId: invite.organisationId,
-    })
-
+  if (queryData.invite.data.status !== 'PENDING') {
     return {
       props: {
-        membership: membership ? JSON.parse(JSON.stringify(membership)) : null,
-        error: null,
+        layoutData: JSON.parse(
+          JSON.stringify({ loggedInUser: queryData.loggedInUser }),
+        ),
+        initialData: JSON.parse(JSON.stringify({ invite: queryData.invite })),
+        inviteId: context.query.inviteId,
       },
     }
-  } catch (error) {
-    return {
-      props: {
-        membership: null,
-        error,
+  }
+
+  const mutationData = await serverRequest(
+    {
+      document: ACCEPT_INVITE_MUTATION,
+      variables: {
+        id: inviteId,
       },
-    }
+    },
+    context,
+  )
+
+  return {
+    props: {
+      layoutData: JSON.parse(
+        JSON.stringify({ loggedInUser: queryData.loggedInUser }),
+      ),
+      initialData: JSON.parse(JSON.stringify({ invite: mutationData })),
+      inviteId: context.query.inviteId,
+    },
   }
 }
