@@ -1,3 +1,10 @@
+import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { Plus } from 'react-feather'
+
 import { MessagesList } from '@/components/MessagesList'
 import { useQuery } from '@/graphql/hooks'
 import { LOGGED_IN_USER_QUERY, MESSAGES_QUERY } from '@/graphql/queries'
@@ -6,12 +13,6 @@ import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { CreateMessageModal } from '@/modals/CreateMessageModal'
 import { LoggedInUser, MessageWithUserReactions } from '@/types'
 import { getUserSession } from '@/utils/auth'
-import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
-import { GraphQLResponse } from 'graphql-request/dist/types'
-import { NextPageContext } from 'next'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { Plus } from 'react-feather'
 
 type IProps = {
   initialData: {
