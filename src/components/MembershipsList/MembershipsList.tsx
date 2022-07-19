@@ -1,8 +1,8 @@
-import { Avatar, Box, Button, Icon, Text } from '@chakra-ui/react'
 import { MembershipsListItem } from '@/components/MembershipsList'
+import { LoggedInUser, MembershipWithOrganisationMemberships } from '@/types'
+import { Avatar, Box, Button, Icon, Text } from '@chakra-ui/react'
 import Link from 'next/link'
 import { Plus } from 'react-feather'
-import { LoggedInUser, MembershipWithOrganisationMemberships } from '@/types'
 
 interface IProps {
   memberships: MembershipWithOrganisationMemberships[]
@@ -31,7 +31,7 @@ export const MembershipsList = ({
       ))}
 
       {showNew && (
-        <Link href="/organisations/new">
+        <Link href="/organisations/new" passHref>
           <Button
             as="a"
             display="grid"

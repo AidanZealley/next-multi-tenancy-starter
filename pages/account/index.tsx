@@ -1,18 +1,18 @@
-import { Box, Button, Heading } from '@chakra-ui/react'
+import { Form, FormInput } from '@/components/Form'
+import { Page, PageHeader } from '@/components/Page'
+import { accountLinks } from '@/config'
+import { useMutation, useQuery } from '@/graphql/hooks'
+import { UPDATE_USER_MUTATION } from '@/graphql/mutations'
 import { LOGGED_IN_USER_QUERY, USER_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { LoggedInUser } from '@/types'
-import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
-import { useMutation, useQuery } from '@/graphql/hooks'
-import { batchServerRequest } from '@/graphql/utils'
-import { GraphQLResponse } from 'graphql-request/dist/types'
-import { Page, PageHeader } from '@/components/Page'
-import { accountLinks, settingsLinks } from '@/config'
-import { Form, FormInput } from '@/components/Form'
-import { useForm } from 'react-hook-form'
-import { UPDATE_USER_MUTATION } from '@/graphql/mutations'
+import { Box, Button, Heading } from '@chakra-ui/react'
 import { User } from '@prisma/client'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
+import { useForm } from 'react-hook-form'
 
 type IProps = {
   initialData: {
@@ -98,7 +98,7 @@ const SettingsPage = ({ initialData }: IProps) => {
 }
 
 SettingsPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Account" />
 }
 
 export default SettingsPage

@@ -1,3 +1,11 @@
+import { InviteStatusMessage } from '@/components/InviteStatusMessage'
+import { invitesErrorMessages, InvitesErrorMessages } from '@/constants'
+import { useMutation, useQuery } from '@/graphql/hooks'
+import { DECLINE_INVITE_MUTATION } from '@/graphql/mutations'
+import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
+import { WithSiteHeader } from '@/layouts/WithSiteHeader'
+import { InviteWithInvitedByOrg } from '@/types'
 import {
   Alert,
   AlertIcon,
@@ -8,21 +16,13 @@ import {
   Icon,
   Text,
 } from '@chakra-ui/react'
+import { InviteStatus } from '@prisma/client'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 import { NextPageContext } from 'next'
 import { signIn } from 'next-auth/react'
-import { ThumbsDown, ThumbsUp } from 'react-feather'
-import { invitesErrorMessages, InvitesErrorMessages } from '@/constants'
-import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
-import { batchServerRequest, serverRequest } from '@/graphql/utils'
-import { InviteWithInvitedByOrg } from '@/types'
-import { useMutation, useQuery } from '@/graphql/hooks'
-import { GraphQLResponse } from 'graphql-request/dist/types'
-import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { DECLINE_INVITE_MUTATION } from '@/graphql/mutations'
-import { WithSiteHeader } from '@/layouts/WithSiteHeader'
-import { InviteStatus } from '@prisma/client'
-import { InviteStatusMessage } from '@/components/InviteStatusMessage'
+import { useEffect } from 'react'
+import { ThumbsDown, ThumbsUp } from 'react-feather'
 
 interface IProps {
   initialData: {
@@ -70,7 +70,7 @@ const JoinPage = ({
     }
 
     router.push('/')
-  }, [declineStatus])
+  }, [declineStatus, router])
 
   if (inviteStatus === 'ACCEPTED' || inviteStatus === 'DECLINED') {
     return <InviteStatusMessage inviteStatus={inviteStatus} />

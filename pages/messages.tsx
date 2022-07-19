@@ -1,17 +1,17 @@
-import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
-import { NextPageContext } from 'next'
-import { Plus } from 'react-feather'
-import { CreateMessageModal } from '@/modals/CreateMessageModal'
 import { MessagesList } from '@/components/MessagesList'
-import { MESSAGES_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
 import { useQuery } from '@/graphql/hooks'
+import { LOGGED_IN_USER_QUERY, MESSAGES_QUERY } from '@/graphql/queries'
 import { batchServerRequest } from '@/graphql/utils'
-import { getUserSession } from '@/utils/auth'
+import { DashboardLayout } from '@/layouts/DashboardLayout'
+import { CreateMessageModal } from '@/modals/CreateMessageModal'
 import { LoggedInUser, MessageWithUserReactions } from '@/types'
+import { getUserSession } from '@/utils/auth'
+import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
 import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { Plus } from 'react-feather'
 
 type IProps = {
   initialData: {
@@ -46,7 +46,7 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
     if (!loggedInUser) {
       router.push('/')
     }
-  }, [loggedInUser])
+  }, [loggedInUser, router])
 
   return (
     <Box display="flex" flexDirection="column" gap={8}>
@@ -77,7 +77,7 @@ const MessagesPage = ({ initialData, organisationId }: IProps) => {
 }
 
 MessagesPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Messages" />
 }
 
 export default MessagesPage

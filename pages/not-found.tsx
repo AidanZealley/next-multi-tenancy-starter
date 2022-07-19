@@ -1,6 +1,6 @@
 import { Alert, AlertIcon, Box, Button, Heading, Icon } from '@chakra-ui/react'
-import { Home } from 'react-feather'
 import Link from 'next/link'
+import { Home } from 'react-feather'
 
 const JoinPage = () => {
   return (
@@ -12,10 +12,10 @@ const JoinPage = () => {
 
         <Alert status="warning">
           <AlertIcon />
-          Oops, couldn't find that.
+          {`Oops, couldn't find that.`}
         </Alert>
 
-        <Link href="/">
+        <Link href="/" passHref>
           <Button as="a" leftIcon={<Icon as={Home} w={4} h={4} />}>
             Back to home
           </Button>

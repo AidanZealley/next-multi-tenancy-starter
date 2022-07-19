@@ -1,5 +1,5 @@
-import { Box, Button, Heading, Icon, Text } from '@chakra-ui/react'
 import { LoadingOverlay } from '@/components/LoadingOverlay'
+import { Box, Button, Heading, Icon, Text } from '@chakra-ui/react'
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Box as BoxIcon, LogIn } from 'react-feather'
@@ -46,7 +46,7 @@ const Home = () => {
         )}
 
         {status === 'authenticated' && (
-          <Link href="/messages">
+          <Link href="/messages" passHref>
             <Button as="a" leftIcon={<Icon as={LogIn} w={4} h={4} />}>
               Go to your dashboard
             </Button>

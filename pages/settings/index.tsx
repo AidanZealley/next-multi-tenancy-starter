@@ -1,20 +1,20 @@
-import { Box, Button, Heading } from '@chakra-ui/react'
+import { Form, FormInput } from '@/components/Form'
+import { Page, PageHeader } from '@/components/Page'
+import { settingsLinks } from '@/config'
+import { useMutation, useQuery } from '@/graphql/hooks'
+import { UPDATE_ORGANISATION_MUTATION } from '@/graphql/mutations'
 import { LOGGED_IN_USER_QUERY, ORGANISATION_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
 import {
   LoggedInUser,
   OrganisationWithMembershipsOwnerSelectedBy,
 } from '@/types'
-import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
-import { useMutation, useQuery } from '@/graphql/hooks'
-import { batchServerRequest } from '@/graphql/utils'
+import { Box, Button, Heading } from '@chakra-ui/react'
 import { GraphQLResponse } from 'graphql-request/dist/types'
-import { Page, PageHeader } from '@/components/Page'
-import { settingsLinks } from '@/config'
-import { Form, FormInput } from '@/components/Form'
+import { NextPageContext } from 'next'
 import { useForm } from 'react-hook-form'
-import { UPDATE_ORGANISATION_MUTATION } from '@/graphql/mutations'
 
 type IProps = {
   initialData: {
@@ -96,7 +96,7 @@ const SettingsPage = ({ initialData, organisationId }: IProps) => {
 }
 
 SettingsPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Settings" />
 }
 
 export default SettingsPage

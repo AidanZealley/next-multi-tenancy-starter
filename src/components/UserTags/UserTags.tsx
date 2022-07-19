@@ -1,12 +1,6 @@
 import { Box, Tag } from '@chakra-ui/react'
 import { Organisation, Role, User } from '@prisma/client'
 
-interface RoleValues {
-  label: string
-  variant: string
-  color: string
-}
-
 const getRoleValues = {
   ADMIN: {
     label: 'Admin',

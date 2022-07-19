@@ -1,3 +1,5 @@
+import { VerticalNav } from '@/components/VerticalNav'
+import { NavLink } from '@/types'
 import {
   Icon,
   IconButton,
@@ -5,7 +7,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react'
-import { NavLink, VerticalNav } from '@/components/VerticalNav'
 import { MoreVertical } from 'react-feather'
 
 interface IProps {

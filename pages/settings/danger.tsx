@@ -1,32 +1,26 @@
+import { Page, PageHeader } from '@/components/Page'
+import { settingsLinks } from '@/config'
+import { useQuery } from '@/graphql/hooks'
+import { LOGGED_IN_USER_QUERY, ORGANISATION_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
+import { DashboardLayout } from '@/layouts/DashboardLayout'
+import { ConfirmDeleteOrganisationModal } from '@/modals/ConfirmDeleteOrganisationModal'
+import {
+  LoggedInUser,
+  OrganisationWithMembershipsOwnerSelectedBy,
+} from '@/types'
+import { getUserSession } from '@/utils/auth'
 import {
   Box,
   Button,
   Heading,
   Icon,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { LOGGED_IN_USER_QUERY, ORGANISATION_QUERY } from '@/graphql/queries'
-import { DashboardLayout } from '@/layouts/DashboardLayout'
-import {
-  LoggedInUser,
-  OrganisationWithMembershipsOwnerSelectedBy,
-} from '@/types'
-import { NextPageContext } from 'next'
-import { getUserSession } from '@/utils/auth'
-import { useQuery } from '@/graphql/hooks'
-import { batchServerRequest } from '@/graphql/utils'
 import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
 import { Trash, User } from 'react-feather'
-import { ConfirmDeleteOrganisationModal } from '@/modals/ConfirmDeleteOrganisationModal'
-import { isActivePage } from '@/utils/navigation'
-import { Page, PageHeader } from '@/components/Page'
-import { settingsLinks } from '@/config'
 
 type IProps = {
   initialData: {
@@ -120,7 +114,7 @@ const DangerPage = ({ initialData, organisationId }: IProps) => {
 }
 
 DangerPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Settings" />
 }
 
 export default DangerPage

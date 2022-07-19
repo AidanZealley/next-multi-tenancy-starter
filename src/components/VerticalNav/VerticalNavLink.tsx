@@ -1,6 +1,6 @@
+import { NavLink } from '@/types'
 import { Button } from '@chakra-ui/react'
 import Link from 'next/link'
-import { NavLink } from '@/types'
 
 interface IProps extends Pick<NavLink, 'action' | 'icon' | 'text' | 'loading'> {
   isActive?: boolean
@@ -27,7 +27,7 @@ export const VerticalNavLink = ({
       {text}
     </Button>
   ) : (
-    <Link href={action}>
+    <Link href={action} passHref>
       <Button
         as="a"
         variant={isActive ? 'solid' : 'ghost'}

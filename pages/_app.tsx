@@ -1,15 +1,15 @@
+import { ChakraProvider } from '@chakra-ui/react'
+import type { NextPage } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
-import type { NextPage } from 'next'
 import type { ReactElement, ReactNode } from 'react'
-import { ChakraProvider } from '@chakra-ui/react'
 
-import { theme } from '@/theme'
 import { AppLayout } from '@/layouts/AppLayout'
+import { theme } from '@/theme'
 
 type NextPageWithLayout = NextPage & {
-  layout?: (page: ReactElement) => ReactNode
+  layout?: (_page: ReactElement) => ReactNode
 }
 
 type AppPropsWithLayout = AppProps & {

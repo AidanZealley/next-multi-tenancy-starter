@@ -1,20 +1,20 @@
-import { Box, Button, Heading } from '@chakra-ui/react'
-import { LOGGED_IN_USER_QUERY } from '@/graphql/queries'
-import { LoggedInUser } from '@/types'
-import { NextPageContext } from 'next'
-import { getUserSession } from '@/utils/auth'
-import { useMutation, useQuery } from '@/graphql/hooks'
-import { serverRequest } from '@/graphql/utils'
-import { GraphQLResponse } from 'graphql-request/dist/types'
-import { useForm } from 'react-hook-form'
 import { Form, FormInput } from '@/components/Form'
+import { LoadingOverlay } from '@/components/LoadingOverlay'
+import { useMutation, useQuery } from '@/graphql/hooks'
 import {
   CREATE_ORGANISATION_MUTATION,
   SWITCH_ORGANISATION_MUTATION,
 } from '@/graphql/mutations'
-import { useEffect } from 'react'
-import { LoadingOverlay } from '@/components/LoadingOverlay'
+import { LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { serverRequest } from '@/graphql/utils'
 import { WithSiteHeader } from '@/layouts/WithSiteHeader'
+import { LoggedInUser } from '@/types'
+import { getUserSession } from '@/utils/auth'
+import { Box, Button, Heading } from '@chakra-ui/react'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 
 type IProps = {
   initialData: {
@@ -62,7 +62,7 @@ const NewOrganisationPage = ({ initialData }: IProps) => {
     if (data && status === 'success') {
       switchOrganisation({ organisationId: data.id })
     }
-  }, [status, data])
+  }, [status, data, switchOrganisation])
 
   return (
     <Box display="grid" placeItems="center" p={6} position="relative">

@@ -30,7 +30,7 @@ export const InviteStatusMessage = ({ inviteStatus }: IProps) => {
         </Box>
 
         <Box display="grid" gridTemplateColumns="1fr 1fr" gap={4}>
-          <Link href="/">
+          <Link href="/" passHref>
             <Button
               as="a"
               leftIcon={<Icon as={ArrowLeft} w={4} h={4} />}
@@ -40,7 +40,7 @@ export const InviteStatusMessage = ({ inviteStatus }: IProps) => {
             </Button>
           </Link>
 
-          <Link href="/messages">
+          <Link href="/messages" passHref>
             <Button as="a" leftIcon={<Icon as={LogIn} w={4} h={4} />}>
               Dashboard
             </Button>

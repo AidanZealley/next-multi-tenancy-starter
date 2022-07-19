@@ -3,13 +3,14 @@ import { DashboardSidebar } from '@/components/DashboardSidebar'
 import { LOGGED_IN_USER_QUERY } from '@/graphql/queries'
 import { LoggedInUser } from '@/types'
 import { useQuery } from '@/graphql/hooks'
-import { DashboardLayoutPage } from './DashboardLayoutPage'
+import { AppHeader } from '@/components/AppHeader'
 
 interface IProps {
   page: React.ReactElement
+  title: string
 }
 
-export const DashboardLayout = ({ page }: IProps) => {
+export const DashboardLayout = ({ page, title }: IProps) => {
   const { props } = page
   const { layoutData } = props
   const { loggedInUser } = layoutData
@@ -30,7 +31,12 @@ export const DashboardLayout = ({ page }: IProps) => {
         />
       </Box>
 
-      <DashboardLayoutPage>{page}</DashboardLayoutPage>
+      <Box>
+        <AppHeader title={title} loggedInUser={user} />
+        <Box display="grid" px={6} py={8}>
+          {page}
+        </Box>
+      </Box>
     </Box>
   )
 }

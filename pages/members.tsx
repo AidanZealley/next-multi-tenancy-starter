@@ -1,13 +1,13 @@
-import { Box, Heading } from '@chakra-ui/react'
 import { MembersTable } from '@/components/MembersTable'
+import { useQuery } from '@/graphql/hooks'
 import { LOGGED_IN_USER_QUERY, MEMBERSHIPS_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
 import { LoggedInUser, MembershipWithUser } from '@/types'
-import { NextPageContext } from 'next'
 import { getUserSession } from '@/utils/auth'
-import { useQuery } from '@/graphql/hooks'
-import { batchServerRequest } from '@/graphql/utils'
+import { Box, Heading } from '@chakra-ui/react'
 import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
 
 type IProps = {
   initialData: {
@@ -45,7 +45,7 @@ const MembersPage = ({ initialData, organisationId }: IProps) => {
 }
 
 MembersPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Members" />
 }
 
 export default MembersPage

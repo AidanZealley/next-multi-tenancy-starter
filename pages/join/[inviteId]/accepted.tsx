@@ -1,17 +1,17 @@
-import { Alert, AlertIcon, Box, Button, Icon, Text } from '@chakra-ui/react'
-import { RefreshCcw } from 'react-feather'
-import Link from 'next/link'
-import { getUserSession } from '@/utils/auth'
-import { batchServerRequest, serverRequest } from '@/graphql/utils'
-import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
-import { NextPageContext } from 'next'
-import { InviteWithInvitedByOrg } from '@/types'
-import { ACCEPT_INVITE_MUTATION } from '@/graphql/mutations'
-import { GraphQLResponse } from 'graphql-request/dist/types'
 import { InviteStatusMessage } from '@/components/InviteStatusMessage'
 import { useQuery } from '@/graphql/hooks'
+import { ACCEPT_INVITE_MUTATION } from '@/graphql/mutations'
+import { INVITE_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { batchServerRequest, serverRequest } from '@/graphql/utils'
 import { WithSiteHeader } from '@/layouts/WithSiteHeader'
+import { InviteWithInvitedByOrg } from '@/types'
+import { getUserSession } from '@/utils/auth'
+import { Alert, AlertIcon, Box, Button, Icon, Text } from '@chakra-ui/react'
+import { GraphQLResponse } from 'graphql-request/dist/types'
+import { NextPageContext } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { RefreshCcw } from 'react-feather'
 
 interface IProps {
   initialData: {
@@ -40,7 +40,7 @@ const AcceptedPage = ({ initialData, inviteId }: IProps) => {
         {initialData.invite.errors ? (
           <Box display="flex" flexDir="column" gap={8}>
             <Box display="flex" gap={4}>
-              <Link href={`/join/${invite.id}`}>
+              <Link href={`/join/${invite.id}`} passHref>
                 <Button
                   as="a"
                   flexGrow={1}

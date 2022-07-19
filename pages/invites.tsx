@@ -1,15 +1,15 @@
-import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
+import { InvitesTable } from '@/components/InvitesTable'
+import { useQuery } from '@/graphql/hooks'
+import { INVITES_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
+import { batchServerRequest } from '@/graphql/utils'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
+import { CreateInviteModal } from '@/modals/CreateInviteModal'
+import { InviteWithInvitedBy, LoggedInUser } from '@/types'
+import { getUserSession } from '@/utils/auth'
+import { Box, Button, Heading, Icon, useDisclosure } from '@chakra-ui/react'
+import { GraphQLResponse } from 'graphql-request/dist/types'
 import { NextPageContext } from 'next'
 import { Plus } from 'react-feather'
-import { INVITES_QUERY, LOGGED_IN_USER_QUERY } from '@/graphql/queries'
-import { useQuery } from '@/graphql/hooks'
-import { batchServerRequest } from '@/graphql/utils'
-import { getUserSession } from '@/utils/auth'
-import { InviteWithInvitedBy, LoggedInUser } from '@/types'
-import { InvitesTable } from '@/components/InvitesTable'
-import { CreateInviteModal } from '@/modals/CreateInviteModal'
-import { GraphQLResponse } from 'graphql-request/dist/types'
 
 type IProps = {
   initialData: {
@@ -68,7 +68,7 @@ const InvitesPage = ({ initialData, organisationId }: IProps) => {
 }
 
 InvitesPage.layout = (page: React.ReactElement) => {
-  return <DashboardLayout page={page} />
+  return <DashboardLayout page={page} title="Invites" />
 }
 
 export default InvitesPage
